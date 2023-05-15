@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Common styles
+ */
+
+.monospace {
+ font-family: 'Roboto Mono', monospace;
+}
+
+.input-error + .input-error {
+  display: none;
+}

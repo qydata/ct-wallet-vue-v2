@@ -1,0 +1,32 @@
+{
+  "ZERO_ADDRESS": "0x0000000000000000000000000000000000000000",
+  "SCORE_ADDRESS": "0x367b0c721d2e74b773a5128c32e8313b7d0e810f",
+  "AUTH_CONTROLLER_ADDRESS": "0x709bBc0aD7581D02244E00C356d0EFcbC79AE9f3",
+  "JOBCONTRACT_ADDRESS": "0x9b655BaD81E202f829E2b94508AE4969a000CcDd",
+  "AUTH_CONTROLLER_SYSTEM_ADDRESS": "0x21366DB44c5C6Aebe8fE6005B3F599E561100740",
+  "CAN_AUTH": false,
+  "IPFS": [
+    {
+      "HOST": "dream.chaonft.cn",
+      "PORT": "443",
+      "API_PATH": "/ipfs/api/v0/",
+      "PROTOCOL": "https"
+    },
+    {
+      "HOST": "47.102.108.225",
+      "PORT": "5001",
+      "PROTOCOL": "http"
+    }
+  ],
+  "BLOCK_CHAIN": {
+    "RPC_CHAIN_ID": 27,
+    "RPC_URL": [
+      {
+        "url": "http://ctblock.cn/blockChain"
+      },
+      {
+        "url": "http://ctblock.cn/blockChainLKJdstgdflfdsgljkjlklkkretoiio"
+      }
+    ]
+  }
+}
