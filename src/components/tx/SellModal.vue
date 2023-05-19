@@ -171,7 +171,7 @@
         <div v-if="!withinSaleLimit" class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
           <div class="">
             <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-              Exchange rate has been updated. The swap maximum is now {{exchangeRate.limit}} CT.
+              汇率已更新。交换最大值现在是 {{exchangeRate.limit}} CT.
             </span>
           </div>
         </div>
@@ -207,7 +207,7 @@
           <div v-if="submitError" class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-                An error has occurred ({{ submitError }}). Please try again.
+                发生了错误 ({{ submitError }})。 请再试一次。
               </span>
             </div>
           </div>
@@ -264,7 +264,7 @@
 
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">Your request has been accepted and should be processed soon. If your request cannot be processed for any reason, your CT will be returned.</p>
+            <p class="mb-0">您的请求已被接受，应该会尽快处理。如果您的请求因任何原因无法处理，您的 CT 将被退回。</p>
           </div>
         </div>
       </template>
@@ -284,8 +284,8 @@
 <script>
 /*global process*/
 
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
@@ -294,11 +294,11 @@ import Modal from '../Modal'
 import Tooltip from '../Tooltip'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
-import { parseAmount } from '../../utils/form'
+import { parseAmount } from '@/utils/form'
 import { toMicroXe } from '@edge/wallet-utils'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon, LockOpenIcon } from '@heroicons/vue/outline'
-import { fetchExchangeRates, fetchGasRates } from '../../utils/api'
+import { fetchExchangeRates, fetchGasRates } from '@/utils/api'
 
 const exchangeRateUpdateInterval = 15 * 1000
 const gasRatesUpdateInterval = 15 * 1000

@@ -29,9 +29,9 @@
           <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
             <ShieldExclamationIcon/>
           </span>
-            <p>Ensure you copy and store your wallet address and key securely. If you lose your details you
-              will not be able to access your wallet. Please enter your password to confirm you have
-              backed up your details.</p>
+            <p>确保您安全地复制和存储您的钱包地址和密钥。如果您丢失了您的详细信息，您
+              将无法访问您的钱包。请输入您的密码以确认您有
+              备份您的详细信息。</p>
           </div>
 
           <div class="form-group" :class="{'form-group__error': v$.mobile.$error}">
@@ -149,8 +149,8 @@ import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
 import {ClipboardCopyIcon, LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import Modal from '../Modal'
 
 const {contract_static_call, contract_gas_call_override, contract_call_override} = require('../../contract/ChainCall')
@@ -532,7 +532,7 @@ export default {
       this.create()
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
+      if (!this.canCopy) window.alert('剪贴板不可用。请手动复制粘贴。')
       return navigator.clipboard.writeText(input)
     },
 

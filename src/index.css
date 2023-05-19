@@ -7,9 +7,18 @@
  */
 
 .monospace {
- font-family: 'Roboto Mono', monospace;
+    font-family: 'Roboto Mono', monospace;
 }
 
 .input-error + .input-error {
-  display: none;
+    display: none;
+}
+
+.el-radio__input.is-checked + .el-radio__label {
+    color: #ffffff;
+}
+
+.el-radio__input.is-checked .el-radio__inner {
+    border-color: #000000;;
+    background: #000000;;
 }

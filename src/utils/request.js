@@ -1,7 +1,7 @@
 import axios from 'axios'
 // TODO 这里是测试代码
 var baseURL = process.env.VUE_APP_BASE_URL
-// var baseURL =  "http://127.0.0.1:8080/";
+// var baseURL =  "http://localhost:8080/";
 // 1.创建axios实例
 const instance = axios.create({
   baseURL: baseURL,
@@ -34,7 +34,7 @@ export function postRequest(config) {
     method: 'post',
     responseType: 'blob',
     headers: {
-      'Access-Control-Allow-Origin': '127.0.0.1'
+      'Access-Control-Allow-Origin': 'localhost'
     }
   })
   return instance(config)

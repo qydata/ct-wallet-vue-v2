@@ -185,7 +185,7 @@ export default {
       this.modal = ''
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
+      if (!this.canCopy) window.alert('剪贴板不可用。请手动复制粘贴。')
       return navigator.clipboard.writeText(input)
     },
     async createOnEnter(event) {

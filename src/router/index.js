@@ -10,6 +10,7 @@ import Overview from '@/views/Overview'
 import Staking from '@/views/Staking'
 import ChatPanel from '@/views/ChatPanel'
 import MintPanel from '@/views/MintPanel'
+import CaptchaTestPanel from '@/views/CaptchaTestPanel'
 import Transactions from '@/views/Transactions'
 import Display from '@/views/Display'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -60,6 +61,11 @@ const routes = [
     path: '/mintPanel',
     name: 'MintPanel',
     component: MintPanel
+  },
+  {
+    path: '/captchaTestPanel',
+    name: 'CaptchaTestPanel',
+    component: CaptchaTestPanel
   }
 ]
 

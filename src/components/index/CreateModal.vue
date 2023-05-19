@@ -100,7 +100,9 @@
             </div>
           </div>
           <div class="form-group" :class="{'form-group__error': v$.confirmPhrase.$error}">
-            <label for="confirm-phrase">请输入 '<span style="text-transform: none">{{ phrase }}</span>'来确认我已经备份了我的私钥</label>
+            <label for="confirm-phrase">请输入 '<span style="text-transform: none">{{
+                phrase
+              }}</span>'来确认我已经备份了我的私钥</label>
             <input
               type="text"
               @keypress="createOnEnter"
@@ -125,11 +127,11 @@
 </template>
 
 <script>
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import {ClipboardCopyIcon, LockOpenIcon, RefreshIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
 import Modal from '../Modal'
 
 const ethers = require('ethers')
@@ -224,7 +226,7 @@ export default {
       this.create()
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
+      if (!this.canCopy) window.alert('剪贴板不可用。请手动复制粘贴。')
       return navigator.clipboard.writeText(input)
     },
     generateWallet() {

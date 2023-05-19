@@ -27,7 +27,6 @@ export default {
       if (this.value === undefined) return '...'
       if (isNaN(this.value)) return '&mdash;'
       if (typeof this.value === 'string') {
-        console.log(this.value)
         return Number(this.value).toFixed(6)
       }
       if (this.isCT && !this.short) {

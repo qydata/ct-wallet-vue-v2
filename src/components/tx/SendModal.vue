@@ -245,9 +245,9 @@ import {LockOpenIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers} from '@vuelidate/validators'
 import {mapState} from 'vuex'
-import {parseAmount} from '../../utils/form'
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import {parseAmount} from '@/utils/form'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import Modal from '../Modal'
@@ -714,7 +714,7 @@ export default {
           // We must pass in the amount as wei (1 ether = 1e18 wei), so we
           // use this convenience function to convert ether to wei.
           // gasPrice: ethers.utils.hexlify(0),
-          value: ethers.utils.parseEther((this.amountParsed).toString()),
+          value: ethers.utils.parseEther((this.amountParsedCalc).toString()),
           data: '0x' + memo,
           nonce: this.nextNonce
         }

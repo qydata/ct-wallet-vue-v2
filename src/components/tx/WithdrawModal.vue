@@ -190,7 +190,7 @@
           <div v-if="submitError" class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-                An error has occurred ({{ submitError }}). Please try again.
+                发生了错误 ({{ submitError }})。 请再试一次。
               </span>
             </div>
           </div>
@@ -259,17 +259,17 @@
 <script>
 /*global process*/
 
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
 import Modal from '../Modal'
 import Tooltip from '../Tooltip'
-import { fetchGasRates } from '../../utils/api'
+import { fetchGasRates } from '@/utils/api'
 import { mapState } from 'vuex'
-import { parseAmount } from '../../utils/form'
+import { parseAmount } from '@/utils/form'
 import { toMicroXe } from '@edge/wallet-utils'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon, LockOpenIcon } from '@heroicons/vue/outline'

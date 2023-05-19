@@ -3,19 +3,19 @@
     <table>
       <thead class="hidden lg:table-header-group">
       <tr v-if="sortable">
-        <TableHeader width="16%" header="名称" :sortQuery="sortQuery"
+        <TableHeader width="15%" header="名称" :sortQuery="sortQuery"
                      sortParam="timestamp" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="10%" header="符号" :sortQuery="sortQuery"
+        <TableHeader width="15%" header="符号" :sortQuery="sortQuery"
                      sortParam="hash" :onSortingUpdate="updateSorting"
         />
         <TableHeader width="20%" header="余额" :sortQuery="sortQuery"
                      sortParam="sortAddress" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="10%" header="类型" :sortQuery="sortQuery"
+        <TableHeader width="15%" header="类型" :sortQuery="sortQuery"
                      sortParam="data.memo" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="10%" header="精度" :sortQuery="sortQuery"
+        <TableHeader width="20%" header="精度" :sortQuery="sortQuery"
                      sortParam="block.height" :onSortingUpdate="updateSorting"
         />
         <TableHeader class="amount-col" width="15%" header="操作" :sortQuery="sortQuery"
@@ -23,12 +23,12 @@
         />
       </tr>
       <tr v-else>
-        <th width="16%">名称</th>
-        <th width="10%">符号</th>
+        <th width="15%">名称</th>
+        <th width="15%">符号</th>
         <th width="20%">余额</th>
-        <th width="10%">精度</th>
-        <th width="10%">类型</th>
-        <th width="10%">操作</th>
+        <th width="15%">精度</th>
+        <th width="20%">类型</th>
+        <th width="15%">操作</th>
       </tr>
       </thead>
       <tbody v-if="transactions.length">

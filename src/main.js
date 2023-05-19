@@ -2,16 +2,19 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
+import ElementPlus from 'element-plus'
+import 'element-plus/theme-chalk/index.css'
 /*global process*/
-import {createApp} from 'vue'
+import Vue, {createApp} from 'vue'
+// import 'element-plus/lib/theme-chalk/index.css'
 import App from './App.vue'
 import './index.css'
 import titleMixin from './mixins/titleMixin'
 import router from './router'
 import Store from './store'
 import './utils'
-// import 'element-plus/lib/theme-chalk/index.css'
 
+// Vue.prototype.$message = ElementPlus.Message
 const WALLET_REFRESH_INTERVAL = 30 * 1000
 const init = async () => {
   const store = await Store.init()
@@ -19,6 +22,7 @@ const init = async () => {
   const app = createApp(App, {store})
     .use(router)
     .use(store)
+    .use(ElementPlus)
     .mixin(titleMixin)
     .mixin({
       data() {

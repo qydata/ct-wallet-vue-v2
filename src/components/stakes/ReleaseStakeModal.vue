@@ -29,7 +29,7 @@
           </div>
           <div v-if="!isUnlocked" class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">This stake has not unlocked yet. It will unlock at {{ unlocksAtTime }} on {{ unlocksAtDate }}. You can release it instantly for a {{ releasePc }}% express release fee.</p>
+            <p class="mb-0">该股份尚未解锁。它将解锁 {{ unlocksAtTime }} 于 {{ unlocksAtDate }}。 您可以立即释放它一段时间 {{ releasePc }}% 快递费。</p>
           </div>
         </div>
       </template>
@@ -197,7 +197,7 @@
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">Your transaction has been submitted. Once processed, your stake will be released (minus any fees). This may take a minute or two.</p>
+            <p class="mb-0">您的交易已提交。一旦处理完毕，您的股份将被释放（减去任何费用）。这可能需要一两分钟。</p>
           </div>
         </div>
       </template>
@@ -216,8 +216,8 @@
 
 <script>
 /*global process*/
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import HashLink from '../HashLink'

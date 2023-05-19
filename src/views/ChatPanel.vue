@@ -1,108 +1,175 @@
 <template>
-  <div>
+  <div style="">
     <Header/>
+    <div class="chat-ui">
 
-    <div class="bg-gray-200 py-35">
-      <div class="container">
-        <h2>当前共有 <span style="color: #0095ff;">{{ total }}</span> 个消息</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-          <div class="flex flex-col w-full">
-            <div v-for="(msg, index) in messageList"
-                 :class="{
-                  'account-panel__address flex flex-col flex-1 px-12 pt-12 pb-12 rounded-b point': true,
-                  'bg-black': true,
+      <h2>
+        当前共有 <span style="color: #0095ff;">{{ total }}</span> 个消息
+      </h2>
+
+      <el-row :gutter="0" style="height: 700px; background: white">
+        <el-col :span="8">
+          <div class="flex flex-col w-full px-12 pt-12 pb-12  bg-white  rounded-b">
+            <div
+              v-for="(msg, index) in messageList"
+              :class="{
+                  'account-panel__address flex flex-col flex-1 px-12 pt-12  rounded-b point': true,
+                  'bg-black': index != 0,
+                  'pb-12': index != 0,
                   'bg-opacity-60': true,
                   'bg-opacity-100': index == indexItem
-                 }"
-                 @click="getJobChatDetail(msg, index)"
-                 :key="index">
-
+                }"
+              @click="getJobChatDetail(msg, index)"
+              :key="index"
+            >
               <div v-if="index == 0">
-
-                <h3 class="mb-1">新建聊天</h3>
+                <el-button type="success" circle>
+                  <el-icon>
+                    <Plus/>
+                  </el-icon>
+                </el-button>
+                <el-divider/>
               </div>
+
               <div v-else>
+
                 <h3 class="mb-1">发送方</h3>
-                <span>{{ hexStripZeros(msg.topics[1]) }}{{ isMeFun(hexStripZeros(msg.topics[1])) ? '(我)' : '' }}</span>
+                <span
+                >{{
+                    hexStripZeros(msg.topics[1])
+                  }}{{
+                    isMeFun(hexStripZeros(msg.topics[1])) ? '(我)' : ''
+                  }}</span
+                >
                 <h3 class="mb-1">接收方</h3>
-                <span>{{ hexStripZeros(msg.topics[2]) }}{{ isMeFun(hexStripZeros(msg.topics[2])) ? '(我)' : '' }}</span>
+                <span
+                >{{
+                    hexStripZeros(msg.topics[2])
+                  }}{{
+                    isMeFun(hexStripZeros(msg.topics[2])) ? '(我)' : ''
+                  }}</span
+                >
               </div>
             </div>
           </div>
-          <div class="flex flex-col w-full h-full">
-            <div class="flex flex-col flex-1 px-12 pt-12 pb-12 bg-white rounded-b">
-              <div class="contents">
-                <div class="chat-messages">
-                  <div v-for="(message, index) in messages" :key="message.id">
-                    <div v-if="message.isMe">
-                      <p class="message-nickname-me">
-                        {{ addressFormat(address) }} (我)
-                      </p>
-                      <div class="message-me">
-                        <button type="success"
-                                :class="'button button--'+ (message.isRead?'success':'error')"
-                                @click="dencPass(message, message.text)"
-                                v-show="message.denText ==''"
-                                shape="circle" size="small">
-                          解密
-                        </button>
-                        <button shape="circle" size="small"
-                                :class="'button button--'+ (message.isRead?'success':'error')">
-                          {{
-                            message.isRead ? '已读' : '未读'
-                          }}
-                        </button>
-                        <p>{{ message.text }}</p></div>
-                    </div>
-                    <div v-else>
-                      <div>
-                        <p class="message-nickname-other">
-                          {{ addressFormat(publisher) }}
-                        </p>
-                        <div class="message-other">
-                          <button type="success" @click="dencPass(message,message.text)"
-                                  v-show="message.denText ==''"
-                                  shape="circle"
-                                  :class="'button button--'+ (message.isRead?'success':'error')"
-                                  size="small">解密
-                          </button>
-                          <button
-                            :type="message.isRead?'success':'error'"
-                            :class="'button button--'+ (message.isRead?'success':'error')"
-                            shape="circle" size="small">{{
-                              message.isRead ? '已读' : '未读'
-                            }}
-                          </button>
-                          <p>{{ message.text }}</p></div>
-                      </div>
+        </el-col>
+
+        <el-col :span="1">
+          <el-divider direction="vertical" style="height: 100%;"/>
+        </el-col>
+        <el-col :span="15">
+          <div class="contents">
+            <div class="chat-messages">
+              <div v-for="(message, index) in messages" :key="message.id">
+                <div v-if="message.isMe">
+                  <p class="message-nickname-me">
+                    {{ addressFormat(address) }} (我)
+                  </p>
+                  <div class="message-me">
+                    <button
+                      type="success"
+                      :class="
+                              'button button--' +
+                                (message.isRead ? 'success' : 'error')
+                            "
+                      @click="dencPass(message, message.text)"
+                      v-show="message.denText == ''"
+                      shape="circle"
+                      size="small"
+                    >
+                      解密
+                    </button>
+                    <button
+                      shape="circle"
+                      size="small"
+                      :class="
+                              'button button--' +
+                                (message.isRead ? 'success' : 'error')
+                            "
+                    >
+                      {{ message.isRead ? '已读' : '未读' }}
+                    </button>
+                    <p>{{ message.text }}</p>
+                  </div>
+                </div>
+                <div v-else>
+                  <div>
+                    <p class="message-nickname-other">
+                      {{ addressFormat(publisher) }}
+                    </p>
+                    <div class="message-other">
+                      <button
+                        type="success"
+                        @click="dencPass(message, message.text)"
+                        v-show="message.denText == ''"
+                        shape="circle"
+                        :class="
+                                'button button--' +
+                                  (message.isRead ? 'success' : 'error')
+                              "
+                        size="small"
+                      >
+                        解密
+                      </button>
+                      <button
+                        :type="message.isRead ? 'success' : 'error'"
+                        :class="
+                                'button button--' +
+                                  (message.isRead ? 'success' : 'error')
+                              "
+                        shape="circle"
+                        size="small"
+                      >
+                        {{ message.isRead ? '已读' : '未读' }}
+                      </button>
+                      <p>{{ message.text }}</p>
                     </div>
                   </div>
                 </div>
-                <div class="chat-input">
-                  <input v-model="newMessage" size="large"
-                         style="flex: 4" placeholder="在这里输入你要发送的消息"
-                  />
-                  <button
-                    class="button button--success"
-                    @click.native="sendMessagePass">发送
-                  </button>
-                </div>
               </div>
             </div>
+            <div class="chat-input">
+              <input
+                v-model="newMessage"
+                size="large"
+                style="flex: 4"
+                placeholder="在这里输入你要发送的消息"
+              />
+              <button
+                class="button button--success"
+                @click.native="sendMessagePass"
+              >
+                发送
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        </el-col>
+      </el-row>
+      <NewChatModal
+        :afterCreate="chatAfter"
+        :close="closeModal"
+        :visible="modal == 'newChat'"
+      />
+      <InPasswordModal
+        :afterCreate="dencMsg"
+        :close="closeModal"
+        :visible="modal == 'inPasswordModalDenc'"
+      />
+      <InPasswordModal
+        :afterCreate="sendMessagePassCall"
+        :close="closeModal"
+        :visible="modal == 'inPasswordModalSend'"
+      />
+      <LoadingModal
+        :afterCreate="sendMessagePassCall"
+        :close="closeModal"
+        :visible="loading"
+      />
     </div>
-    <NewChatModal :afterCreate="chatAfter" :close="closeModal" :visible="modal == 'newChat'"/>
-    <InPasswordModal :afterCreate="dencMsg" :close="closeModal" :visible="modal == 'inPasswordModalDenc'"/>
-    <InPasswordModal :afterCreate="sendMessagePassCall" :close="closeModal" :visible="modal == 'inPasswordModalSend'"/>
-    <LoadingModal :afterCreate="sendMessagePassCall" :close="closeModal" :visible="loading"/>
-
   </div>
 </template>
 
 <script>
-import Amount from '@/components/Amount.vue'
 import Header from '@/components/Header'
 import AuthBindModal from '@/components/index/AuthBindModal'
 import ChargeModal from '@/components/index/ChargeModal'
@@ -119,6 +186,7 @@ import SwapModal from '@/components/tx/SwapModal'
 import WithdrawModal from '@/components/tx/WithdrawModal'
 import {queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
+import {Plus} from '@element-plus/icons-vue'
 import {ArrowDownIcon, ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@heroicons/vue/outline'
 import ipfsAPI from 'ipfs-api'
 import {mapState} from 'vuex'
@@ -137,16 +205,20 @@ const ipfsNode = ipfsAPI({
   port: '5001',
   protocol: 'http'
 })
-const {contract_static_call, contract_gas_call_override, contract_call_override} = require('../contract/ChainCall')
+const {
+  contract_static_call,
+  contract_gas_call_override,
+  contract_call_override
+} = require('../contract/ChainCall')
 
 let ElementPlus = {
   Message: {
-    error: (info) => {
+    error: info => {
       // console.log(info)
       alert(info)
       // this.passwordError = info
     },
-    success: (info) => {
+    success: info => {
       // console.log(info)
       alert(info)
     }
@@ -156,7 +228,7 @@ export default {
   name: 'AccountPanel',
   props: ['view'],
   components: {
-    Amount,
+    Plus,
     ArrowDownIcon,
     ArrowUpIcon,
     CreateStakeModal,
@@ -242,7 +314,6 @@ export default {
         return oText
       }
 
-
       // 解密
       // 使用私钥解密信息
       // const privateKey = await storage.getPrivateKey(this.password)
@@ -252,12 +323,13 @@ export default {
     addressFormat(value) {
       if (!value) return '0x00...0000'
       if (value.length > 8) {
-        return `${value.substring(0, 4)}****${value.substring(value.length - 4)}`
+        return `${value.substring(0, 4)}****${value.substring(
+          value.length - 4
+        )}`
       }
       return value
     },
     chatAfter(toAddress, firstMessage, password) {
-
       // 发送明文消息
       console.log(toAddress, firstMessage, password)
       // 加密信息(我的公钥)
@@ -284,9 +356,12 @@ export default {
       console.log('text', JSON.parse(JSON.stringify(text)))
       if (msg.denText == '') {
         const privateKey = await storage.getPrivateKey(password)
-        let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
-          chainId: 27
-        })
+        let customHttpProvider = new ethers.providers.JsonRpcProvider(
+          this.$store.state.config.blockchain.baseURL,
+          {
+            chainId: 27
+          }
+        )
         let wallet = new ethers.Wallet(privateKey, customHttpProvider)
 
         console.log(wallet.privateKey)
@@ -298,11 +373,16 @@ export default {
       else {
         msg.text = msg.denText
       }
-
     },
     sendMessagePass() {
       // publisher, newMessage,password,false
-      this.modal = 'inPasswordModalSend'
+      // 判断是否选中了发送列表
+      if (this.messages.length == 0) {
+        this.modal = 'newChat'
+      }
+      else {
+        this.modal = 'inPasswordModalSend'
+      }
       // sendMessagePass(publisher, newMessage,password,false)
     },
     async sendMessagePassCall(password) {
@@ -310,7 +390,6 @@ export default {
       this.sendMessage(this.publisher, this.newMessage, password, false)
     },
     async sendMessage(toAddress, firstMessage, password, isFirst) {
-
       console.log('sendMessage')
       let that = this
 
@@ -319,7 +398,9 @@ export default {
       // 上传ipfs
       // 加密信息
       // 公钥加密
-      let publicKey = await storage.getPublicKey(storage.getHighestWalletVersion()) // 公钥
+      let publicKey = await storage.getPublicKey(
+        storage.getHighestWalletVersion()
+      ) // 公钥
       // 使用公钥加密信息
       publicKey = ethUtil.stripHexPrefix(publicKey)
       const encMsgRQ = await encryptWithPublicKey(publicKey, firstMessage)
@@ -353,10 +434,10 @@ export default {
 
       let responseRet = await ipfsNode
         .add(Buffer.from(JSON.stringify(message), 'utf-8'))
-        .then((resp) => {
+        .then(resp => {
           return {err: null, data: resp}
         })
-        .catch((err) => {
+        .catch(err => {
           console.trace(err)
           return {err: err, data: null}
         })
@@ -373,9 +454,12 @@ export default {
       // 对比两个地址的大小
       const privateKey = await storage.getPrivateKey(password)
 
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
-        chainId: 27
-      })
+      let customHttpProvider = new ethers.providers.JsonRpcProvider(
+        this.$store.state.config.blockchain.baseURL,
+        {
+          chainId: 27
+        }
+      )
       let param = [toAddress, responseRet.data[0].path]
       let wallet = new ethers.Wallet(privateKey, customHttpProvider)
       let tx = await contract_call_override(
@@ -402,7 +486,6 @@ export default {
       await tx.data.wait()
       console.log(tx.data.hash)
       if (tx.data != null) {
-
         ElementPlus.Message.success('发送成功')
         // 这里切换最新的聊天列表
         that.getJobChat()
@@ -412,7 +495,6 @@ export default {
         ElementPlus.Message.error('发送失败')
       }
       this.loading = false
-
     },
     getJobChatDetail(msg, index) {
       if (index == 0) {
@@ -439,7 +521,6 @@ export default {
         this.indexItem = index
         this.getJobChat()
       }
-
     },
     hexStripZeros(val) {
       return ethers.utils.hexStripZeros(val)
@@ -483,7 +564,10 @@ export default {
       })
 
       console.log(addresses)
-      let abiCode = '0x' + web3.utils.stripHexPrefix(addresses[0]) + web3.utils.stripHexPrefix(addresses[1])
+      let abiCode =
+        '0x' +
+        web3.utils.stripHexPrefix(addresses[0]) +
+        web3.utils.stripHexPrefix(addresses[1])
       let hash = web3.utils.keccak256(abiCode)
       console.log(hash)
       this.id = hash
@@ -491,7 +575,7 @@ export default {
       //计算起始区块
       let filter = {
         address: GlobalConfig.JOBCONTRACT_ADDRESS,
-        fromBlock: Number(fromBlock),    // 1天的数据
+        fromBlock: Number(fromBlock), // 1天的数据
         toBlock: Number(toBlock),
         // topics: [topic, ethers.utils.hexZeroPad(that.address, 32)],
         topics: [topic, this.id, null, null]
@@ -499,10 +583,13 @@ export default {
         // topics: [topic],
       }
       // that.loading = true;
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
-        chainId: 27
-      })
-      let resp_ret = await customHttpProvider.getLogs(filter).then((result) => {
+      let customHttpProvider = new ethers.providers.JsonRpcProvider(
+        this.$store.state.config.blockchain.baseURL,
+        {
+          chainId: 27
+        }
+      )
+      let resp_ret = await customHttpProvider.getLogs(filter).then(result => {
         return result
       })
 
@@ -517,11 +604,21 @@ export default {
         // console.log('obj', obj)
 
         let isMe
-        if (ethers.utils.hexStripZeros(obj.topics[2]).toString().toLowerCase() == _from.toLowerCase()) {
+        if (
+          ethers.utils
+            .hexStripZeros(obj.topics[2])
+            .toString()
+            .toLowerCase() == _from.toLowerCase()
+        ) {
           isMe = true
           noMe = false
         }
-        else if (ethers.utils.hexStripZeros(obj.topics[3]).toString().toLowerCase() == _from.toLowerCase()) {
+        else if (
+          ethers.utils
+            .hexStripZeros(obj.topics[3])
+            .toString()
+            .toLowerCase() == _from.toLowerCase()
+        ) {
           isMe = false
         }
         else {
@@ -529,7 +626,10 @@ export default {
         }
         let tempObj
 
-        let content = ethers.utils.defaultAbiCoder.decode(['string'], obj.data)[0]
+        let content = ethers.utils.defaultAbiCoder.decode(
+          ['string'],
+          obj.data
+        )[0]
         let isRead = false
         let isReadTemp = window.localStorage.getItem(obj.transactionHash)
         if (isReadTemp && isReadTemp == 'true') {
@@ -540,10 +640,10 @@ export default {
           // 查询ipfs元数据
           let responseRet = await ipfsNode
             .cat(content)
-            .then((resp) => {
+            .then(resp => {
               return {err: null, data: resp}
             })
-            .catch((err) => {
+            .catch(err => {
               console.trace(err)
               return {err: err, data: null}
             })
@@ -570,7 +670,6 @@ export default {
           else if (this.pubKeyMe == null) {
             that.pubKeyMe = metaOriData.pubKeyRP
           }
-
         }
         else {
           tempObj = {
@@ -589,12 +688,13 @@ export default {
 
       // 没有我的公钥缓存, 将通过metamask获取
       if (noMe && this.pubKeyMe == '') {
-        that.pubKeyMe = await storage.getPublicKey(storage.getHighestWalletVersion()) // 公钥
+        that.pubKeyMe = await storage.getPublicKey(
+          storage.getHighestWalletVersion()
+        ) // 公钥
       }
 
       this.messages = messages
       this.loading = false
-
     },
     async getJobchats() {
       let that = this
@@ -611,36 +711,39 @@ export default {
       //计算起始区块
 
       that.loading = true
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
-        chainId: 27
-      })
+      let customHttpProvider = new ethers.providers.JsonRpcProvider(
+        this.$store.state.config.blockchain.baseURL,
+        {
+          chainId: 27
+        }
+      )
       // 我发出的
       let filter = {
         address: GlobalConfig.JOBCONTRACT_ADDRESS,
-        fromBlock: Number(fromBlock),    // 1天的数据
+        fromBlock: Number(fromBlock), // 1天的数据
         toBlock: Number(toBlock),
         // topics: [topic, ethers.utils.hexZeroPad(that.address, 32)],
-        topics: [topic,
-          ethers.utils.hexZeroPad(that.address, 32), null]
+        topics: [topic, ethers.utils.hexZeroPad(that.address, 32), null]
         // topics: [topic],
       }
-      let resp_ret = await customHttpProvider.getLogs(filter).then((result) => {
+      let resp_ret = await customHttpProvider.getLogs(filter).then(result => {
         return result
       })
 
       //  我接受的
       let filterR = {
         address: GlobalConfig.JOBCONTRACT_ADDRESS,
-        fromBlock: Number(fromBlock),    // 1天的数据
+        fromBlock: Number(fromBlock), // 1天的数据
         toBlock: Number(toBlock),
         // topics: [topic, ethers.utils.hexZeroPad(that.address, 32)],
-        topics: [topic, null,
-          ethers.utils.hexZeroPad(that.address, 32)]
+        topics: [topic, null, ethers.utils.hexZeroPad(that.address, 32)]
         // topics: [topic],
       }
-      let resp_retR = await customHttpProvider.getLogs(filterR).then((resultR) => {
-        return resultR
-      })
+      let resp_retR = await customHttpProvider
+        .getLogs(filterR)
+        .then(resultR => {
+          return resultR
+        })
       that.messageList = resp_ret.concat(resp_retR)
 
       that.messageList.unshift({
@@ -650,7 +753,6 @@ export default {
 
       that.total = this.messageList.length - 1
       if (that.total > 1) {
-
         // 复制 publisher
         let addr1 = this.hexStripZeros(this.messageList[1].topics[1])
         let addr2 = this.hexStripZeros(this.messageList[1].topics[2])
@@ -680,13 +782,17 @@ export default {
       this.modal = ''
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
+      if (!this.canCopy) window.alert('剪贴板不可用。请手动复制粘贴。')
       return navigator.clipboard.writeText(input)
     },
     async createOnEnter(event) {
       if (event.charCode !== 13) return
       // 修改钱包名称
-      await storage.setWalletName(this.walletName, this.address, storage.getHighestWalletVersion())
+      await storage.setWalletName(
+        this.walletName,
+        this.address,
+        storage.getHighestWalletVersion()
+      )
     },
 
     openCreateStake() {
@@ -696,27 +802,29 @@ export default {
       this.modal = 'deposit'
     },
     async authJudge(oriName) {
-
       // 查询实名状态
       let address = await storage.getAddress(storage.getHighestWalletVersion())
-      queryCert({address: address}).then((res) => {
-        if (res.code !== 200) {
-          console.log(res.msg)
-        }
-        else if (!res.is_cert) {
-          let r = confirm('当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!')
-          if (r == true) {
-            console.log('You pressed OK!')
-            this.modal = 'authBind'
+      queryCert({address: address})
+        .then(res => {
+          if (res.code !== 200) {
+            console.log(res.msg)
           }
-        }
-        else {
-          this.modal = oriName
-        }
-      }).catch((e) => {
-        console.log(e)
-      })
-
+          else if (!res.is_cert) {
+            let r = confirm(
+              '当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!'
+            )
+            if (r == true) {
+              console.log('You pressed OK!')
+              this.modal = 'authBind'
+            }
+          }
+          else {
+            this.modal = oriName
+          }
+        })
+        .catch(e => {
+          console.log(e)
+        })
     },
     async openReceive() {
       await this.authJudge('receive')
@@ -742,7 +850,6 @@ export default {
     }
   }
 }
-
 </script>
 
 <style scoped>
@@ -844,10 +951,18 @@ export default {
   height: 100%;
 }
 
+.contents {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 15px;
+}
+
 .chat-messages {
-  /*flex: 1;*/
-  height: 500px;
+  flex: 1;
   overflow-y: scroll;
+  overflow: hidden;
+
 }
 
 .message-me {
@@ -857,8 +972,6 @@ export default {
   align-self: flex-end;
   margin: 4px 4px 4px 20%;
   overflow-wrap: break-word;
-
-
 }
 
 .message-nickname-me {
@@ -893,5 +1006,10 @@ export default {
 
 .point {
   cursor: pointer;
+}
+
+.chat-ui {
+  margin: 50px 100px;
+
 }
 </style>

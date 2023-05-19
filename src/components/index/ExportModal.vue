@@ -85,8 +85,8 @@
 </template>
 
 <script>
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import Modal from '../Modal.vue'
 import { mapState } from 'vuex'
 import useVuelidate from '@vuelidate/core'
@@ -159,7 +159,7 @@ export default {
       this.exportKey()
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
+      if (!this.canCopy) window.alert('剪贴板不可用。请手动复制粘贴。')
       return navigator.clipboard.writeText(input)
     }
   },

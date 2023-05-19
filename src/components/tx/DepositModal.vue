@@ -5,7 +5,7 @@
         <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <!-- eslint-disable max-len -->
         <span v-if="browserSupport" class="sub-heading d-block text-gray text-caption">Connect to MetaMask to deposit EDGE for swap.</span>
-        <span v-else class="sub-heading d-block text-gray text-caption">Your browser doesn't support the MetaMask browser extension. Please use Brave, Chrome, CTChain or Firefox for depositing EDGE.</span>
+        <span v-else class="sub-heading d-block text-gray text-caption">您的浏览器不支持 MetaMask 浏览器扩展。请使用 Brave、Chrome、CTChain 或 Firefox 充值 EDGE。</span>
         <!-- eslint-enable max-len -->
       </template>
       <template v-slot:body>
@@ -208,8 +208,8 @@
 </template>
 
 <script>
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
@@ -220,10 +220,10 @@ import Tooltip from '../Tooltip'
 import bridge from '@edge/bridge-utils'
 import { detect } from 'detect-browser'
 import { ethers } from 'ethers'
-import { fetchGasRates } from '../../utils/api'
+import { fetchGasRates } from '@/utils/api'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
-import { parseAmount } from '../../utils/form'
+import { parseAmount } from '@/utils/form'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/vue/outline'
 
@@ -476,7 +476,7 @@ export default {
     setChainId(chainId) {
       // https://eips.ethereum.org/EIPS/eip-1193#chain-changes
       if (networks[chainId] === undefined) {
-        this.connectError = 'Unsupported network. Please use Ethereum Mainnet or Rinkeby Test Network.'
+        this.connectError = '不支持的网络。请使用以太坊主网或 Rinkeby 测试网络。'
         this.connectStatus = ''
         return
       }

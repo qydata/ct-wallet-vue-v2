@@ -94,20 +94,6 @@ export default {
     return {
       metadata: {totalCount: 0},
       limit: 20,
-      mainNav: [
-        {
-          link: '/erc20',
-          text: 'ERC20'
-        },
-        {
-          link: '/nft',
-          text: 'NFT'
-        },
-        {
-          link: '/other',
-          text: '其它活动'
-        }
-      ],
       tabModel: 'erc20',
       erc20List: [],
       nftList: [],

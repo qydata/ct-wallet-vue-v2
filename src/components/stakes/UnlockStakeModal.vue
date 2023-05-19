@@ -96,7 +96,7 @@
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">Your transaction has been submitted. Once the transaction is confirmed, your stake will begin to unlock. It will unlock on {{ unlocksAtDate }} at {{ unlocksAtTime }}.</p>
+            <p class="mb-0">您的交易已提交。交易确认后，您的股份将开始解锁。它将解锁 {{ unlocksAtDate }} at {{ unlocksAtTime }}。</p>
           </div>
         </div>
       </template>
@@ -116,8 +116,8 @@
 <script>
 /*global process*/
 
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import HashLink from '../HashLink'

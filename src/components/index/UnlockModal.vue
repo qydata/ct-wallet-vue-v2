@@ -61,8 +61,8 @@
 import {LockOpenIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {mapState} from 'vuex'
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import Modal from '../Modal'
 
 export default {

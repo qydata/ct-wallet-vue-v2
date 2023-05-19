@@ -3,10 +3,10 @@
     <table>
       <thead class="hidden lg:table-header-group">
       <tr>
-        <TableHeader width="165" header="名称" :sortQuery="sortQuery"
+        <TableHeader width="50%" header="名称" :sortQuery="sortQuery"
                      sortParam="timestamp" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="15%" header="链接" :sortQuery="sortQuery"
+        <TableHeader width="50%" header="链接" :sortQuery="sortQuery"
                      sortParam="hash" :onSortingUpdate="updateSorting"
         />
       </tr>

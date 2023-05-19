@@ -128,7 +128,7 @@
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">Your transaction has been submitted. Once processed, your stake will be created. This may take a minute or two.</p>
+            <p class="mb-0">您的交易已提交。处理完成后，您的股份将被创建。这可能需要一两分钟。</p>
           </div>
         </div>
       </template>
@@ -148,8 +148,8 @@
 <script>
 /*global process*/
 
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import HashLink from '../HashLink'

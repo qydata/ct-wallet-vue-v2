@@ -13,7 +13,7 @@
             <input
               type="text"
               autocomplete="off"
-              placeholder="请输入一个钱包名称"
+              placeholder="请输入一个钱包地址"
               id="toAddress"
               v-model="v$.toAddress.$model"
             />
@@ -94,8 +94,8 @@
 import {ClipboardCopyIcon, LockOpenIcon, RefreshIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
-import * as storage from '../../utils/storage'
-import * as validation from '../../utils/validation'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import Modal from '../Modal'
 
 const ethers = require('ethers')
@@ -179,7 +179,7 @@ export default {
       this.create()
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
+      if (!this.canCopy) window.alert('剪贴板不可用。请手动复制粘贴。')
       return navigator.clipboard.writeText(input)
     },
     reset() {
