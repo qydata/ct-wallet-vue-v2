@@ -20,7 +20,7 @@ export default {
     const title = getTitle(this)
 
     if (title) {
-      document.title = `${titlePrefix} » ${title}`
+      document.title = `${title} | ${titlePrefix}`
     }
   }
 }

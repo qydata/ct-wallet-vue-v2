@@ -29,6 +29,19 @@
                     />
                   </el-radio>
                 </div>
+
+                <div
+                  v-if="contractList.length == 0"
+                >
+                  <el-radio label="创建收藏夹">
+                    <el-alert
+                      title="创建收藏夹"
+                      type="success"
+                      :closable="false"
+                      description="点击去创建收藏夹"
+                    />
+                  </el-radio>
+                </div>
               </el-radio-group>
             </div>
           </div>
@@ -38,7 +51,8 @@
                        accept="image/*"
                        list-type="picture-card"
                        :file-list="fileList"
-                       :limit="1"
+                       :limit="limitCount"
+                       :class="{hide:hideUpload}"
                        :on-change="
                     (file, fileList) => handleChange(file, fileList, 1)
                   "
@@ -51,15 +65,14 @@
                 <div>
                   <img class="el-upload-list__item-thumbnail" :src="file.url" alt=""/>
                   <span class="el-upload-list__item-actions">
-
-          <span
-            v-if="!disabled"
-            class="el-upload-list__item-delete"
-            @click="handleRemove(file)"
-          >
-            <el-icon><Delete/></el-icon>
-          </span>
-        </span>
+                        <span
+                          v-if="!disabled"
+                          class="el-upload-list__item-delete"
+                          @click="handleRemove(file)"
+                        >
+                          <el-icon><Delete/></el-icon>
+                        </span>
+                  </span>
                 </div>
               </template>
             </el-upload>
@@ -69,7 +82,7 @@
             <label for="title">标题</label>
             <div class="relative input-wrap">
               <span class="icon">
-                <LockOpenIcon/>
+                <EditPen/>
               </span>
               <input
                 type="text"
@@ -88,7 +101,7 @@
             <label for="author_description">持有者</label>
             <div class="relative input-wrap">
               <span class="icon">
-                <LockOpenIcon/>
+                <EditPen/>
               </span>
               <input
                 type="text"
@@ -108,7 +121,7 @@
             <label for="description">描述</label>
             <div class="relative input-wrap">
               <span class="icon">
-                <LockOpenIcon/>
+                <EditPen/>
               </span>
               <input
                 type="text"
@@ -196,9 +209,11 @@ import ContractList from '@/components/ProtocolList'
 import {fetchDisplay} from '@/utils/api'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
-import {Delete, Download, Plus, ZoomIn} from '@element-plus/icons-vue'
-import {LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
+// EditPen <el-icon><EditPen /></el-icon>
+import {Delete, Download, EditPen, Plus, ZoomIn} from '@element-plus/icons-vue'
+import {LockOpenIcon, PencilIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
+
 import {helpers, required as _required} from '@vuelidate/validators'
 import Modal from '../Modal'
 
@@ -221,11 +236,15 @@ export default {
     LoadingModal,
     ContractList,
     LockOpenIcon,
+    EditPen,
     Modal,
+    PencilIcon,
+
     ShieldExclamationIcon, Delete, Download, Plus, ZoomIn
   },
   props: {
     afterCreate: Function,
+    createCollect: Function,
     close: Function,
     visible: Boolean
   },
@@ -234,8 +253,9 @@ export default {
       address: '',
       privateKey: '',
       publicKey: '',
-
+      hideUpload: false,
       password: '',
+      limitCount: 1,
       confirmPhrase: '',
       passwordError: '',
       canCopy: !!navigator.clipboard,
@@ -279,12 +299,18 @@ export default {
   },
   watch: {
     radioVal(newVal, oldVal) {
-      if (newVal.type == 'ERC-1155') {
+      if (newVal == '创建收藏夹') {
+        this.radioVal = ''
+        this.createCollect()
+      }
+      else if (newVal && newVal.type == 'ERC-1155') {
         this.showSupplyInput = true
       }
       else {
         this.showSupplyInput = false
       }
+
+
     }
   },
   methods: {
@@ -328,6 +354,7 @@ export default {
     },
 
     handleChange(file, fileList, type) {
+      this.hideUpload = fileList.length >= this.limitCount
       this.fileList = fileList
       const that = this
       let binaryData = []
@@ -642,6 +669,7 @@ export default {
     handleRemove(file) {
       console.log(file)
       this.fileList = []
+      this.hideUpload = this.fileList.length >= this.limitCount
     },
 
     handlePictureCardPreview(file) {
@@ -745,4 +773,6 @@ export default {
     opacity: 1;
   }
 }
+
+
 </style>

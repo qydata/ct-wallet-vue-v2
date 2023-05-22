@@ -29,13 +29,23 @@
         <div class="form-group" :class="{'form-group__error': v$.firstMessage.$error}">
           <label for="firstMessage">消息内容</label>
           <div class="relative">
-            <input
-              type="text"
-              autocomplete="off"
-              placeholder="请输入消息内容"
-              id="firstMessage"
+            <el-input
               v-model="v$.firstMessage.$model"
-            />
+              :rows="3"
+              type="textarea"
+              id="firstMessage"
+              placeholder="请输入消息内容"
+            >
+
+            </el-input>
+
+<!--            <input-->
+<!--              type="text"-->
+<!--              autocomplete="off"-->
+<!--              placeholder="请输入消息内容"-->
+<!--              id="firstMessage"-->
+<!--              v-model="v$.firstMessage.$model"-->
+<!--            />-->
           </div>
           <!-- eslint-disable-next-line max-len -->
           <div class="form-group__error input-error" v-for="error of v$.firstMessage.$errors" :key="error.$uid">

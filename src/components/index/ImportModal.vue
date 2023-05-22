@@ -157,6 +157,7 @@ export default {
       this.$store.commit('unlock')
       this.$store.dispatch('refresh')
 
+      this.reset()
       this.afterRestore()
     },
     async checkPassword() {

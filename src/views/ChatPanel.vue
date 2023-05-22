@@ -129,18 +129,31 @@
               </div>
             </div>
             <div class="chat-input">
-              <input
-                v-model="newMessage"
-                size="large"
-                style="flex: 4"
-                placeholder="在这里输入你要发送的消息"
-              />
+
+              <div style="flex: 1;">
+                <el-input
+                  v-model="newMessage"
+                  :rows="4"
+                  type="textarea"
+                  placeholder="在这里输入你要发送的消息"
+                >
+
+                </el-input>
+              </div>
               <button
+                style="height: 50px; margin-left: 10px"
                 class="button button--success"
                 @click.native="sendMessagePass"
               >
                 发送
               </button>
+              <!--              <input-->
+              <!--                v-model="newMessage"-->
+              <!--                size="large"-->
+              <!--                style="flex: 4"-->
+              <!--                placeholder="在这里输入你要发送的消息"-->
+              <!--              />-->
+
             </div>
           </div>
         </el-col>
@@ -200,11 +213,7 @@ const ethers = require('ethers')
 const GlobalConfig = require('@/config/GlobalConfig.json')
 const Web3 = require('web3')
 let web3 = new Web3('http://ctblock.cn/blockChain')
-const ipfsNode = ipfsAPI({
-  host: '47.102.108.225',
-  port: '5001',
-  protocol: 'http'
-})
+const ipfsNode = ipfsAPI(GlobalConfig.IPFS[0])
 const {
   contract_static_call,
   contract_gas_call_override,
@@ -225,7 +234,8 @@ let ElementPlus = {
   }
 }
 export default {
-  name: 'AccountPanel',
+  title: '去中心化Chat',
+  name: 'ChatPanel',
   props: ['view'],
   components: {
     Plus,
@@ -542,8 +552,8 @@ export default {
         'jobChat(bytes32,address,address,string)'
       )
 
-      console.log('===', that.address)
-      console.log('===', ethers.utils.hexZeroPad(that.address, 32))
+      // console.log('===', that.address)
+      // console.log('===', ethers.utils.hexZeroPad(that.address, 32))
       let toBlock = window.localStorage.getItem('blockNumber')
       let fromBlock = Number(toBlock) - 30000
       let _from = this.address
@@ -704,8 +714,8 @@ export default {
         // "jobChat(address,address,string)"
       )
 
-      console.log('===', that.address)
-      console.log('===', ethers.utils.hexZeroPad(that.address, 32))
+      // console.log('===', that.address)
+      // console.log('===', ethers.utils.hexZeroPad(that.address, 32))
       let toBlock = window.localStorage.getItem('blockNumber')
       let fromBlock = Number(toBlock) - 30000
       //计算起始区块

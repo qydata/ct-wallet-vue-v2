@@ -7,15 +7,14 @@
   "CAN_AUTH": false,
   "IPFS": [
     {
-      "HOST": "dream.chaonft.cn",
-      "PORT": "443",
-      "API_PATH": "/ipfs/api/v0/",
-      "PROTOCOL": "https"
+      "host": "dream.chaonft.cn",
+      "port": "/ipfs",
+      "protocol": "https"
     },
     {
-      "HOST": "47.102.108.225",
-      "PORT": "5001",
-      "PROTOCOL": "http"
+      "host": "47.102.108.225",
+      "port": "5001",
+      "protocol": "http"
     }
   ],
   "BLOCK_CHAIN": {

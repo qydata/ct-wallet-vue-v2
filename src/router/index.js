@@ -14,7 +14,6 @@ import CaptchaTestPanel from '@/views/CaptchaTestPanel'
 import Transactions from '@/views/Transactions'
 import Display from '@/views/Display'
 import { createRouter, createWebHistory } from 'vue-router'
-
 const routes = [
   {
     path: '/',

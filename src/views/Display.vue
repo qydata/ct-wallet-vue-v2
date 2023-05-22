@@ -23,7 +23,7 @@
         }"
                 style="margin-right: 10px; color: black"
                 @click="openNft">
-          藏品
+          NFT
         </button>
 
         <button :class="{

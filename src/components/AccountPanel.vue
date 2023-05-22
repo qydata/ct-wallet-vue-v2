@@ -5,14 +5,31 @@
       <div class="account-panel__left">
         <div class="account-panel__address">
           <h3 class="mb-1">钱包名称</h3>
-          <input
-            type="text"
-            @keypress="createOnEnter"
-            autocomplete="off"
-            placeholder="输入一个钱包名称"
-            id="walletName"
-            v-model="walletName"
-          />
+          <div style="display: flex">
+            <input
+              type="text"
+              @keypress="createOnEnter"
+              autocomplete="off"
+              placeholder="输入一个钱包名称"
+              id="walletName"
+              v-model="walletName"
+            />
+            <el-tooltip
+              class="box-item"
+              effect="dark"
+              content="点击钱包名修改钱包名称"
+              placement="right-end"
+            >
+              <el-icon
+                :size="24"
+                color="rgba(14, 204, 95, var(--tw-text-opacity))"
+                style="vertical-align: middle;height: 57px;margin-left: 10px;cursor: pointer">
+                <InfoFilled/>
+              </el-icon>
+            </el-tooltip>
+
+          </div>
+
         </div>
 
         <div class="account-panel__address">
@@ -79,19 +96,19 @@
     </div>
 
     <div class="account-panel__modals">
-      <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
-      <DepositModal :close="reset" :visible="modal === 'deposit'"/>
+<!--      <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>-->
+<!--      <DepositModal :close="reset" :visible="modal === 'deposit'"/>-->
       <ReceiveModal :close="reset" :visible="modal === 'receive'"/>
       <SellModal :close="reset" :visible="modal === 'sell'"/>
       <AuthBindModal :afterAuthBind="reset" :close="reset" :visible="modal == 'authBind'"/>
       <SendModal :close="reset" :item="item" :visible="modal === 'send'"/>
-      <SwapModal
-        :close="reset"
-        :openDeposit="openDeposit"
-        :openWithdraw="openWithdraw"
-        :openSell="openSell"
-        :visible="modal === 'swap'"
-      />
+<!--      <SwapModal-->
+<!--        :close="reset"-->
+<!--        :openDeposit="openDeposit"-->
+<!--        :openWithdraw="openWithdraw"-->
+<!--        :openSell="openSell"-->
+<!--        :visible="modal === 'swap'"-->
+<!--      />-->
       <ChargeModal
         :close="closeCharge"
         :afterCharge="openPay"
@@ -111,6 +128,7 @@
 import AuthBindModal from '@/components/index/AuthBindModal'
 import {queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
+import {InfoFilled} from '@element-plus/icons-vue'
 import {ArrowDownIcon, ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@heroicons/vue/outline'
 import {mapState} from 'vuex'
 import Amount from './Amount.vue'
@@ -123,6 +141,7 @@ import SellModal from './tx/SellModal'
 import SendModal from './tx/SendModal'
 import SwapModal from './tx/SwapModal'
 import WithdrawModal from './tx/WithdrawModal'
+
 export default {
   name: 'AccountPanel',
   props: ['view'],
@@ -137,6 +156,7 @@ export default {
     SellModal,
     SendModal,
     SwapModal,
+    InfoFilled,
     ChargeModal,
     PayModal,
     SwitchHorizontalIcon,

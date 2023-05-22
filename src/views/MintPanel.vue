@@ -35,7 +35,7 @@
       </div>
     </div>
     <CreateCollectModal :close="close" :afterCreate="openCollectInit" :visible="tabModel === 'createCollect'"/>
-    <CreateNftModal :close="close" :afterCreate="afterNftCreate" :visible="tabModel === 'createNfts'"/>
+    <CreateNftModal :close="close" :createCollect="openCreateCollect" :afterCreate="afterNftCreate" :visible="tabModel === 'createNfts'"/>
     <CollectInitModal :close="close" :afterInit="afterInit" :visible="tabModel === 'collectInit'"
                       :itemContract="itemContract"/>
     <SendModal :close="closeSendModal" :visible="model === 'send'" :item="item"/>
@@ -57,7 +57,7 @@ import * as storage from '@/utils/storage'
 
 export default {
   name: 'ViewTransactions',
-  title: '制造',
+  title: 'NFT',
   data: function () {
     return {
       metadata: {totalCount: 0},

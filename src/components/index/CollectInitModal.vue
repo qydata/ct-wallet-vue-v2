@@ -54,7 +54,7 @@
             <label for="tokenUrlPrefix">藏品元数据访问前缀</label>
             <div class="relative input-wrap">
               <span class="icon">
-                <LockOpenIcon/>
+                <EditPen/>
               </span>
               <input
                 type="text"
@@ -73,7 +73,7 @@
             <label for="contractUrl">合约元数据URL</label>
             <div class="relative input-wrap">
               <span class="icon">
-                <LockOpenIcon/>
+                <EditPen/>
               </span>
               <input
                 type="text"
@@ -152,7 +152,7 @@ const TRANSACTION_RECEIPT_STATUS = {
 }
 const ethers = require('ethers')
 const Web3 = require('web3')
-
+import {Delete, Download, EditPen, Plus, ZoomIn} from '@element-plus/icons-vue'
 const ethUtil = require('ethereumjs-util')
 const ABI_const = require('@/contract/ABI_const.js')
 export default {
@@ -161,7 +161,7 @@ export default {
     LoadingModal,
     LockOpenIcon,
     Modal,
-    RefreshIcon,
+    EditPen,
     ShieldExclamationIcon
   },
   props: {

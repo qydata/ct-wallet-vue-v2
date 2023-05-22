@@ -40,6 +40,8 @@ import ImportKey from '@/components/index/ImportModal'
 import Logo from '@/components/Logo'
 import Menu from '@/components/Menu'
 import WalletList from '@/components/WalletList'
+import {queryCert} from '@/utils/api'
+import * as storage from '@/utils/storage'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -81,11 +83,11 @@ export default {
         // },
         {
           link: '/chatPanel',
-          text: '去中心化邮件'
+          text: '去中心化Chat'
         },
         {
           link: '/mintPanel',
-          text: '铸造'
+          text: 'NFT'
         }
       ]
     }
@@ -125,7 +127,23 @@ export default {
       this.createAndImportModal = 'import'
     },
     async gotoAuthBind() {
-      this.createAndImportModal = 'authBind'
+
+      // 判断是否实名
+      let address = await storage.getAddress(storage.getHighestWalletVersion())
+      queryCert({address: address}).then((res) => {
+        if (res.code !== 200) {
+          console.log(res.msg)
+        }
+        else if (!res.is_cert) {
+          this.createAndImportModal = 'authBind'
+        }
+        else {
+          this.createAndImportModal = 'charge'
+        }
+      }).catch((e) => {
+        console.log(e)
+      })
+
     },
     async gotoCharge() {
       this.createAndImportModal = 'charge'

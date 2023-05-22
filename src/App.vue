@@ -8,7 +8,7 @@
 const ethers = require('ethers')
 export default {
   title() {
-    return 'CT Wallet'
+    return '草田链'
   },
 
   methods: {

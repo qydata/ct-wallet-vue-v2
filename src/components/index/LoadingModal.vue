@@ -1,7 +1,6 @@
 <template>
   <Modal :close="cancel" :visible="visible">
-    <template v-slot:header>
-      <h2>加载中</h2>
+    <template v-slot:body>
       <body>
       <div class="loading">
         <span style="--i: 0;"></span>
@@ -18,7 +17,11 @@
       </body>
 
     </template>
-
+    <template v-slot:footer>
+      <div style="text-align: center;">
+        <h3>加载中</h3>
+      </div>
+    </template>
   </Modal>
 </template>
 

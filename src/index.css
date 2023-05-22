@@ -19,6 +19,43 @@
 }
 
 .el-radio__input.is-checked .el-radio__inner {
-    border-color: #000000;;
-    background: #000000;;
+    border-color: #000000;
+    background: #000000;
+}
+
+.el-textarea {
+    border-color: rgba(0, 0, 0, 0);
+}
+
+.el-textarea__inner {
+    border-color: black;
+    box-shadow: inherit;
+    background-color: black;
+}
+
+.el-textarea__inner:hover {
+    border-color: black;
+    box-shadow: inherit;
+    background-color: black;
+}
+
+.el-textarea:before {
+    border-color: black;
+    box-shadow: inherit;
+}
+
+.el-textarea:hover {
+    border-color: black;
+}
+
+.el-textarea:after {
+    border-color: black;
+}
+
+.el-textarea__inner:focus {
+    outline: 0;
+    box-shadow: 0 0 0 1px black inset;
+}
+.hide .el-upload--picture-card {
+    display: none;
 }

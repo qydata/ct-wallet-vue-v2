@@ -18,7 +18,7 @@
         <TableHeader width="10%" header="类型" :sortQuery="sortQuery"
                      sortParam="data.memo" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="40%" header="通证ID" :sortQuery="sortQuery"
+        <TableHeader width="40%" header="Token ID" :sortQuery="sortQuery"
                      sortParam="block.height" :onSortingUpdate="updateSorting"
         />
         <TableHeader class="amount-col" width="20%" header="操作" :sortQuery="sortQuery"
@@ -30,7 +30,7 @@
         <th width="15%">符号</th>
         <th width="10%">余额</th>
         <th width="10%">元数据</th>
-        <th width="30%">通证ID</th>
+        <th width="30%">Token ID</th>
         <th width="10%">类型</th>
         <th width="10%">操作</th>
       </tr>
