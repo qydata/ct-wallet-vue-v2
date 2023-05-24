@@ -17,7 +17,7 @@
             <el-tooltip
               class="box-item"
               effect="dark"
-              content="点击钱包名修改钱包名称"
+              content="点击钱包名修改钱包名称,回车确认修改"
               placement="right-end"
             >
               <el-icon

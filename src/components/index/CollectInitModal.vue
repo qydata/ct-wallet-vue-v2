@@ -51,7 +51,7 @@
           </div>
 
           <div class="form-group" :class="{'form-group__error': v$.tokenUrlPrefix.$error}">
-            <label for="tokenUrlPrefix">藏品元数据访问前缀</label>
+            <label for="tokenUrlPrefix">NFT元数据访问前缀</label>
             <div class="relative input-wrap">
               <span class="icon">
                 <EditPen/>
@@ -205,7 +205,7 @@ export default {
         helpers.withMessage('请输入合约简称。', _required)
       ],
       tokenUrlPrefix: [
-        helpers.withMessage('请输入藏品元数据访问前缀。', _required)
+        helpers.withMessage('请输入NFT元数据访问前缀。', _required)
       ],
       contractUrl: [
         helpers.withMessage('请输入合约元数据地址。', _required)
@@ -348,7 +348,7 @@ export default {
       console.log(result1)
       //初始化成功
       this.$message.warning(
-        '新创建的合约请先进行藏品创建, 否则合约记录可能会丢失!'
+        '新创建的合约请先进行NFT创建, 否则合约记录可能会丢失!'
       )
       this.loading = false
       this.afterInit({

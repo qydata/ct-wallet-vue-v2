@@ -140,13 +140,15 @@
 
                 </el-input>
               </div>
-              <button
-                style="height: 50px; margin-left: 10px"
-                class="button button--success"
-                @click.native="sendMessagePass"
-              >
-                发送
-              </button>
+              <div style="display: flex;align-self: end;">
+                <button
+                  style="height: 50px; margin-left: 10px"
+                  class="button button--success"
+                  @click.native="sendMessagePass"
+                >
+                  发送
+                </button>
+              </div>
               <!--              <input-->
               <!--                v-model="newMessage"-->
               <!--                size="large"-->

@@ -51,7 +51,7 @@
       <tbody v-else>
       <tr>
         <td colspan="12" class="block w-full text-center bg-white lg:table-cell py-35">
-          没有数字藏品.
+          没有数字NFT.
         </td>
       </tr>
       </tbody>

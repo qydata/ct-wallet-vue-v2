@@ -21,7 +21,7 @@
         }"
                 style="margin-right: 10px; color: black"
                 @click.prevent="openCreateNfts">
-          创建藏品
+          创建NFT
         </button>
 
       </div>
@@ -130,7 +130,7 @@ export default {
           }
 
           newMap.contractAddress = this.$route.query.newContractAddress
-          newMap.name = '新创建合约,请进行首次藏品创建'
+          newMap.name = '新创建合约,请进行首次NFT创建'
           newMap.symbol = '新创建合约'
           contractList.push(newMap)
         }

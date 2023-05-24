@@ -24,7 +24,7 @@
 
 <script>
 import * as storage from '@/utils/storage'
-import {ChevronDownIcon, UsersIcon, KeyIcon, LockOpenIcon, LogoutIcon} from '@heroicons/vue/outline'
+import {ChevronDownIcon, KeyIcon, LockOpenIcon, LogoutIcon, UsersIcon} from '@heroicons/vue/outline'
 import {SupportIcon} from '@heroicons/vue/solid'
 import vClickOutside from 'click-outside-vue3'
 
@@ -80,6 +80,10 @@ export default {
       this.$store.commit('setAddress', this.address)
       this.$store.dispatch('refresh')
       this.showTools = false
+
+      // 跳转到总览
+      await this.$router.push('overview')
+
     },
     publicKeyToAddress(publicKey) {
       if (publicKey !== undefined) return ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))

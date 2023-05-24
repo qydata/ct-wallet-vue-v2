@@ -2,7 +2,7 @@
   <div>
     <Modal :close="cancel" :visible="visible">
       <template v-slot:header>
-        <h2>创建藏品</h2>
+        <h2>创建NFT</h2>
       </template>
 
       <template v-slot:body>
@@ -87,7 +87,7 @@
               <input
                 type="text"
                 autocomplete="off"
-                placeholder="请输入藏品标题"
+                placeholder="请输入NFT标题"
                 id="title"
                 v-model="v$.title.$model"
               />
@@ -106,7 +106,7 @@
               <input
                 type="text"
                 autocomplete="off"
-                placeholder="请输入藏品持有者信息"
+                placeholder="请输入NFT持有者信息"
                 id="author_description"
                 v-model="v$.author_description.$model"
               />
@@ -123,10 +123,11 @@
               <span class="icon">
                 <EditPen/>
               </span>
-              <input
-                type="text"
+              <el-input
+                :rows="3"
+                type="textarea"
                 autocomplete="off"
-                placeholder="请输入藏品描述"
+                placeholder="请输入NFT描述"
                 id="description"
                 v-model="v$.description.$model"
               />
@@ -145,7 +146,7 @@
               <input
                 type="text"
                 autocomplete="off"
-                placeholder="请输入藏品描述"
+                placeholder="请输入发行数量"
                 id="supply"
                 v-model="supply"
               />
@@ -190,7 +191,7 @@
           </form>
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="cancel">返回</button>
-            <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="sedMintTx">创建数字藏品
+            <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="sedMintTx">创建数字NFT
             </button>
           </div>
           <el-dialog v-model="dialogVisible">
@@ -228,8 +229,6 @@ const ABI_const = require('@/contract/ABI_const.js')
 const ethers = require('ethers')
 const Web3 = require('web3')
 const ethUtil = require('ethereumjs-util')
-const confirmPhrase = '我确认'
-const matchConfirmPhrase = validation.caseInsensitive(confirmPhrase, '确认短语不匹配。')
 export default {
   name: 'CreateModal',
   components: {
@@ -256,10 +255,8 @@ export default {
       hideUpload: false,
       password: '',
       limitCount: 1,
-      confirmPhrase: '',
       passwordError: '',
       canCopy: !!navigator.clipboard,
-      phrase: confirmPhrase,
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
@@ -278,13 +275,13 @@ export default {
   validations() {
     return {
       title: [
-        helpers.withMessage('请输入藏品标题。', _required)
+        helpers.withMessage('请输入NFT标题。', _required)
       ],
       description: [
-        helpers.withMessage('请输入藏品描述。', _required)
+        helpers.withMessage('请输入NFT描述。', _required)
       ],
       author_description: [
-        helpers.withMessage('请输入藏品持有者信息。', _required)
+        helpers.withMessage('请输入NFT持有者信息。', _required)
       ],
       password: [
         validation.passwordRequired,
@@ -402,7 +399,7 @@ export default {
         return
       }
       if (!this.image) {
-        this.$message.error('请上传藏品封面!')
+        this.$message.error('请上传NFT封面!')
         return
       }
       that.loading = true
@@ -657,7 +654,7 @@ export default {
           }
 
           newMap.contractAddress = this.$route.query.contractAddress
-          newMap.name = '新创建合约,请进行首次藏品创建'
+          newMap.name = '新创建合约,请进行首次NFT创建'
           newMap.symbol = '新创建合约'
           contractList.push(newMap)
         }
@@ -711,7 +708,6 @@ export default {
     reset() {
 
       this.password = ''
-      this.confirmPhrase = ''
       this.v$.$reset()
     }
   },
