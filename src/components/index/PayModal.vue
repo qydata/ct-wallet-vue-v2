@@ -97,13 +97,13 @@ export default {
         .then((res) => {
           console.log(res)
           if (res.code !== 200) {
-            ElementPlus.Message.error(res.msg)
+            this.$message.error(res.msg)
           }
           else {
             console.log(res)
             this.payCodeDialog = false
             // this.getBalance(this.ruleForm.toaddress);
-            ElementPlus.Message.success('草田分到账可能存在延迟,请稍后查看账户.')
+            this.$message.success('草田分到账可能存在延迟,请稍后查看账户.')
             this.close()
 
             //把token放在浏览器上
@@ -111,7 +111,7 @@ export default {
           }
         })
         .catch(() => {
-          ElementPlus.Message.error('网络请求失败')
+          this.$message.error('网络请求失败')
         })
     },
     cancel() {

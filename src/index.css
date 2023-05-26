@@ -24,38 +24,25 @@
 }
 
 .el-textarea {
-    border-color: rgba(0, 0, 0, 0);
+    /*border-color: rgba(0, 0, 0, 0);*/
+    --el-input-bg-color: black;
+    --el-border-color: black;
+    --el-input-text-color: white;
 }
 
-.el-textarea__inner {
-    border-color: black;
-    box-shadow: inherit;
-    background-color: black;
-}
-
-.el-textarea__inner:hover {
-    border-color: black;
-    box-shadow: inherit;
-    background-color: black;
-}
-
-.el-textarea:before {
-    border-color: black;
-    box-shadow: inherit;
-}
-
-.el-textarea:hover {
-    border-color: black;
-}
-
-.el-textarea:after {
-    border-color: black;
-}
-
-.el-textarea__inner:focus {
-    outline: 0;
-    box-shadow: 0 0 0 1px black inset;
-}
 .hide .el-upload--picture-card {
     display: none;
+}
+
+:root {
+    --el-color-success: #4ecd5f;
+    --el-color-primary: black;
+}
+
+.el-button--success {
+    --el-button-hover-border-color: #2b7a39;
+    --el-button-hover-bg-color: #2b7a39;
+}
+.el-divider--horizontal {
+    margin: 0;
 }

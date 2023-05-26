@@ -4,7 +4,7 @@
     <ExportKey :close="closeExportKeyModal" :visible="showExportKeyModal"/>
     <CreateModal :afterCreate="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'create'"/>
     <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'import'"/>
-    <AuthBindModal :afterAuthBind="gotoCharge" :visible="createAndImportModal == 'authBind'"/>
+    <AuthBindModal :afterAuthBind="gotoCharge"  :close="closeCreateModal" :visible="createAndImportModal == 'authBind'"/>
     <ChargeModal :afterCharge="gotoOverview" :visible="createAndImportModal == 'charge'"/>
     <header class="relative z-10 py-16 header md:pb-15" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">

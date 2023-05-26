@@ -151,11 +151,11 @@ export default {
       // 判断实名情况
       queryCert({address: this.address}).then((res) => {
         if (res.code !== 200) {
-          ElementPlus.Message.error(res.msg)
+          this.$message.error(res.msg)
         }
         else {
           if (res.is_cert) {
-            // ElementPlus.Message.success('账户已经认证!')
+            // this.$message.success('账户已经认证!')
 
             let data = {
               charge_amount: this.tovalue,
@@ -163,7 +163,7 @@ export default {
             }
             putChangeReq(data).then((res) => {
               if (res.code !== 200) {
-                ElementPlus.Message.error(res.msg)
+                this.$message.error(res.msg)
               }
               else {
                 console.log(res)
@@ -176,13 +176,13 @@ export default {
 
           }
           else {
-            ElementPlus.Message.success('账户未认证!')
+            this.$message.success('账户未认证!')
           }
 
         }
       })
         .catch(() => {
-          ElementPlus.Message.error('网络请求失败')
+          this.$message.error('网络请求失败')
         })
 
 

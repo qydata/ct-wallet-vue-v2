@@ -4,51 +4,56 @@
     <div class="chat-ui">
 
       <h2>
-        当前共有 <span style="color: #0095ff;">{{ total }}</span> 个消息
+        当前共有 <span style="color: #4ecd5f;">{{ total }}</span> 个消息
       </h2>
 
       <el-row :gutter="0" style="height: 700px; background: white">
         <el-col :span="8">
           <div class="flex flex-col w-full px-12 pt-12 pb-12  bg-white  rounded-b">
             <div
-              v-for="(msg, index) in messageList"
               :class="{
-                  'account-panel__address flex flex-col flex-1 px-12 pt-12  rounded-b point': true,
-                  'bg-black': index != 0,
-                  'pb-12': index != 0,
+                  'account-panel__address flex flex-col flex-1 px-12 pt-12  rounded point': true,
                   'bg-opacity-60': true,
-                  'bg-opacity-100': index == indexItem
                 }"
-              @click="getJobChatDetail(msg, index)"
-              :key="index"
+              @click="openNewChat"
             >
-              <div v-if="index == 0">
+              <div>
                 <el-button type="success" circle>
                   <el-icon>
                     <Plus/>
                   </el-icon>
                 </el-button>
-                <el-divider/>
+
               </div>
+            </div>
+            <el-divider/>
+            <div class="panelLeft">
+              <div
+                v-for="(msg, index) in messageList"
+                :class="{
+                  'account-panel__address flex flex-col flex-1 px-12 pt-12  rounded-b point': true,
+                  'bg-black': true,
+                  'pb-12': true,
+                  'bg-opacity-60': true,
+                  'bg-opacity-100': index == indexItem
+                }"
+                @click="getJobChatDetail(msg, index)"
+                :key="index"
+              >
 
-              <div v-else>
-
-                <h3 class="mb-1">发送方</h3>
-                <span
-                >{{
-                    hexStripZeros(msg.topics[1])
-                  }}{{
-                    isMeFun(hexStripZeros(msg.topics[1])) ? '(我)' : ''
-                  }}</span
-                >
-                <h3 class="mb-1">接收方</h3>
-                <span
-                >{{
-                    hexStripZeros(msg.topics[2])
-                  }}{{
-                    isMeFun(hexStripZeros(msg.topics[2])) ? '(我)' : ''
-                  }}</span
-                >
+                <div style="display: flex;width: 100%;">
+                  <div class="chatAva">
+                    <img :src="msg.avaCcanvas" alt="">
+                  </div>
+                  <div style="flex: 1;line-height: 50px;text-align: left;">
+                    <span>{{ addressFormat(msg.reced, 12) }}</span>
+                  </div>
+                  <div class="timeClass">
+                    {{ formatDate(dateTime - ((blockNumber - msg.blockNumber) * 5 * 1000)) }}
+                  </div>
+                  <div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -57,39 +62,58 @@
         <el-col :span="1">
           <el-divider direction="vertical" style="height: 100%;"/>
         </el-col>
-        <el-col :span="15">
+        <el-col :span="14">
           <div class="contents">
             <div class="chat-messages">
-              <div v-for="(message, index) in messages" :key="message.id">
+              <div v-if="messages.length == 0" class="newChatRightPanel">
+                <h2>欢迎来到去中心化聊天</h2>
+                <div>
+                  <el-button type="success" size="large" @click.native="openNewChat">
+                    <el-icon :size="20">
+                      <Plus/>
+                    </el-icon>
+                    开始新的聊天
+                  </el-button>
+                </div>
+              </div>
+              <div v-for="(message, index) in messages" :key="index">
                 <div v-if="message.isMe">
-                  <p class="message-nickname-me">
-                    {{ addressFormat(address) }} (我)
-                  </p>
                   <div class="message-me">
-                    <button
-                      type="success"
-                      :class="
+                    <div style="display: flex;">
+                      <div style="flex: 1;color:#818181;line-height: 26px;">
+                        {{ formatDate(message.datetime) }}
+                      </div>
+
+                      <!--                    <button-->
+                      <!--                      shape="circle"-->
+                      <!--                      size="small"-->
+                      <!--                      :class="-->
+                      <!--                              'button button&#45;&#45;' +-->
+                      <!--                                (message.isRead ? 'success' : 'error')-->
+                      <!--                            "-->
+                      <!--                    >-->
+                      <!--                      {{ message.isRead ? '已读' : '未读' }}-->
+                      <!--                    </button>-->
+
+                    </div>
+                    <div>
+                      <el-button
+                        type="success"
+                        :class="
                               'button button--' +
                                 (message.isRead ? 'success' : 'error')
                             "
-                      @click="dencPass(message, message.text)"
-                      v-show="message.denText == ''"
-                      shape="circle"
-                      size="small"
-                    >
-                      解密
-                    </button>
-                    <button
-                      shape="circle"
-                      size="small"
-                      :class="
-                              'button button--' +
-                                (message.isRead ? 'success' : 'error')
-                            "
-                    >
-                      {{ message.isRead ? '已读' : '未读' }}
-                    </button>
-                    <p>{{ message.text }}</p>
+
+                        @click="dencPass(message, message.text)"
+                        v-show="isEncText(message.text)"
+                        shape="circle"
+                        plain
+                      >
+                        查看
+                      </el-button>
+                      <p v-show="!isEncText(message.text)">{{ message.text }}</p>
+                    </div>
+
                   </div>
                 </div>
                 <div v-else>
@@ -98,37 +122,59 @@
                       {{ addressFormat(publisher) }}
                     </p>
                     <div class="message-other">
-                      <button
-                        type="success"
-                        @click="dencPass(message, message.text)"
-                        v-show="message.denText == ''"
-                        shape="circle"
-                        :class="
+
+                      <div style="display: flex;">
+                        <div style="flex: 1;color:#818181;line-height: 26px;">
+                          {{ formatDate(message.datetime) }}
+                        </div>
+
+                        <!--                    <button-->
+                        <!--                      shape="circle"-->
+                        <!--                      size="small"-->
+                        <!--                      :class="-->
+                        <!--                              'button button&#45;&#45;' +-->
+                        <!--                                (message.isRead ? 'success' : 'error')-->
+                        <!--                            "-->
+                        <!--                    >-->
+                        <!--                      {{ message.isRead ? '已读' : '未读' }}-->
+                        <!--                    </button>-->
+
+                      </div>
+
+
+                      <div>
+                        <button
+                          type="success"
+                          @click="dencPass(message, message.text)"
+                          v-show="isEncText(message.text)"
+                          shape="circle"
+                          :class="
                                 'button button--' +
                                   (message.isRead ? 'success' : 'error')
                               "
-                        size="small"
-                      >
-                        解密
-                      </button>
-                      <button
-                        :type="message.isRead ? 'success' : 'error'"
-                        :class="
-                                'button button--' +
-                                  (message.isRead ? 'success' : 'error')
-                              "
-                        shape="circle"
-                        size="small"
-                      >
-                        {{ message.isRead ? '已读' : '未读' }}
-                      </button>
-                      <p>{{ message.text }}</p>
+                          size="small"
+                        >
+                          查看
+                        </button>
+                        <!--                      <button-->
+                        <!--                        :type="message.isRead ? 'success' : 'error'"-->
+                        <!--                        :class="-->
+                        <!--                                'button button&#45;&#45;' +-->
+                        <!--                                  (message.isRead ? 'success' : 'error')-->
+                        <!--                              "-->
+                        <!--                        shape="circle"-->
+                        <!--                        size="small"-->
+                        <!--                      >-->
+                        <!--                        {{ message.isRead ? '已读' : '未读' }}-->
+                        <!--                      </button>-->
+                        <p v-show="!isEncText(message.text)">{{ message.text }}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="chat-input">
+            <div class="chat-input" v-if="messages.length != 0">
 
               <div style="flex: 1;">
                 <el-input
@@ -141,13 +187,15 @@
                 </el-input>
               </div>
               <div style="display: flex;align-self: end;">
-                <button
-                  style="height: 50px; margin-left: 10px"
-                  class="button button--success"
+                <el-button
+                  style="margin-left: 10px"
+                  type="success"
                   @click.native="sendMessagePass"
                 >
-                  发送
-                </button>
+                  <el-icon :size="24">
+                    <Promotion/>
+                  </el-icon>
+                </el-button>
               </div>
               <!--              <input-->
               <!--                v-model="newMessage"-->
@@ -158,6 +206,8 @@
 
             </div>
           </div>
+        </el-col>
+        <el-col :span="1">
         </el-col>
       </el-row>
       <NewChatModal
@@ -201,8 +251,9 @@ import SwapModal from '@/components/tx/SwapModal'
 import WithdrawModal from '@/components/tx/WithdrawModal'
 import {queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
-import {Plus} from '@element-plus/icons-vue'
-import {ArrowDownIcon, ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@heroicons/vue/outline'
+import {Plus, Promotion} from '@element-plus/icons-vue'
+import {ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@heroicons/vue/outline'
+import dayjs from 'dayjs'
 import ipfsAPI from 'ipfs-api'
 import {mapState} from 'vuex'
 
@@ -221,6 +272,7 @@ const {
   contract_gas_call_override,
   contract_call_override
 } = require('../contract/ChainCall')
+const blockies = require('ethereum-blockies') // 引入库
 
 let ElementPlus = {
   Message: {
@@ -241,7 +293,7 @@ export default {
   props: ['view'],
   components: {
     Plus,
-    ArrowDownIcon,
+    Promotion,
     ArrowUpIcon,
     CreateStakeModal,
     DepositModal,
@@ -280,7 +332,6 @@ export default {
       order: {},
       messageList: [],
       total: 0,
-      address: '',
       publisher: '',
       messages: [],
       pubKey: null,
@@ -291,7 +342,9 @@ export default {
         text: ''
       },
       indexItem: 1,
-      loading: false
+      loading: false,
+      blockNumber: 0,
+      dateTime: 0
     }
   },
   watch: {
@@ -304,12 +357,36 @@ export default {
     }
   },
   filters: {},
+  created() {
+
+  },
   async mounted() {
     this.walletName = await storage.getWalletName()
-    this.address = await storage.getAddress(storage.getHighestWalletVersion())
+    this.blockNumber = window.localStorage.getItem('blockNumber')
+    this.dateTime = new Date().getTime()
+    console.log('this.blockNumber', this.blockNumber)
     this.getJobchats()
+
   },
   methods: {
+    isEncText(val) {
+      let text = JSON.stringify(val)
+      if (text.indexOf('ephemPublicKey') != -1) {
+        return true
+      }
+      else {
+        return false
+      }
+    },
+    generateAvatar(addr) {
+
+      const img = blockies.create({ // 生成头像
+        seed: addr,// 要生成头像的地址
+        size: 8,
+        scale: 16
+      }).toDataURL('image/png')
+      return img
+    },
     processMsg(message, index) {
       // console.log(message)
       // console.log(index)
@@ -332,11 +409,20 @@ export default {
       // let decText = await decryptWithPrivateKey(privateKey, oText)
       return oText
     },
-    addressFormat(value) {
+    formatDate(date_time_str) {
+
+      // let date_time_str = '2023-05-09 07:10:37.000000Z'
+      const formattedDate = dayjs(date_time_str).format('YYYY/MM/DD HH:mm:ss')
+      return formattedDate
+    },
+    addressFormat(value, num) {
+      if (!num) {
+        num = 8
+      }
       if (!value) return '0x00...0000'
-      if (value.length > 8) {
-        return `${value.substring(0, 4)}****${value.substring(
-          value.length - 4
+      if (value.length > num) {
+        return `${value.substring(0, num / 2)}****${value.substring(
+          value.length - num / 2
         )}`
       }
       return value
@@ -389,12 +475,7 @@ export default {
     sendMessagePass() {
       // publisher, newMessage,password,false
       // 判断是否选中了发送列表
-      if (this.messages.length == 0) {
-        this.modal = 'newChat'
-      }
-      else {
-        this.modal = 'inPasswordModalSend'
-      }
+      this.modal = 'inPasswordModalSend'
       // sendMessagePass(publisher, newMessage,password,false)
     },
     async sendMessagePassCall(password) {
@@ -441,7 +522,8 @@ export default {
         messageRQ: encMsgRQ,
         pubKeyRQ: publicKey,
         messageRP: encMsgRP,
-        pubKeyRP: this.pubKey
+        pubKeyRP: this.pubKey,
+        datetime: new Date().getTime()
       }
 
       let responseRet = await ipfsNode
@@ -487,52 +569,47 @@ export default {
       )
       console.log(tx)
       if (tx.data == null) {
-        ElementPlus.Message.error('发生错误')
+        this.$message.error('发生错误' + tx.err.reason)
         this.loading = false
+        return
       }
       console.log('tx:', tx)
-      if (tx.data == null) {
-        ElementPlus.Message.error('发生错误')
-        this.loading = false
-      }
       await tx.data.wait()
       console.log(tx.data.hash)
       if (tx.data != null) {
-        ElementPlus.Message.success('发送成功')
+        this.$message.success('发送成功')
         // 这里切换最新的聊天列表
         that.getJobChat()
         that.newMessage = ''
       }
       else {
-        ElementPlus.Message.error('发送失败')
+        this.$message.error('发送失败')
       }
       this.loading = false
     },
     getJobChatDetail(msg, index) {
-      if (index == 0) {
-        // 新建聊天
-        this.modal = 'newChat'
-      }
-      else {
-        this.loading = true
-        // 已经存在对话
-        console.log(msg.topics[0])
-        // 这里不用区分谁是谁, 会自动排序计算房间号
-        // 复制 publisher
-        let addr1 = this.hexStripZeros(msg.topics[1])
-        let addr2 = this.hexStripZeros(msg.topics[2])
-        if (this.isMeFun(addr1)) {
-          this.publisher = addr2
-        }
-        if (this.isMeFun(addr2)) {
-          this.publisher = addr1
-        }
 
-        this.addressRQ = addr1
-        this.addressRP = addr2
-        this.indexItem = index
-        this.getJobChat()
+      this.loading = true
+      // 已经存在对话
+      console.log(msg.topics[0])
+      // 这里不用区分谁是谁, 会自动排序计算房间号
+      // 复制 publisher
+      let addr1 = this.hexStripZeros(msg.topics[1])
+      let addr2 = this.hexStripZeros(msg.topics[2])
+      if (this.isMeFun(addr1)) {
+        this.publisher = addr2
       }
+      if (this.isMeFun(addr2)) {
+        this.publisher = addr1
+      }
+
+      this.addressRQ = addr1
+      this.addressRP = addr2
+      this.indexItem = index
+      this.getJobChat()
+    },
+    openNewChat() {
+      this.modal = 'newChat'
     },
     hexStripZeros(val) {
       return ethers.utils.hexStripZeros(val)
@@ -557,7 +634,7 @@ export default {
       // console.log('===', that.address)
       // console.log('===', ethers.utils.hexZeroPad(that.address, 32))
       let toBlock = window.localStorage.getItem('blockNumber')
-      let fromBlock = Number(toBlock) - 30000
+      let fromBlock = Number(toBlock) - 300000
       let _from = this.address
       let _to = this.publisher
       // 计算房间号码
@@ -665,6 +742,7 @@ export default {
 
           tempObj = {
             id: allMessagesKey,
+            datetime: metaOriData.datetime,
             messageRP: metaOriData.messageRP,
             messageRQ: metaOriData.messageRQ,
             pubKeyRP: metaOriData.pubKeyRP,
@@ -719,7 +797,7 @@ export default {
       // console.log('===', that.address)
       // console.log('===', ethers.utils.hexZeroPad(that.address, 32))
       let toBlock = window.localStorage.getItem('blockNumber')
-      let fromBlock = Number(toBlock) - 30000
+      let fromBlock = Number(toBlock) - 300000
       //计算起始区块
 
       that.loading = true
@@ -757,28 +835,31 @@ export default {
           return resultR
         })
       that.messageList = resp_ret.concat(resp_retR)
-
-      that.messageList.unshift({
-        new: true
-      })
+      //
+      // that.messageList.unshift({
+      //   new: true
+      // })
       console.log(that.messageList)
 
-      that.total = this.messageList.length - 1
-      if (that.total > 1) {
-        // 复制 publisher
-        let addr1 = this.hexStripZeros(this.messageList[1].topics[1])
-        let addr2 = this.hexStripZeros(this.messageList[1].topics[2])
+      that.total = this.messageList.length
+
+      for (let msg of this.messageList) {
+        let publisher
+        let addr1 = this.hexStripZeros(this.messageList[0].topics[1])
+        let addr2 = this.hexStripZeros(this.messageList[0].topics[2])
         if (this.isMeFun(addr1)) {
-          this.publisher = addr2
+          publisher = addr2
+          msg.reced = publisher
+          msg.send = addr1
         }
         if (this.isMeFun(addr2)) {
-          this.publisher = addr1
+          publisher = addr1
+          msg.reced = publisher
+          msg.send = addr2
         }
-
-        this.addressRQ = addr1
-        this.addressRP = addr2
-        this.getJobChat()
+        msg.avaCcanvas = this.generateAvatar(publisher)
       }
+
       that.loading = false
     },
 
@@ -1023,5 +1104,33 @@ export default {
 .chat-ui {
   margin: 50px 100px;
 
+}
+
+.newChatRightPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.panelLeft {
+  display: flex;
+  flex-direction: column;
+  border-radius: 100px;
+  padding: 5px 10px;
+}
+
+.panelLeft div {
+  flex-direction: row;
+}
+
+.panelLeft img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.chatAva {
+  margin-right: 10px;
 }
 </style>

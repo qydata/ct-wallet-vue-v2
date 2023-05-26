@@ -11,7 +11,7 @@
           <label for="walletName">钱包名称</label>
           <div class="relative input-wrap">
               <span class="icon">
-                <LockOpenIcon/>
+                <EditPen/>
               </span>
             <input
               type="text"
@@ -140,6 +140,7 @@ const Web3 = require('web3')
 const ethUtil = require('ethereumjs-util')
 const confirmPhrase = '我确认'
 const matchConfirmPhrase = validation.caseInsensitive(confirmPhrase, '确认短语不匹配。')
+import {Delete, Download, EditPen, Plus, ZoomIn} from '@element-plus/icons-vue'
 
 export default {
   name: 'CreateModal',
@@ -147,6 +148,7 @@ export default {
     ClipboardCopyIcon,
     LockOpenIcon,
     Modal,
+    EditPen,
     RefreshIcon,
     ShieldExclamationIcon
   },

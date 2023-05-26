@@ -390,10 +390,10 @@ export default {
 
       // 这里进行验证码验证
       if (this.nextTime != 0) {
-        ElementPlus.Message.error('当前验证码有效!')
+        this.$message.error('当前验证码有效!')
       }
       else if (this.v$.mobile.$invalid) {
-        ElementPlus.Message.error('手机号码输入有误,请重新输入!')
+        this.$message.error('手机号码输入有误,请重新输入!')
       }
       else if (this.hcaptchaResp == null) {
         alert('请先通过验证')
@@ -402,10 +402,10 @@ export default {
         sendTelCode({tel: this.mobile, hcaptcha: this.hcaptchaResp}).then(res => {
           console.log(res)
           if (res.code !== 1) {
-            ElementPlus.Message.error(res.msg)
+            this.$message.error(res.msg)
           }
           else {
-            ElementPlus.Message.success('发送成功!')
+            this.$message.success('发送成功!')
             // 开始短信倒计时
             this.nextTime = 60
             this.countTime()
@@ -413,7 +413,7 @@ export default {
           }
         }).catch((e) => {
           console.trace(e)
-          ElementPlus.Message.error('网络请求失败')
+          this.$message.error('网络请求失败')
         })
       }
     },
@@ -426,7 +426,7 @@ export default {
     },
     skip() {
       this.reset()
-      this.afterAuthBind()
+      this.close()
     },
     async create() {
       if (!await this.v$.$validate()) return
@@ -455,7 +455,7 @@ export default {
         [address]
       )
       if (isAuth.data == true) {
-        ElementPlus.Message.error('账户已经认证!')
+        this.$message.error('账户已经认证!')
       }
       else {
         // 以太币转账
@@ -464,12 +464,12 @@ export default {
         queryCert({address: address}).then((res) => {
           console.log(res)
           if (res.code !== 200) {
-            ElementPlus.Message.error(res.msg)
+            this.$message.error(res.msg)
           }
           else {
             if (res.is_cert) {
               this.showCertModal = false
-              ElementPlus.Message.success('账户已经认证!')
+              this.$message.success('账户已经认证!')
               return
             }
             this.sec_data = res.sec_data
@@ -498,18 +498,18 @@ export default {
             }).then((res) => {
               console.log(res)
               if (res.code !== 200) {
-                ElementPlus.Message.error(res.msg)
+                this.$message.error(res.msg)
               }
               else {
                 this.is_cert = res.is_cert
                 this.sec_data = res.sec_data
-                ElementPlus.Message.success('认证成功!')
+                this.$message.success('认证成功!')
 
                 this.reset()
                 this.afterAuthBind()
               }
             }).catch(() => {
-              ElementPlus.Message.error('网络请求失败')
+              this.$message.error('网络请求失败')
             })
           }
         })

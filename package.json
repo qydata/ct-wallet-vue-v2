@@ -44,6 +44,7 @@
     "elliptic": "^6.5.4",
     "eth-crypto": "^2.6.0",
     "eth-sig-util": "^3.0.1",
+    "ethereum-blockies": "^0.1.1",
     "ethereumjs-util": "^7.1.5",
     "ethers": "^5.7.2",
     "express": "^4.17.1",

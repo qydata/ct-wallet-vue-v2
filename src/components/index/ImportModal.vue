@@ -11,7 +11,7 @@
             <label for="walletName">钱包名称</label>
             <div class="relative input-wrap">
               <span class="icon">
-                <KeyIcon/>
+                <EditPen/>
               </span>
               <input type="text" placeholder="请输入一个钱包名称" id="walletName" v-model="v$.walletName.$model"/>
             </div>
@@ -80,6 +80,7 @@ import {helpers} from '@vuelidate/validators'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
 import Modal from '../Modal'
+import {Delete, Download, EditPen, Plus, ZoomIn} from '@element-plus/icons-vue'
 
 const ethers = require('ethers')
 
@@ -91,6 +92,7 @@ export default {
   components: {
     KeyIcon,
     LockOpenIcon,
+    EditPen,
     Modal
   },
   props: {
