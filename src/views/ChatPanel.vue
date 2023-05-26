@@ -341,7 +341,7 @@ export default {
         msg: '',
         text: ''
       },
-      indexItem: 1,
+      indexItem: -1,
       loading: false,
       blockNumber: 0,
       dateTime: 0
@@ -845,8 +845,8 @@ export default {
 
       for (let msg of this.messageList) {
         let publisher
-        let addr1 = this.hexStripZeros(this.messageList[0].topics[1])
-        let addr2 = this.hexStripZeros(this.messageList[0].topics[2])
+        let addr1 = this.hexStripZeros(msg.topics[1])
+        let addr2 = this.hexStripZeros(msg.topics[2])
         if (this.isMeFun(addr1)) {
           publisher = addr2
           msg.reced = publisher
@@ -1116,8 +1116,10 @@ export default {
 .panelLeft {
   display: flex;
   flex-direction: column;
-  border-radius: 100px;
+  /*border-radius: 100px;*/
   padding: 5px 10px;
+  height: 600px;
+  overflow-y: scroll;
 }
 
 .panelLeft div {

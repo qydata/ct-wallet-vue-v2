@@ -3,6 +3,7 @@
 // that can be found in the LICENSE.md file. All rights reserved.
 
 module.exports = {
+  productionSourceMap: process.env.NODE_ENV === 'production' ? false : true,
   assetsDir: 'assets/',
   chainWebpack: config => {
     config

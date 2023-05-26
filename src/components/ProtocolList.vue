@@ -14,7 +14,7 @@
       <li class="header-tools__item" v-for="(item, index) in contractList" :key="index">
         <div class="header-tools__link" @click="itemClick(item)">
           <span class="header-tools__icon">
-            <KeyIcon :class="{'green':defaultV == item.contractName}"/>
+            <Tickets :class="{'green':defaultV == item.contractName}"/>
           </span>
           {{ item.labelName }}
         </div>
@@ -27,7 +27,7 @@
 import {ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon, PlusIcon, UserIcon} from '@heroicons/vue/outline'
 import {SupportIcon} from '@heroicons/vue/solid'
 import vClickOutside from 'click-outside-vue3'
-
+import {Tickets} from '@element-plus/icons-vue'
 const ABI_const = require('@/contract/ABI_const.js')
 
 export default {
@@ -40,7 +40,7 @@ export default {
     PlusIcon,
     LockOpenIcon,
     LogoutIcon,
-    SupportIcon
+    Tickets
   },
   data: function () {
     return {

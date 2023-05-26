@@ -65,7 +65,7 @@ import * as validation from '@/utils/validation'
 import {LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import Modal from '../Modal'
-
+import {Tickets} from '@element-plus/icons-vue'
 const ethers = require('ethers')
 const Web3 = require('web3')
 const ABI_const = require('@/contract/ABI_const.js')
@@ -77,7 +77,7 @@ export default {
     LockOpenIcon,
     Modal,
     ProtocolList,
-    ShieldExclamationIcon
+    Tickets
   },
   props: {
     afterCreate: Function,
