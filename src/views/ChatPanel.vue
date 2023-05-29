@@ -31,7 +31,7 @@
               <div
                 v-for="(msg, index) in messageList"
                 :class="{
-                  'account-panel__address flex flex-col flex-1 px-12 pt-12  rounded-b point': true,
+                  'account-panel__address flex  px-12 pt-12  rounded-b point': true,
                   'bg-black': true,
                   'pb-12': true,
                   'bg-opacity-60': true,
@@ -39,9 +39,10 @@
                 }"
                 @click="getJobChatDetail(msg, index)"
                 :key="index"
+                style="height: 75px;"
               >
 
-                <div style="display: flex;width: 100%;">
+                <div style="display: flex;width: 100%;height: 80px;">
                   <div class="chatAva">
                     <img :src="msg.avaCcanvas" alt="">
                   </div>
@@ -1124,6 +1125,10 @@ export default {
 
 .panelLeft div {
   flex-direction: row;
+}
+
+.panelLeft .account-panel__address {
+
 }
 
 .panelLeft img {
