@@ -88,6 +88,10 @@ export default {
         {
           link: '/mintPanel',
           text: 'NFT'
+        },
+        {
+          link: '/mintPanel',
+          text: '开源连接'
         }
       ]
     }
