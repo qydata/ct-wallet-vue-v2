@@ -90,7 +90,8 @@ export default {
           text: 'NFT'
         },
         {
-          link: '/mintPanel',
+          link: 'https://github.com/qydata/ct-wallet-vue-v2',
+          external: 'https://github.com/qydata/ct-wallet-vue-v2',
           text: '开源连接'
         }
       ]
