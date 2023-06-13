@@ -5,7 +5,7 @@
 import ElementPlus from 'element-plus'
 import 'element-plus/theme-chalk/index.css'
 /*global process*/
-import Vue, {createApp} from 'vue'
+import {createApp} from 'vue'
 // import 'element-plus/lib/theme-chalk/index.css'
 import App from './App.vue'
 import './index.css'
@@ -34,7 +34,12 @@ const init = async () => {
     .mount('#app')
 
   app.$router.beforeResolve(to => {
-    if (store.state.locked && to.name !== 'Index') return {name: 'Index'}
+    if (store.state.locked
+      && to.name !== 'Index'
+      && to.name !== 'Interact'
+      && to.name !== 'ConnectWallet') {
+      return {name: 'Index'}
+    }
     return true
   })
 

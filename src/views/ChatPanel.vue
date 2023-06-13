@@ -289,7 +289,7 @@ let ElementPlus = {
   }
 }
 export default {
-  title: '去中心化Chat',
+  title: '区块链邮件',
   name: 'ChatPanel',
   props: ['view'],
   components: {

@@ -9,7 +9,7 @@ import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
 import {mapState} from 'vuex'
 
 export default {
-  name: 'MintPanel',
+  name: 'CaptchaTestPanel',
   props: ['view'],
   components: {
     VueHcaptcha

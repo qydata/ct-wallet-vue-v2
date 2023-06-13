@@ -83,7 +83,7 @@ export default {
         // },
         {
           link: '/chatPanel',
-          text: '去中心化Chat'
+          text: '区块链邮件'
         },
         {
           link: '/mintPanel',

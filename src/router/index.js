@@ -11,6 +11,8 @@ import Staking from '@/views/Staking'
 import ChatPanel from '@/views/ChatPanel'
 import MintPanel from '@/views/MintPanel'
 import CaptchaTestPanel from '@/views/CaptchaTestPanel'
+import Interact from '@/views/interact'
+import ConnectWallet from '@/views/ConnectWallet'
 import Transactions from '@/views/Transactions'
 import Display from '@/views/Display'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -65,6 +67,16 @@ const routes = [
     path: '/captchaTestPanel',
     name: 'CaptchaTestPanel',
     component: CaptchaTestPanel
+  },
+  {
+    path: '/interact',
+    name: 'Interact',
+    component: Interact
+  },
+  {
+    path: '/connectWallet',
+    name: 'ConnectWallet',
+    component: ConnectWallet
   }
 ]
 

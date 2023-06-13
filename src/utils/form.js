@@ -10,6 +10,7 @@ const amountRegexp = /^[0-9]+(\.[0-9]{1,6})?$/
  * @returns number
  */
 export const parseAmount = amount => {
+  amount = amount + ''
   if (amount.length === 0) return 0
   if (!amountRegexp.test(amount)) return NaN
   return parseFloat(amount.replace(/,/g, ''))

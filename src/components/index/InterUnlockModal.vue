@@ -20,12 +20,12 @@
                 <LockOpenIcon/>
               </span>
               <input
-                type="password"
-                @keypress="unlockOnEnter"
-                autocomplete="off"
-                placeholder="你的密码"
-                id="password"
-                v-model="v$.password.$model"
+                  type="password"
+                  @keypress="unlockOnEnter"
+                  autocomplete="off"
+                  placeholder="你的密码"
+                  id="password"
+                  v-model="v$.password.$model"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -44,13 +44,7 @@
       <!-- eslint-disable-next-line max-len -->
       <!--      class="grid grid-cols-1 gap-32 p-32 rounded-md md:grid-cols-2 bg-black-100">-->
       <div
-        class="grid grid-cols-1 gap-32 p-32 rounded-md md:grid-cols-2 bg-black-100">
-        <button
-          class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"
-          @click="switchToForgetModal"
-        >
-          忘记钱包
-        </button>
+          class="grid grid-cols-1 gap-32 p-32 rounded-md md:grid-cols-2 bg-black-100">
         <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="unlock">解锁</button>
       </div>
     </template>
@@ -58,11 +52,11 @@
 </template>
 
 <script>
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import {LockOpenIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {mapState} from 'vuex'
-import * as storage from '@/utils/storage'
-import * as validation from '@/utils/validation'
 import Modal from '../Modal'
 
 export default {
@@ -85,7 +79,6 @@ export default {
   props: {
     afterUnlock: Function,
     close: Function,
-    switchToForgetModal: Function,
     visible: Boolean
   },
   computed: {
@@ -114,16 +107,10 @@ export default {
 
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
-
-      const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
-      const publicKey = await storage.getPublicKey(this.walletVersion)
-      const walletName = await storage.getWalletName(this.walletVersion)
-
-      // do not specify wallet version here - this forces migration to highest version
-      await storage.setWallet({privateKey, publicKey}, walletName, this.password)
-      await storage.setWalletVersion(storage.getHighestWalletVersion())
+      this.$store.commit('setAddress', this.address)
       this.$store.commit('unlock')
-      this.$store.dispatch('refresh')
+
+      console.log('llllllllllllllll')
 
       this.afterUnlock()
     },
