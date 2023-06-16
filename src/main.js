@@ -37,6 +37,7 @@ const init = async () => {
     if (store.state.locked
       && to.name !== 'Index'
       && to.name !== 'Interact'
+      && to.name !== 'InterSign'
       && to.name !== 'ConnectWallet') {
       return {name: 'Index'}
     }

@@ -24,8 +24,7 @@
 
 <script>
 import * as storage from '@/utils/storage'
-import {ChevronDownIcon, KeyIcon, LockOpenIcon, LogoutIcon, UsersIcon} from '@heroicons/vue/outline'
-import {SupportIcon} from '@heroicons/vue/solid'
+import {ChevronDownIcon, KeyIcon, UsersIcon} from '@heroicons/vue/outline'
 import vClickOutside from 'click-outside-vue3'
 
 const ethUtil = require('ethereumjs-util')
@@ -35,10 +34,7 @@ export default {
   components: {
     ChevronDownIcon,
     UsersIcon,
-    KeyIcon,
-    LockOpenIcon,
-    LogoutIcon,
-    SupportIcon
+    KeyIcon
   },
   data: function () {
     return {
@@ -82,7 +78,10 @@ export default {
       this.showTools = false
 
       // 跳转到总览
-      await this.$router.push('overview')
+      if (window.location.href.indexOf('connectWallet') == -1) {
+        await this.$router.push('overview')
+      }
+
 
     },
     publicKeyToAddress(publicKey) {
@@ -129,6 +128,7 @@ export default {
 <style scoped>
 .header-tools {
   @apply mt-auto px-15 flex-shrink-0;
+  z-index: 1;
 }
 
 .green {
@@ -140,11 +140,13 @@ export default {
 }
 
 .header-tools.hideTools {
-  @apply block md:hidden;
+  /*@apply block md:hidden;*/
+  @apply hidden;
 }
 
 .header-tools__expand {
-  @apply hidden md:flex items-center text-gray transition-colors hover:text-white;
+  /*@apply hidden md:flex items-center text-gray transition-colors hover:text-white;*/
+  @apply flex items-center text-gray transition-colors hover:text-white;
 }
 
 .header-tools__link {
@@ -167,22 +169,32 @@ export default {
   @apply flex-shrink-0 w-20;
 }
 
+/*@screen md {*/
+.header-tools {
+  /*@apply flex-col space-y-10 absolute top-40 w-56 right-0 bg-black p-0 rounded flex-wrap mt-0;*/
+  @apply flex-col space-y-10 absolute w-56 bg-black p-0 rounded flex-wrap mt-0;
+}
+
+.header-tools__item {
+  @apply flex flex-wrap mt-0 w-full border-gray-300 md:border-b border-opacity-25 !important;
+}
+
+.header-tools__item:last-child {
+  @apply border-none;
+}
+
+.header-tools__link {
+  @apply p-16 m-0 w-full;
+  cursor: pointer;
+}
+
+.header-tools__expand {
+  padding: 0.75rem 1.6875rem;
+}
+
 @screen md {
-  .header-tools {
-    @apply flex-col space-y-10 absolute top-40 w-56 right-0 bg-black p-0 rounded flex-wrap mt-0;
-  }
-
-  .header-tools__item {
-    @apply flex flex-wrap mt-0 w-full border-gray-300 md:border-b border-opacity-25 !important;
-  }
-
-  .header-tools__item:last-child {
-    @apply border-none;
-  }
-
-  .header-tools__link {
-    @apply p-16 m-0 w-full;
-    cursor: pointer;
+  .header-tools__expand {
+    padding: 0;
   }
 }
 

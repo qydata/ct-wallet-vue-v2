@@ -87,6 +87,10 @@ export default {
   }),
   methods: {
     gotoOverview() {
+      if(this.modal != 'unlock') {
+        sessionStorage.setItem('needAuth', 1)
+      }
+
       this.$router.push('overview')
     },
     openCreateModal() {

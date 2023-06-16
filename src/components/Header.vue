@@ -4,7 +4,7 @@
     <ExportKey :close="closeExportKeyModal" :visible="showExportKeyModal"/>
     <CreateModal :afterCreate="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'create'"/>
     <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'import'"/>
-    <AuthBindModal :afterAuthBind="gotoCharge"  :close="closeCreateModal" :visible="createAndImportModal == 'authBind'"/>
+    <AuthBindModal :afterAuthBind="gotoCharge" :close="gotoCharge" :visible="createAndImportModal == 'authBind'"/>
     <ChargeModal :afterCharge="gotoOverview" :visible="createAndImportModal == 'charge'"/>
     <header class="relative z-10 py-16 header md:pb-15" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">
@@ -17,8 +17,10 @@
 
           <WalletList/>
           <div style="width: 40px"></div>
-          <HeaderTools :openForgetWalletModal="openForgetWalletModal" :openExportKeyModal="openExportKeyModal"
-                       :openAuthBindModal="openAuthBindModal" :openCreateModal="openCreateModal"
+          <HeaderTools :openForgetWalletModal="openForgetWalletModal"
+                       :openExportKeyModal="openExportKeyModal"
+                       :openAuthBindModal="openAuthBindModal"
+                       :openCreateModal="openCreateModal"
                        :openImportKeyModal="openImportKeyModal"/>
         </div>
       </div>
@@ -98,13 +100,19 @@ export default {
     }
   },
   async mounted() {
-
+    let needAuth = sessionStorage.getItem('needAuth')
+    console.log('needAuth',needAuth)
+    if (needAuth != null) {
+      sessionStorage.removeItem('needAuth')
+      await this.gotoAuthBind()
+    }
   },
   methods: {
     closeForgetWalletModal() {
       this.showForgetWalletModal = false
     },
     openForgetWalletModal() {
+      this.showNav = false
       this.showForgetWalletModal = true
     },
     afterForgetWallet() {
@@ -114,21 +122,25 @@ export default {
       this.showExportKeyModal = false
     },
     openExportKeyModal() {
+      this.showNav = false
       this.showExportKeyModal = true
     },
     closeCreateModal() {
       this.createAndImportModal = ''
     },
     openCreateModal() {
+      this.showNav = false
       this.createAndImportModal = 'create'
     },
     openAuthBindModal() {
+      this.showNav = false
       this.createAndImportModal = 'authBind'
     },
     closeImportKeyModal() {
       this.createAndImportModal = ''
     },
     openImportKeyModal() {
+      this.showNav = false
       this.createAndImportModal = 'import'
     },
     async gotoAuthBind() {
@@ -154,8 +166,26 @@ export default {
       this.createAndImportModal = 'charge'
     },
     async gotoOverview() {
-      this.createAndImportModal = ''
-      this.$router.push('overview')
+      let callbackURL = sessionStorage.getItem('callbackURL')
+      let callBack = sessionStorage.getItem('callBack')
+      let sessionId = sessionStorage.getItem('sessionId')
+      if (callbackURL != null) {
+        sessionStorage.removeItem('callbackURL')
+        sessionStorage.removeItem('callBack')
+        sessionStorage.removeItem('sessionId')
+        this.$router.push({
+          path: '/connectWallet',
+          query: {
+            sessionId: sessionId,
+            callBack: callBack
+          }
+        })
+      }
+      else {
+        this.createAndImportModal = ''
+        this.$router.push('overview')
+      }
+
     }
   },
   components: {

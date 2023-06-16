@@ -25,6 +25,7 @@
             >
               <ClipboardCopyIcon/>
             </button>
+            <WalletList/>
           </span>
           </div>
         </div>
@@ -51,12 +52,13 @@ import useVuelidate from '@vuelidate/core'
 import {helpers} from '@vuelidate/validators'
 import {mapState} from 'vuex'
 import Modal from '../Modal'
-
+import WalletList from '@/components/WalletList'
 export default {
   name: 'InterSendModal',
   components: {
     ClipboardCopyIcon,
-    Modal
+    Modal,
+    WalletList
   },
   props: {
     close: Function,

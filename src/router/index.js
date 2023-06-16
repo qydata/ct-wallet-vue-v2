@@ -4,18 +4,20 @@
 
 /*global process*/
 
-import Index from '../views/Index.vue'
+import CaptchaTestPanel from '@/views/CaptchaTestPanel'
+import ChatPanel from '@/views/ChatPanel'
+import Display from '@/views/Display'
+import Interact from '@/views/interact'
+import ConnectWallet from '@/views/ConnectWallet'
+import InterSign from '@/views/InterSign'
+import MintPanel from '@/views/MintPanel'
 import Nodes from '@/views/Nodes'
 import Overview from '@/views/Overview'
 import Staking from '@/views/Staking'
-import ChatPanel from '@/views/ChatPanel'
-import MintPanel from '@/views/MintPanel'
-import CaptchaTestPanel from '@/views/CaptchaTestPanel'
-import Interact from '@/views/interact'
-import ConnectWallet from '@/views/ConnectWallet'
 import Transactions from '@/views/Transactions'
-import Display from '@/views/Display'
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
+import Index from '../views/Index.vue'
+
 const routes = [
   {
     path: '/',
@@ -45,7 +47,8 @@ const routes = [
   {
     path: '/governance',
     name: 'Governance',
-    component: () => {},
+    component: () => {
+    },
     disabled: true
   },
   {
@@ -77,6 +80,11 @@ const routes = [
     path: '/connectWallet',
     name: 'ConnectWallet',
     component: ConnectWallet
+  },
+  {
+    path: '/interSign',
+    name: 'InterSign',
+    component: InterSign
   }
 ]
 

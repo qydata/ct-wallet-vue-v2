@@ -219,34 +219,14 @@
       </template>
     </Modal>
 
-    <Modal :close="cancel" :visible="loading">
-      <template v-slot:header>
-        <h2>加载中</h2>
-        <body>
-        <div class="loading">
-          <span style="--i: 0;"></span>
-          <span style="--i: 2;"></span>
-          <span style="--i: 4;"></span>
-          <span style="--i: 6;"></span>
-          <span style="--i: 8;"></span>
-          <span style="--i: 10;"></span>
-          <span style="--i: 12;"></span>
-          <span style="--i: 14;"></span>
-          <span style="--i: 16;"></span>
-          <span style="--i: 18;"></span>
-        </div>
-        </body>
-
-      </template>
-
-    </Modal>
-
+    <LoadingModal :visible="loading"/>
   </div>
 </template>
 
 <script>
 /*global process*/
 
+import LoadingModal from '@/components/index/LoadingModal'
 import {parseAmount} from '@/utils/form'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
@@ -270,6 +250,7 @@ const {contract_static_call, contract_gas_call_override, contract_call_override}
 export default {
   name: 'InterSendModal',
   components: {
+    LoadingModal,
     Amount,
     HashLink,
     LockOpenIcon,

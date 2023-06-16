@@ -1,13 +1,15 @@
 <template>
-  <div class="account-panel">
+  <div>
     <InterUnlockModal
       :afterUnlock="openGetWalletModal"
       :close="close"
       :visible="modal === 'unlock'"
     />
-    <InterGetWalletModal :close="closeGetWalletModal" :afterGetWallet="afterGetWallet" :visible="modal== 'getWallet'"
+    <InterGetWalletModal :close="closeGetWalletModal"
+                         :afterGetWallet="afterGetWallet"
+                         :visible="modal== 'getWallet'"
                          :item="item"/>
-    <el-button @click="close">关闭</el-button>
+
   </div>
 </template>
 
@@ -15,12 +17,13 @@
 import InterUnlockModal from '@/components/index/InterUnlockModal'
 import InterGetWalletModal from '@/components/tx/InterGetWalletModal'
 import {mapState} from 'vuex'
-
+import CreateModal from '@/components/index/CreateModal'
 export default {
   name: 'ConnectWallet',
   props: ['view'],
   components: {
     InterGetWalletModal,
+    CreateModal,
     InterUnlockModal
   },
   computed: mapState({
@@ -53,14 +56,25 @@ export default {
     this.sessionId = this.$route.query.sessionId
     this.callBack = this.$route.query.callBack
 
-    if (!this.locked) {
+    if (this.hasWallet) {
       this.modal = 'getWallet'
     }
     else {
-      this.modal = 'unlock'
+      sessionStorage.setItem('callbackURL', window.location.href)
+      sessionStorage.setItem('callBack', this.callBack)
+      sessionStorage.setItem('sessionId',this.sessionId)
+      this.$router.push('/')
     }
   },
   methods: {
+    gotoOverview() {
+      if (window.location.href.indexOf('connectWallet') == -1) {
+        this.$router.push('overview')
+      }
+      else {
+        this.$router.push('getWallet')
+      }
+    },
     closeGetWalletModal() {
       this.modal = ''
     },
@@ -94,17 +108,12 @@ export default {
         }
         break
       }
-      window.opener.postMessage({
+      window.parent.postMessage({
         type: 'connectWallet', message: message
       }, this.callBack)
-      window.close()
     },
     openGetWalletModal() {
       this.modal = 'getWallet'
-    },
-    close() {
-      // 处理验证响应
-      window.close()
     }
   }
 }
