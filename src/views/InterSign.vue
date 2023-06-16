@@ -58,7 +58,6 @@ export default {
         type1 = 'sign_transaction'
       }
       else if (tType == 2) {
-        // TODO 这里需要处理
         type1 = 'sign_stract_msg'
       }
       window.parent.postMessage({

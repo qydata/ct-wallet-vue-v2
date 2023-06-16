@@ -293,7 +293,7 @@ export default {
         .keccak256(Buffer.from(orderId + ''))
         .toString('hex')}`
 
-      const AUTH_CONTROLLER_SYSTEM_ADDRESS = GlobalConfig.AUTH_CONTROLLER_SYSTEM_ADDRESS // TODO 这里需要系统地址
+      const AUTH_CONTROLLER_SYSTEM_ADDRESS = GlobalConfig.AUTH_CONTROLLER_SYSTEM_ADDRESS
       // 判断用户密码是否正确
       // 判断接入方用户名密码
 
