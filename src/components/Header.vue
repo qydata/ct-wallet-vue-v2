@@ -83,14 +83,14 @@ export default {
         //   text: 'Governance',
         //   external: true
         // },
-        {
-          link: '/chatPanel',
-          text: '区块链邮件'
-        },
-        {
-          link: '/mintPanel',
-          text: 'NFT'
-        },
+        // {
+        //   link: '/chatPanel',
+        //   text: '区块链邮件'
+        // },
+        // {
+        //   link: '/mintPanel',
+        //   text: 'NFT'
+        // },
         {
           link: 'https://github.com/qydata/ct-wallet-vue-v2',
           external: 'https://github.com/qydata/ct-wallet-vue-v2',

@@ -3,29 +3,29 @@
     <Header/>
     <AccountPanel/>
 
-    <div class="bg-gray-200 py-25">
-      <div class="container">
+<!--    <div class="bg-gray-200 py-25">-->
+<!--      <div class="container">-->
         <!--        <button :class="'button ' + tabModel == 'erc20' ? 'button&#45;&#45;success': 'button&#45;&#45;outline-success'" @click="openErc20">-->
-        <button :class="{
-        'button': true,
-        'button--outline-success': true
-        }"
-                style="margin-right: 10px; color: black"
-                @click.prevent="openCreateCollect">
-          创建合约
-        </button>
+<!--        <button :class="{-->
+<!--        'button': true,-->
+<!--        'button&#45;&#45;outline-success': true-->
+<!--        }"-->
+<!--                style="margin-right: 10px; color: black"-->
+<!--                @click.prevent="openCreateCollect">-->
+<!--          创建合约-->
+<!--        </button>-->
 
-        <button :class="{
-        'button': true,
-        'button--outline-success': true
-        }"
-                style="margin-right: 10px; color: black"
-                @click.prevent="openCreateNfts">
-          创建NFT
-        </button>
-
-      </div>
-    </div>
+<!--        <button :class="{-->
+<!--        'button': true,-->
+<!--        'button&#45;&#45;outline-success': true-->
+<!--        }"-->
+<!--                style="margin-right: 10px; color: black"-->
+<!--                @click.prevent="openCreateNfts">-->
+<!--          创建NFT-->
+<!--        </button>-->
+<!---->
+<!--      </div>-->
+<!--    </div>-->
     <div class="bg-gray-200 py-15">
 
       <div class="container">
@@ -35,7 +35,8 @@
       </div>
     </div>
     <CreateCollectModal :close="close" :afterCreate="openCollectInit" :visible="tabModel === 'createCollect'"/>
-    <CreateNftModal :close="close" :createCollect="openCreateCollect" :afterCreate="afterNftCreate" :visible="tabModel === 'createNfts'"/>
+    <CreateNftModal :close="close" :createCollect="openCreateCollect" :afterCreate="afterNftCreate"
+                    :visible="tabModel === 'createNfts'"/>
     <CollectInitModal :close="close" :afterInit="afterInit" :visible="tabModel === 'collectInit'"
                       :itemContract="itemContract"/>
     <SendModal :close="closeSendModal" :visible="model === 'send'" :item="item"/>
