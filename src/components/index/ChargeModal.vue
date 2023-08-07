@@ -63,12 +63,12 @@
 
 <script>
 import {putChangeReq, queryCert} from '@/utils/api'
+import * as storage from '@/utils/storage'
 import {ClipboardCopyIcon, LockOpenIcon, RefreshIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
-import * as storage from '@/utils/storage'
 import Modal from '../Modal'
-
+import {mapState} from 'vuex'
 const ethers = require('ethers')
 const Web3 = require('web3')
 
@@ -102,7 +102,6 @@ export default {
   },
   data() {
     return {
-      address: '',
       privateKey: '',
       publicKey: '',
 
@@ -132,8 +131,14 @@ export default {
     }
   },
   computed: {
+    ...mapState(['address']),
     canSubmit() {
       return !this.v$.$invalid
+    }
+  },
+  watch: {
+    address(newVal, oldVal) {
+      this.toaddress = this.address
     }
   },
   methods: {
