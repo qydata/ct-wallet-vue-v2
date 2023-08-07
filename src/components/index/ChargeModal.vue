@@ -64,35 +64,16 @@
 <script>
 import {putChangeReq, queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
-import {ClipboardCopyIcon, LockOpenIcon, RefreshIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
+import {ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
-import Modal from '../Modal'
 import {mapState} from 'vuex'
-const ethers = require('ethers')
-const Web3 = require('web3')
+import Modal from '../Modal'
 
-const ethUtil = require('ethereumjs-util')
-let ElementPlus = {
-  Message: {
-    error: (info) => {
-      console.log(info)
-      alert(info)
-      // this.passwordError = info
-    },
-    success: (info) => {
-      console.log(info)
-      alert(info)
-    }
-  }
-}
 export default {
   name: 'AuthBindModal',
   components: {
-    ClipboardCopyIcon,
-    LockOpenIcon,
     Modal,
-    RefreshIcon,
     ShieldExclamationIcon
   },
   props: {
