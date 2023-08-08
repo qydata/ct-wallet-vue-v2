@@ -2,6 +2,7 @@
   <div class="account-panel">
     <InterSendModal :close="closeSendModal" :visible="modal== 'interSend'" :item="transaction"
                     :afterSendFun="afterSendFun"/>
+<!--    <p>{{transaction}}</p>-->
   </div>
 </template>
 
@@ -18,13 +19,12 @@ export default {
   computed: mapState(['address', 'balance', 'usdBalance']),
   data() {
     return {
-      modal: 'interSend',
+      modal: '',
       tabindex: '0',
       walletName: '',
       canCopy: !!navigator.clipboard,
       order: {},
-      transaction: {},
-      opener: null
+      transaction: {}
     }
   },
   watch: {},
@@ -45,12 +45,6 @@ export default {
         that.processTrans()
       }
     }, false)
-    // 发送加载完成事件
-
-    // console.log('this.sessionId', this.sessionId)
-    // console.log('this.callBack', this.callBack)
-    window.opener.postMessage({type: 'loading', message: '加载完成'}, this.callBack)
-    // this.opener = window.opener
   },
   methods: {
     afterSendFun(type, result, tType) {
@@ -64,8 +58,7 @@ export default {
       else if (tType == 2) {
         type1 = 'trans_result_contract'
       }
-      // this.opener.postMessage({
-      window.opener.postMessage({
+      window.parent.postMessage({
         type: type1,
         code: type,
         message: result.message,
@@ -88,7 +81,7 @@ export default {
       else if (tType == 2) {
         type1 = 'trans_result_contract'
       }
-      window.opener.postMessage({
+      window.parent.postMessage({
         type: type1,
         code: 0,
         message: '关闭弹框, 用户拒绝处理交易',

@@ -15,24 +15,24 @@
           <div v-if="item.type == 1">
             <label for="send-send" class="label">发送到</label>
             <input
-                id="send-send"
-                placeholder="CT 地址"
-                ref="item.to"
-                type="text"
-                disabled
-                :value="item.to"
+              id="send-send"
+              placeholder="CT 地址"
+              ref="item.to"
+              type="text"
+              disabled
+              :value="item.to"
             />
 
           </div>
           <div v-if="item.type == 2">
             <label for="send-send" class="label">交互地址</label>
             <input
-                id="send-send"
-                placeholder="合约地址"
-                ref="item.contractAddress"
-                type="text"
-                disabled
-                :value="item.contractAddress"
+              id="send-send"
+              placeholder="合约地址"
+              ref="item.contractAddress"
+              type="text"
+              disabled
+              :value="item.contractAddress"
             />
 
           </div>
@@ -40,12 +40,12 @@
           <label for="amount-send">数量</label>
           <div class="relative input-wrap">
             <input
-                type="text"
-                id="amount-send"
-                placeholder="0.00"
-                disabled
-                :value="item.value"
-                class="placeholder-white placeholder-opacity-100"
+              type="text"
+              id="amount-send"
+              placeholder="0.00"
+              disabled
+              :value="item.value"
+              class="placeholder-white placeholder-opacity-100"
             />
             <span class="absolute right-0 text-xl currentColor top-23">CT</span>
 
@@ -123,12 +123,12 @@
                   <LockOpenIcon/>
                 </span>
                 <input
-                    type="password"
-                    autocomplete="off"
-                    @keypress="sendOnEnter"
-                    placeholder="你的密码"
-                    id="pass-step"
-                    v-model="v$.password.$model"
+                  type="password"
+                  autocomplete="off"
+                  @keypress="sendOnEnter"
+                  placeholder="你的密码"
+                  id="pass-step"
+                  v-model="v$.password.$model"
                 />
               </div>
               <!-- eslint-disable-next-line max-len -->
@@ -144,9 +144,9 @@
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="close">关闭</button>
             <button
-                :disabled="!canSend"
-                @click="send"
-                class="w-full button button--success"
+              :disabled="!canSend"
+              @click="send"
+              class="w-full button button--success"
             >确认交易
             </button>
           </div>
@@ -211,8 +211,8 @@
       <template v-slot:footer>
         <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
           <button
-              @click="afterSend"
-              class="block w-full mx-auto text-center button button--success md:w-1/2"
+            @click="afterSend"
+            class="block w-full mx-auto text-center button button--success md:w-1/2"
           >关闭
           </button>
         </div>
@@ -246,6 +246,7 @@ const TRANSACTION_RECEIPT_STATUS = {
   SUCCESS: 1,
   REVERTED: 0
 }
+let gasPrice = 4800
 const {contract_static_call, contract_gas_call_override, contract_call_override} = require('../../contract/ChainCall')
 export default {
   name: 'InterSendModal',
@@ -305,7 +306,8 @@ export default {
     },
     amountParsedCalc() {
       if (this.item.type == 1) {
-        return parseAmount(this.item.value) - this.gas
+        // return parseAmount(this.item.value) - this.gas
+        return parseAmount(this.item.value)
       }
       else {
         return parseAmount(this.item.value)
@@ -341,10 +343,19 @@ export default {
       if (v) {
         this.$store.dispatch('refresh')
       }
+    },
+    'item.type': {
+      handler(newVal, oldVal) {
+        if (newVal > 0) {
+          this.readySend()
+        }
+      },
+      immediate: true
+      // deep: true
     }
   },
   async mounted() {
-    await this.readySend()
+    // await this.readySend()
   },
   methods: {
     afterSend() {
@@ -404,12 +415,13 @@ export default {
     },
     async easGasSend() {
       // 转账为固定手续费
-      let gasLimit = 21000
-      let gasPrice = 4800
+      let gasLimit
+
       let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
       let override = {}
+      let gasLimitR = {}
       this.loading = true
       switch (this.item.type) {
       case 2:
@@ -417,29 +429,32 @@ export default {
           from: this.address,
           value: this.item.value
         }
-        gasLimit = await contract_gas_call_override(
-            ethers,
-            this.item.contractAddress,
-            JSON.parse(this.item.abi),
-            this.item.method,
-            customHttpProvider,
-            JSON.parse(this.item.params),
-            override
+        gasLimitR = await contract_gas_call_override(
+          ethers,
+          this.item.contractAddress,
+          JSON.parse(this.item.abi),
+          this.item.method,
+          customHttpProvider,
+          JSON.parse(this.item.params),
+          override
         )
-        if (gasLimit.err != null) {
-          console.log('error:', gasLimit.err)
+        if (gasLimitR.err != null) {
+          console.log('error:', gasLimitR.err)
           this.loading = false
-          this.submitError = gasLimit.err
+          this.submitError = gasLimitR.err
           return 0
         }
-        gasLimit = gasLimit.data.toString()
+        gasLimit = gasLimitR.data.toString()
         this.loading = false
         return gasPrice * gasLimit / 1e9
 
       case 1:
-      default:
+        gasLimit = 21000
         this.loading = false
         return gasPrice * gasLimit / 1e9
+      default:
+        this.loading = false
+        return 0
       }
 
     },
@@ -457,6 +472,7 @@ export default {
 
       let tx
       let override
+      let recept
       this.loading = true
       switch (this.item.type) {
 
@@ -466,14 +482,14 @@ export default {
           value: this.item.value
         }
         tx = await contract_call_override(
-            ethers,
-            wallet,
-            this.item.contractAddress,
-            JSON.parse(this.item.abi),
-            this.item.method,
-            customHttpProvider,
-            JSON.parse(this.item.params),
-            override
+          ethers,
+          wallet,
+          this.item.contractAddress,
+          JSON.parse(this.item.abi),
+          this.item.method,
+          customHttpProvider,
+          JSON.parse(this.item.params),
+          override
         )
 
         console.log('tx:', tx)
@@ -484,15 +500,12 @@ export default {
           return
         }
         try {
-          let recept = await customHttpProvider
-              .waitForTransaction(tx.data.hash)
-              .then((ret) => {
-                return ret
-              })
-              .catch((err) => {
-                console.log('err:', err)
-              })
-          // console.log('recept', recept)
+          recept = await customHttpProvider
+            .waitForTransaction(tx.data.hash)
+            .then((ret) => ret)
+            .catch((err) => {
+              console.log('err:', err)
+            })
           this.loading = false
           if (recept.status === TRANSACTION_RECEIPT_STATUS.REVERTED) {
             throw  'Transaction Reverted'
@@ -532,14 +545,12 @@ export default {
 
           let results = await wallet.sendTransaction(tx)
 
-          let recept = await customHttpProvider
-              .waitForTransaction(results.hash)
-              .then((ret) => {
-                return ret
-              })
-              .catch((err) => {
-                console.log('err:', err)
-              })
+          recept = await customHttpProvider
+            .waitForTransaction(results.hash)
+            .then((ret) => ret)
+            .catch((err) => {
+              console.log('err:', err)
+            })
           this.loading = false
           if (recept.status === TRANSACTION_RECEIPT_STATUS.REVERTED) {
             throw  'Transaction Reverted'
