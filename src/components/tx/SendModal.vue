@@ -320,7 +320,8 @@ export default {
     },
     amountParsedCalc() {
       if (this.item.type == 'CT') {
-        return parseAmount(this.amount) - this.gas
+        // return parseAmount(this.amount) - this.gas
+        return parseAmount(this.amount)
       }
       else {
         return parseAmount(this.amount)
