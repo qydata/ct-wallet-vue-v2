@@ -52,8 +52,9 @@ export default {
 <style scoped>
 .modal-backdrop {
   @apply fixed inset-0 z-10 overflow-y-auto bg-black;
-  --tw-bg-opacity: 1;
-  background: radial-gradient(black 30%, rgba(29, 29, 29, var(--tw-bg-opacity)) 50%);
+  /*--tw-bg-opacity: 1;*/
+  /*background: radial-gradient(black 30%, rgba(29, 29, 29, var(--tw-bg-opacity)) 50%);*/
+  /*background: radial-gradient(black 30%, rgba(29, 29, 29, var(--tw-bg-opacity)) 50%);*/
 }
 
 .modal-outer {
