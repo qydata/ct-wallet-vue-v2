@@ -9,7 +9,7 @@
 <script>
 import InterSendModal from '@/components/tx/InterSendModal'
 import {mapState} from 'vuex'
-
+import { EventBus } from '@/utils/event-bus'
 export default {
   name: 'Interact',
   props: ['view'],
@@ -19,7 +19,7 @@ export default {
   computed: mapState(['address', 'balance', 'usdBalance']),
   data() {
     return {
-      modal: '',
+      modal: 'interSend',
       tabindex: '0',
       walletName: '',
       canCopy: !!navigator.clipboard,
@@ -192,5 +192,6 @@ export default {
   .account-panel__balance {
     @apply mb-0;
   }
+
 }
 </style>

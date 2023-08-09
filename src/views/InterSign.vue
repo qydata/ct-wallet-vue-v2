@@ -10,7 +10,7 @@
 <script>
 import InterSignModal from '@/components/tx/InterSignModal'
 import {mapState} from 'vuex'
-
+import { EventBus } from '@/utils/event-bus'
 export default {
   name: 'InterSign',
   props: ['view'],

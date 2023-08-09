@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <Modal :close="cancel" :visible="visible">
+    <ModalInter :close="cancel" :visible="visible">
       <template v-slot:header>
       </template>
       <template v-slot:body>
@@ -93,7 +93,7 @@
           </div>
         </div>
       </template>
-    </Modal>
+    </ModalInter>
 
     <LoadingModal :visible="loading"/>
   </div>
@@ -111,7 +111,7 @@ import useVuelidate from '@vuelidate/core'
 import {mapState} from 'vuex'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
-import Modal from '../Modal'
+import ModalInter from '../ModalInter'
 import Radio from '../Radio'
 
 const EthereumTx = require('ethereumjs-tx').Transaction
@@ -132,7 +132,7 @@ export default {
     Amount,
     HashLink,
     LockOpenIcon,
-    Modal,
+    ModalInter,
     Radio
   },
   props: {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Modal :close="cancel" :visible="visible && step === 1">
+    <ModalInter :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
         <h2 class="mb-8">发送<span class="testnet-header" v-if="isTestnet">(Testnet)</span>
         </h2>
@@ -62,9 +62,9 @@
           </div>
         </div>
       </template>
-    </Modal>
+    </ModalInter>
 
-    <Modal :close="cancel" :visible="visible && step === 2">
+    <ModalInter :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
         <h2 class="mb-8">发送<span class="testnet-header" v-if="isTestnet">(Testnet)</span>
         </h2>
@@ -161,9 +161,9 @@
           </div>
         </div>
       </template>
-    </Modal>
+    </ModalInter>
 
-    <Modal :close="cancel" :visible="visible && step === 3">
+    <ModalInter :close="cancel" :visible="visible && step === 3">
       <template v-slot:header>
         <h2 class="mb-8">交易已发送<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
@@ -217,7 +217,7 @@
           </button>
         </div>
       </template>
-    </Modal>
+    </ModalInter>
 
     <LoadingModal :visible="loading"/>
   </div>
@@ -235,7 +235,7 @@ import useVuelidate from '@vuelidate/core'
 import {mapState} from 'vuex'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
-import Modal from '../Modal'
+import ModalInter from '../ModalInter'
 import Radio from '../Radio'
 
 const Web3 = require('web3')
@@ -255,7 +255,7 @@ export default {
     Amount,
     HashLink,
     LockOpenIcon,
-    Modal,
+    ModalInter,
     Radio
   },
   props: {
