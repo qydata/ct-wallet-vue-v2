@@ -85,7 +85,7 @@ import {Delete, Download, EditPen, Plus, ZoomIn} from '@element-plus/icons-vue'
 const ethers = require('ethers')
 
 const ethUtil = require('ethereumjs-util')
-const privateKeyRegexp = /^[a-fA-F0-9]{64}$/
+const privateKeyRegexp = /^(0x)?[a-fA-F0-9]{64}$/
 
 export default {
   name: 'CreateModal',
