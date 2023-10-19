@@ -49,6 +49,7 @@ export default {
   methods: {
     afterSendFun(type, result, tType) {
       console.log('type', type)
+      console.log('tType', tType)
       console.log('result', result)
 
       let type1
@@ -72,7 +73,7 @@ export default {
     processTrans() {
       console.log(this.transaction)
     },
-    closeSendModal() {
+    closeSendModal(err) {
       let type1
       let tType = this.transaction.type
       if (tType == 1) {
@@ -85,7 +86,7 @@ export default {
         type: type1,
         code: 0,
         message: '关闭弹框, 用户拒绝处理交易',
-        result: JSON.parse(JSON.stringify('{}'))
+        result: err
       }, this.callBack)
       window.close()
     },

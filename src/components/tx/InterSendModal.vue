@@ -442,6 +442,7 @@ export default {
           console.log('error:', gasLimitR.err)
           this.loading = false
           this.submitError = gasLimitR.err
+          this.close(gasLimitR.err)
           return 0
         }
         gasLimit = gasLimitR.data.toString()
