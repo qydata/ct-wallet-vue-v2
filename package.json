@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
-    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service --port 8000 serve",
+    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service --port 8080 serve",
     "lint": "eslint --ext js,vue src",
     "lint:fix": "eslint --fix --ext js,vue src",
     "start": "set NODE_OPTIONS=--openssl-legacy-provider && node server/index.js",
@@ -62,6 +62,7 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "vue": "^3.2.4",
     "vue-chartjs": "^4.0.5",
+    "vue-clicaptcha": "github:Eouo/vue-clicaptcha",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.2",
     "web3": "^1.9.0"

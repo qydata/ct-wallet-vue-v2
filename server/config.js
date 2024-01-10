@@ -6,6 +6,6 @@ require('dotenv').config()
 
 module.exports = {
   http: {
-    port: process.env.HTTP_PORT ? parseInt(process.env.HTTP_PORT) : 8000
+    port: process.env.HTTP_PORT ? parseInt(process.env.HTTP_PORT) : 8080
   }
 }

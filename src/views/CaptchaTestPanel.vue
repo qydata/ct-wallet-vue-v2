@@ -1,23 +1,32 @@
 <template>
   <div class="account-panel">
-    <VueHcaptcha :tabindex="tabindex" sitekey="a0bce798-5c05-4ab9-96ae-d15863e4e5fa" @verify="onVerify"></VueHcaptcha>
+<!--    <VueHcaptcha :tabindex="tabindex" sitekey="a0bce798-5c05-4ab9-96ae-d15863e4e5fa" @verify="onVerify"></VueHcaptcha>-->
+    <VueClicaptcha
+      v-if="show" :callback="callback" :src="src"/>
   </div>
 </template>
 
 <script>
-import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
+// import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
+// import VueClicaptch from 'vue-clicaptcha'
+import VueClicaptcha from 'vue-clicaptcha'
 import {mapState} from 'vuex'
 
 export default {
   name: 'CaptchaTestPanel',
   props: ['view'],
   components: {
-    VueHcaptcha
+    // VueHcaptcha,
+    VueClicaptcha
 
   },
   computed: mapState(['address', 'balance', 'usdBalance']),
   data() {
     return {
+      // src: 'http://127.0.0.1:8000/clicaptcha.php',
+      // src: 'https://manager.ctblock.cn/api/clicaptcha.php',
+      src: 'http://127.0.0.1:8000/clicaptcha.php',
+      show: true,
       modal: '',
       tabindex: '0',
       walletName: '',
@@ -39,6 +48,9 @@ export default {
     }, 5000)
   },
   methods: {
+    callback() {
+      alert('yes')
+    },
     onVerify(response) {
       // 处理验证响应
       console.log('hCaptcha verification response:', response)

@@ -9,6 +9,7 @@ const ethers = require('ethers')
 const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
 const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
 const BASE_URL = process.env.VUE_APP_BASE_URL
+const BASE_API = process.env.VUE_APP_BASE_API
 const fetchBlocks = async (options = {}) => {
   if (!options.page) {
     options.page = 1
@@ -78,7 +79,7 @@ const fetchSessionsStats = async (wallet, options = {}) => {
 }
 
 function getTxList(addressHash, page, offset) {
-  return fetchData(`${BASE_URL}/api/index.php?a=getTargetResponse`, {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`, {
     method: 'post'
   }, {
     target_url:
@@ -87,7 +88,7 @@ function getTxList(addressHash, page, offset) {
 }
 
 function sendTelCode(data) {
-  return fetchData(`${BASE_URL}/api/index.php?a=send_telcode`, {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=send_telcode`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
@@ -96,7 +97,7 @@ function sendTelCode(data) {
 }
 
 function queryCert(data) {
-  return fetchData(`${BASE_URL}/api/index.php?a=query_cert`, {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=query_cert`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
@@ -105,7 +106,7 @@ function queryCert(data) {
 }
 
 function putChangeReq(data) {
-  return fetchData(`${BASE_URL}/api/index.php?a=putChangeReq`, {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=putChangeReq`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
@@ -114,7 +115,7 @@ function putChangeReq(data) {
 }
 
 function checkPay(data) {
-  return fetchData(`${BASE_URL}/api/index.php?a=check_pay&order_id=` + data.order_id, {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=check_pay&order_id=` + data.order_id, {
     method: 'get',
     headers: {
       'Content-Type': 'application/json'
@@ -123,7 +124,7 @@ function checkPay(data) {
 }
 
 function userCert(data) {
-  return fetchData(`${BASE_URL}/api/index.php?a=user_cert`, {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=user_cert`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
@@ -132,7 +133,7 @@ function userCert(data) {
 }
 
 function getPendingTxList(addressHash, page, offset) {
-  return fetchData(`${BASE_URL}/api/index.php?a=getTargetResponse`,
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`,
     {method: 'post'},
     {
       target_url:
@@ -141,7 +142,7 @@ function getPendingTxList(addressHash, page, offset) {
 }
 
 function getBlockNoByTimestampList(options) {
-  return fetchData(`${BASE_URL}/api/index.php?a=getTargetResponse`,
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`,
     {method: 'post'},
     {
       target_url: `http://ctblock.cn/api?module=account&action=getminedblocks&address=0xcEBcbF16494EDbAd87d7FEAb0260ADe82c571E5D&page=${options.page}&offset=${options.limit}`
@@ -175,7 +176,7 @@ const fetchTransactions = async (address, options = {}) => {
 }
 
 function getTokenList(addressHash) {
-  return fetchData(`${BASE_URL}/api/index.php?a=getTargetResponse`,
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`,
     {method: 'post'},
     {
       target_url: `http://ctblock.cn/api?module=account&action=tokenlist&address=${addressHash}`

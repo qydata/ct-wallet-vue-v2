@@ -57,7 +57,17 @@
             </div>
 
             <div style="padding-top: 10px; display: flex; justify-content: center">
-              <VueHcaptcha theme="dark" sitekey="a0bce798-5c05-4ab9-96ae-d15863e4e5fa" @verify="onVerify"></VueHcaptcha>
+
+              <!--              <VueHcaptcha theme="dark"-->
+              <!--                           sitekey="a0bce798-5c05-4ab9-96ae-d15863e4e5fa"-->
+              <!--                           @verify="onVerify"></VueHcaptcha>-->
+
+              <el-checkbox
+                v-model="isVerifys"
+                @change="show =true"
+                label="点击进行验证" border></el-checkbox>
+              <VueClicaptcha
+                v-if="show" :callback="callback" :src="src"/>
             </div>
           </div>
 
@@ -145,12 +155,15 @@
 const EIP712 = require('@/contract/EIP712')
 const sigUtil = require('eth-sig-util')
 import {queryCert, sendTelCode, userCert} from '@/utils/api'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
+
 import {ClipboardCopyIcon, LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
-import * as storage from '@/utils/storage'
-import * as validation from '@/utils/validation'
+
+import VueClicaptcha from 'vue-clicaptcha'
 import Modal from '../Modal'
 
 const {contract_static_call, contract_gas_call_override, contract_call_override} = require('../../contract/ChainCall')
@@ -180,7 +193,8 @@ export default {
     LockOpenIcon,
     Modal,
     ShieldExclamationIcon,
-    VueHcaptcha
+    VueHcaptcha,
+    VueClicaptcha
   },
   props: {
     afterAuthBind: Function,
@@ -189,10 +203,13 @@ export default {
   },
   data() {
     return {
+      // src: 'http://127.0.0.1:8000/clicaptcha.php',
+      src: 'https://wallet.ctblock.cn/api/clicaptcha.php',
+      show: false,
       address: '',
       privateKey: '',
       publicKey: '',
-
+      isVerifys: false,
       password: '',
       passwordError: '',
       canCopy: !!navigator.clipboard,
@@ -284,6 +301,17 @@ export default {
     }
   },
   methods: {
+    callback(val) {
+      console.log(val)
+      if (val.status == true) {
+        this.show = false
+        this.isVerifys = true
+        this.hcaptchaResp = val
+      }
+      else {
+        this.isVerifys = false
+      }
+    },
     preparAuth() {
 
       const that = this
