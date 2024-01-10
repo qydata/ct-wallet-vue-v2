@@ -62,7 +62,7 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "vue": "^3.2.4",
     "vue-chartjs": "^4.0.5",
-    "vue-clicaptcha": "github:Eouo/vue-clicaptcha",
+    "vue-clicaptcha": "github:Eouo/vue3-clicaptcha",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.2",
     "web3": "^1.9.0"
