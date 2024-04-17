@@ -1,6 +1,6 @@
 å
 <template>
-  <div v-if="visible" class="modal-backdrop">
+  <div v-if="visible" class="modal-backdrop" style="scrollbar-width:none;" >
     <div class="modal-outer">
       <div class="inline-block w-full py-10 overflow-hidden align-bottom sm:py-30 sm:align-middle" :style="getStyle()">
         <div class="modal">

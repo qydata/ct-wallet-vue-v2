@@ -4,8 +4,6 @@
 
 /*global process*/
 
-const ethers = require('ethers')
-
 const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
 const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
 const BASE_URL = process.env.VUE_APP_BASE_URL
