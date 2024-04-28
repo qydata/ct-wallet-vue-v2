@@ -414,8 +414,7 @@ export default {
         method:
           ABI_const['AuthController'].contractName +
           '#' +
-          'authentication',
-        origin_value: '0'
+          'authentication'
       }
 
       return preparData
