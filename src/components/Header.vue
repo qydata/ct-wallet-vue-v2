@@ -4,7 +4,7 @@
     <ExportKey :close="closeExportKeyModal" :visible="showExportKeyModal"/>
     <CreateModal :afterCreate="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'create'"/>
     <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'import'"/>
-    <AuthBindModal :afterAuthBind="gotoCharge" :close="gotoCharge" :visible="createAndImportModal == 'authBind'"/>
+    <AuthBindModal :afterAuthBind="gotoCharge" :close="closeCreateModal" :visible="createAndImportModal == 'authBind'"/>
     <ChargeModal :afterCharge="gotoOverview" :visible="createAndImportModal == 'charge'"/>
     <header class="relative z-10 py-16 header md:pb-15" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">
@@ -101,7 +101,7 @@ export default {
   },
   async mounted() {
     let needAuth = sessionStorage.getItem('needAuth')
-    console.log('needAuth',needAuth)
+    console.log('needAuth', needAuth)
     if (needAuth != null) {
       sessionStorage.removeItem('needAuth')
       await this.gotoAuthBind()
@@ -162,8 +162,40 @@ export default {
       })
 
     },
+    isInIframe() {
+      if (window.self !== window.top) {
+        console.log('这个网页是在 iframe 中加载的。')
+        return true
+      }
+      else {
+        console.log('这个网页不是在 iframe 中加载的。')
+        return false
+      }
+    },
+    async authJudge(oriName) {
+
+      // 查询实名状态
+      let address = await storage.getAddress(storage.getHighestWalletVersion())
+      queryCert({address: address}).then((res) => {
+        if (res.code !== 200) {
+          console.log(res.msg)
+        }
+        else if (!res.is_cert) {
+          // 未实名
+          this.createAndImportModal = ''
+        }
+        else if (this.isInIframe() === false) {
+          this.createAndImportModal = oriName
+        }
+        else {
+          this.createAndImportModal = ''
+        }
+      }).catch((e) => {
+        console.log(e)
+      })
+    },
     async gotoCharge() {
-      this.createAndImportModal = 'charge'
+      this.authJudge('charge')
     },
     async gotoOverview() {
       let callbackURL = sessionStorage.getItem('callbackURL')
@@ -185,7 +217,6 @@ export default {
         this.createAndImportModal = ''
         this.$router.push('overview')
       }
-
     }
   },
   components: {

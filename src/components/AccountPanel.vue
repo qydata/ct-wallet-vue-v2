@@ -96,19 +96,19 @@
     </div>
 
     <div class="account-panel__modals">
-<!--      <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>-->
-<!--      <DepositModal :close="reset" :visible="modal === 'deposit'"/>-->
+      <!--      <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>-->
+      <!--      <DepositModal :close="reset" :visible="modal === 'deposit'"/>-->
       <ReceiveModal :close="reset" :visible="modal === 'receive'"/>
       <SellModal :close="reset" :visible="modal === 'sell'"/>
       <AuthBindModal :afterAuthBind="reset" :close="reset" :visible="modal == 'authBind'"/>
       <SendModal :close="reset" :item="item" :visible="modal === 'send'"/>
-<!--      <SwapModal-->
-<!--        :close="reset"-->
-<!--        :openDeposit="openDeposit"-->
-<!--        :openWithdraw="openWithdraw"-->
-<!--        :openSell="openSell"-->
-<!--        :visible="modal === 'swap'"-->
-<!--      />-->
+      <!--      <SwapModal-->
+      <!--        :close="reset"-->
+      <!--        :openDeposit="openDeposit"-->
+      <!--        :openWithdraw="openWithdraw"-->
+      <!--        :openSell="openSell"-->
+      <!--        :visible="modal === 'swap'"-->
+      <!--      />-->
       <ChargeModal
         :close="closeCharge"
         :afterCharge="openPay"
@@ -190,8 +190,19 @@ export default {
   },
   async mounted() {
     this.walletName = await storage.getWalletName()
+    this.isInIframe()
   },
   methods: {
+    isInIframe() {
+      if (window.self !== window.top) {
+        console.log('这个网页是在 iframe 中加载的。')
+        return true
+      }
+      else {
+        console.log('这个网页不是在 iframe 中加载的。')
+        return false
+      }
+    },
 
     closeCharge() {
       this.modal = ''

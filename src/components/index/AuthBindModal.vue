@@ -63,8 +63,9 @@
               <!--                           @verify="onVerify"></VueHcaptcha>-->
 
               <el-checkbox
+                style="color: white;"
                 v-model="isVerifys"
-                @change="show =true"
+                @change="handleChange"
                 label="点击进行验证" border></el-checkbox>
               <VueClicaptcha
                 v-if="show" :callback="callback" :src="src"/>
@@ -143,7 +144,7 @@
 
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
 
-          <button class="w-full button button--outline-success" @click="skip">跳过</button>
+          <button v-if="isInIframe() === false" class="w-full button button--outline-success" @click="skip">跳过</button>
           <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="create">下一步</button>
         </div>
       </div>
@@ -301,6 +302,20 @@ export default {
     }
   },
   methods: {
+    isInIframe() {
+      if (window.self !== window.top) {
+        console.log('这个网页是在 iframe 中加载的。')
+        return true
+      }
+      else {
+        console.log('这个网页不是在 iframe 中加载的。')
+        return false
+      }
+    },
+
+    handleChange() {
+      this.show = true
+    },
     callback(val) {
       console.log(val)
       if (val.status == true) {
