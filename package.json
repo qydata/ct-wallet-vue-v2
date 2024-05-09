@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
+    "deploy": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build && deploy.bat",
     "dev": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service --port 8080 serve",
     "lint": "eslint --ext js,vue src",
     "lint:fix": "eslint --fix --ext js,vue src",

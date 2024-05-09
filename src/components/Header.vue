@@ -100,11 +100,19 @@ export default {
     }
   },
   async mounted() {
-    let needAuth = sessionStorage.getItem('needAuth')
-    console.log('needAuth', needAuth)
-    if (needAuth != null) {
-      sessionStorage.removeItem('needAuth')
-      await this.gotoAuthBind()
+
+    let intent = this.$route.query.intent
+    if (intent !== null && intent !== undefined && intent.length > 1) {
+      console.log('intent', intent)
+      this.createAndImportModal = intent
+    }
+    else {
+      let needAuth = sessionStorage.getItem('needAuth')
+      console.log('needAuth', needAuth)
+      if (needAuth != null) {
+        sessionStorage.removeItem('needAuth')
+        await this.gotoAuthBind()
+      }
     }
   },
   methods: {
