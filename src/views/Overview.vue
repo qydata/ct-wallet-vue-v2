@@ -74,6 +74,14 @@ export default {
   computed: mapState(['address']),
   mounted() {
     this.initialise()
+    let RE_HREF = sessionStorage.getItem('RE_HREF')
+    let RE_HREF_S = sessionStorage.getItem('RE_HREF_S')
+
+    if (RE_HREF != null) {
+      sessionStorage.removeItem('RE_HREF')
+      sessionStorage.removeItem('RE_HREF_S')
+      this.$router.push(RE_HREF + RE_HREF_S)
+    }
   },
   unmounted() {
     clearInterval(this.polling)

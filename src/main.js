@@ -33,15 +33,18 @@ const init = async () => {
     })
     .mount('#app')
 
-  app.$router.beforeResolve(to => {
-    if (store.state.locked
-      && to.name !== 'Index'
-      && to.name !== 'Interact'
-      && to.name !== 'InterSign'
-      && to.name !== 'ConnectWallet') {
+  app.$router.beforeResolve((to) => {
+    // 如果钱包是锁定状态，直接重定向到首页
+    if (store.state.locked && to.name !== 'Index') {
+      // 记录要访问的地址
+      sessionStorage.setItem('RE_HREF', window.location.pathname)
+      sessionStorage.setItem('RE_HREF_S', window.location.search)
       return {name: 'Index'}
     }
-    return true
+
+    else {
+      return true
+    }
   })
 
   if (store.state.address) store.dispatch('refresh')

@@ -4,11 +4,11 @@
       <OverviewItem
         v-for="(item, index) in overviews"
         :key="index"
-        :setting="item" />
+        :setting="item"/>
     </div>
 
     <div class="transactions-items" v-if="transactions">
-      <TransactionsTable :transactions="transactions" :limit="5" />
+      <TransactionsTable :transactions="transactions" :limit="5"/>
     </div>
   </div>
 </template>
@@ -25,14 +25,13 @@ export default {
     TransactionsTable
   },
   props: ['overviews', 'transactions'],
-  methods: {
-  }
+  methods: {},
 }
 </script>
 
 <style scoped>
-  .overview-items {
-    /* max-width: 997px; */
-    @apply mx-auto;
-  }
+.overview-items {
+  /* max-width: 997px; */
+  @apply mx-auto;
+}
 </style>
