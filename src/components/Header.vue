@@ -105,6 +105,13 @@ export default {
     if (intent !== null && intent !== undefined && intent.length > 1) {
       console.log('intent', intent)
       this.createAndImportModal = intent
+      setTimeout(() => {
+        const url = window.location
+        const newUrl = url.origin + url.pathname
+        // 不刷新页面
+        history.pushState('', '', newUrl)
+        // url.href = newUrl; // 刷新页面
+      }, 4000)
     }
     else {
       let needAuth = sessionStorage.getItem('needAuth')
