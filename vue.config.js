@@ -13,6 +13,8 @@ module.exports = {
         args[0].title = process.env.VUE_APP_IS_TESTNET === 'true' ? 'Testnet (CT) Wallet' : '数字钱包'
         return args
       })
+      // 移除 prefetch 插件
+      config.plugins.delete('prefetch')
   },
   devServer: {
     host: '0.0.0.0',
