@@ -9,12 +9,12 @@
     "iozhaq <zhaoqi@coozw.com>"
   ],
   "scripts": {
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
-    "deploy": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build && deploy.bat",
-    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service --port 8080 serve",
+    "dev": "vue-cli-service serve",
+    "start": "node server/index.js",
+    "build": "vue-cli-service build",
+    "deploy": "vue-cli-service build && deploy.bat",
     "lint": "eslint --ext js,vue src",
-    "lint:fix": "eslint --fix --ext js,vue src",
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider && node server/index.js"
+    "lint:fix": "eslint --fix --ext js,vue src"
   },
   "main": "server/index.js",
   "dependencies": {
@@ -39,7 +39,7 @@
     "dayjs": "^1.11.7",
     "detect-browser": "^5.2.0",
     "dotenv": "^8.2.0",
-    "element-plus": "^2.3.4",
+    "element-plus": "^2.7.5",
     "elliptic": "^6.5.4",
     "eth-crypto": "^2.6.0",
     "eth-sig-util": "^3.0.1",
@@ -63,9 +63,11 @@
     "vue": "^3.2.4",
     "vue-chartjs": "^4.0.5",
     "vue-clicaptcha": "github:Eouo/vue3-clicaptcha",
+    "vue-cookies": "^1.8.4",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.2",
-    "web3": "^1.9.0"
+    "web3": "^1.9.0",
+    "webpack": "^4.39.3"
   },
   "devDependencies": {
     "@edge/eslint-config-javascript": "^0.1.0",
@@ -73,6 +75,7 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "babel-plugin-component": "^1.1.1",
     "cross-env": "^7.0.3",
     "deepmerge": "^4.3.1",
     "eslint": "^7.32.0",

@@ -1,46 +1,54 @@
 <template>
-  <tr class="text-black">
+  <tr>
     <td data-title="名称:">
-      <span class=" monospace lg:font-sans lg:inline-block">
+      <span class="monospace lg:font-sans lg:inline-block text-black">
         {{ item.token.name }}
       </span>
     </td>
 
     <td data-title="符号:" :title="item.token.symbol">
-      <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
-        <span class="monospace lg:inline-block">
+        <span class="monospace lg:inline-block text-black">
           {{ item.token.symbol }}
         </span>
-      </a>
     </td>
-
-    <td data-title="余额:" class=" from-to" :title="formattedAmount">
+    <td data-title="合约地址:" class="from-to" :title="item.token_id">
       <span>
         <span class="icon-wrap"></span>
-          <span class="monospace lg:inline-block">
-            {{ formattedAmount }}
+        <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
+          <span class="monospace lg:inline-block text-black">
+            {{ item.token.address }}
+          </span>
+        </a>
+      </span>
+    </td>
+    <td data-title="余额:" class="from-to" :title="item.value">
+      <span>
+        <span class="icon-wrap"></span>
+          <span class="monospace lg:inline-block text-black">
+            {{ item.value }}
           </span>
       </span>
     </td>
-    <td data-title="类型:" class="from-to " :title="item.token.type">
+    <!--    <td data-title="To:" class="from-to" :title="JSON.stringify(item.metadata)">-->
+    <!--      <span>-->
+    <!--        <span class="icon-wrap"></span>-->
+    <!--          <span class="monospace lg:inline-block text-black">-->
+    <!--            {{ item.metadata }}-->
+    <!--          </span>-->
+    <!--      </span>-->
+    <!--    </td>-->
+    <td data-title="类型:" class="from-to" :title="item.token.type">
       <span>
         <span class="icon-wrap"></span>
-          <span class="monospace lg:inline-block">
+          <span class="monospace lg:inline-block text-black">
             {{ item.token.type }}
           </span>
       </span>
     </td>
-    <td data-title="精度:" class="from-to " :title="item.token.decimals">
-      <span>
-        <span class="icon-wrap"></span>
-          <span class="monospace lg:inline-block">
-            {{ item.token.decimals === '' ? 0 : item.token.decimals }}
-          </span>
-      </span>
-    </td>
+
 
     <td data-title="操作:">
-      <el-button type="success" @click="sendErc20(item)">发送</el-button>
+      <el-button type="success" @click="sendNft(item)">发送</el-button>
     </td>
   </tr>
 </template>
@@ -50,7 +58,7 @@ const ethers = require('ethers')
 import {mapState} from 'vuex'
 
 export default {
-  name: 'Erc20TableItem',
+  name: 'NftTableItem',
   data() {
     return {
       modal: ''
@@ -58,26 +66,23 @@ export default {
   },
   props: [
     'item',
-    'sendErc20'
+    'sendNft'
   ],
-  components: {
-  },
+  components: {},
   computed: {
     ...mapState(['address']),
     date() {
       return new Date(this.item.timestamp * 1000).toLocaleString()
     },
+    explorerIdUrl() {
+      return `https://ctblock.cn/token/${this.item.contractAddress}/instance/${this.item.id}/token-transfers`
+    },
     explorerToAddressUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.token.address}`
-    },
-    formattedAmount() {
-      return Number(ethers.utils.formatUnits(this.item.value, this.item.token.decimals))
     },
     sent() {
       return this.item.sender === this.item.recipient || this.address === this.item.sender
     }
-  },
-  mounted() {
   },
   methods: {}
 }
@@ -113,28 +118,8 @@ td .icon {
   @apply w-15 inline-block align-middle;
 }
 
-td .inline-icon {
-  @apply inline-block mb-2 lg:mb-0
-}
-
-td .icon-green {
-  @apply text-green;
-}
-
-td .icon-grey {
-  @apply text-gray-400;
-}
-
-td .icon-red {
-  @apply text-red;
-}
-
 td a {
   @apply border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
-}
-
-tr.pending {
-  @apply italic text-gray-400
 }
 
 tr.pending a {

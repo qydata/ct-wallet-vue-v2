@@ -8,8 +8,10 @@ import {createStore} from 'vuex'
 import {fetchTokenValue} from './utils/api'
 import {empty, expire, getAddress, getUnlockExpiry, getWalletVersion, setUnlockExpiry} from './utils/storage'
 
-const Web3 = require('web3')
+// eslint-disable-next-line no-undef
 const ethers = require('ethers')
+// eslint-disable-next-line no-undef
+const ABI_const = require('@/contract/ABI_const.js')
 const WALLET_EXPIRY = 5 * 60 * 1000
 
 const init = async () => {
@@ -21,7 +23,8 @@ const init = async () => {
   const address = await (async () => {
     try {
       return await getAddress(version)
-    } catch (err) {
+    }
+    catch (err) {
       console.debug(err)
       return ''
     }
@@ -34,9 +37,9 @@ const init = async () => {
 
       address,
       balance: 0,
-      nextNonce: 0,
+      xctBalance: 0,
 
-      usdBalance: undefined,
+      cnyBalance: undefined,
 
       // TODO investigate whether we can set these in app mixin instead
       config: {
@@ -45,7 +48,8 @@ const init = async () => {
         },
         index: {
           baseURL: process.env.VUE_APP_INDEX_API_URL
-        }
+        },
+        env: process.env
       }
     },
     mutations: {
@@ -65,11 +69,11 @@ const init = async () => {
       setBalance(state, balance) {
         state.balance = balance
       },
-      setNextNonce(state, nextNonce) {
-        state.nextNonce = nextNonce
+      setXctBalance(state, _xctBalance) {
+        state.xctBalance = _xctBalance
       },
-      setUSDBalance(state, usdBalance) {
-        state.usdBalance = usdBalance
+      setCNYBalance(state, cnyBalance) {
+        state.cnyBalance = cnyBalance
       },
       unlock(state) {
         state.locked = false
@@ -98,21 +102,35 @@ const init = async () => {
         commit('reset')
       },
       async refresh({commit, dispatch, state}) {
-        const web3 = new Web3(state.config.blockchain.baseURL)
+        const customHttpProvider = new ethers.providers.JsonRpcProvider(state.config.blockchain.baseURL, {
+          chainId: 27
+        })
+        const CtMultCallAddress = state.config.env.VUE_APP_MULT_CALL
+        const CtXCTAddress = state.config.env.VUE_APP_XCT_ADDRESS
+        const contract = new ethers.Contract(
+          CtMultCallAddress,
+          ABI_const['CtMultCall'].abi,
+          customHttpProvider
+        )
+
+        const accountBalance = await contract.callStatic.queryBalanceAndTokenBalance(
+          state.address,
+          CtXCTAddress,
+          0,
+          20
+        )
         if (!state.address) return
         if (state.locked) return
         // const info = await xe.wallet.infoWithNextNonce(state.config.blockchain.baseURL, state.address)
-        let balance = await web3.eth.getBalance(state.address)
-        balance = ethers.utils.formatEther(balance)
+        const balance = ethers.utils.formatEther(accountBalance.balance)
         commit('setBalance', balance)
 
-        const nonce = await web3.eth.getTransactionCount(state.address)
-        commit('setNextNonce', nonce)
+        commit('setXctBalance', ethers.utils.formatUnits(accountBalance.tokenBalance, 2))
         dispatch('refreshTokenValue')
       },
       async refreshTokenValue({commit, state}) {
         const tokenValue = await fetchTokenValue()
-        commit('setUSDBalance', tokenValue.usdPerXE * (state.balance / 1e6))
+        commit('setCNYBalance', tokenValue.cnyPerCT * (state.balance))
       }
     }
   })

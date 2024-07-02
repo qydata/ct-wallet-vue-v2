@@ -3,17 +3,22 @@
 // that can be found in the LICENSE.md file. All rights reserved.
 
 import ElementPlus from 'element-plus'
-import 'element-plus/theme-chalk/index.css'
+import 'element-plus/dist/index.css'
+import './index.css'
+// main.ts
+// if you just want to import css
+import './assets/css/css-vars.css'
+// import 'element-plus/theme-chalk/dark/css-vars.css'
 /*global process*/
 import {createApp} from 'vue'
 // import 'element-plus/lib/theme-chalk/index.css'
 import App from './App.vue'
-import './index.css'
+
 import titleMixin from './mixins/titleMixin'
 import router from './router'
 import Store from './store'
 import './utils'
-
+import VueCookies from 'vue-cookies'
 // Vue.prototype.$message = ElementPlus.Message
 const WALLET_REFRESH_INTERVAL = 30 * 1000
 const init = async () => {
@@ -22,6 +27,7 @@ const init = async () => {
   const app = createApp(App, {store})
     .use(router)
     .use(store)
+    .use(VueCookies)
     .use(ElementPlus)
     .mixin(titleMixin)
     .mixin({

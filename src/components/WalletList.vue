@@ -1,21 +1,26 @@
 <template>
   <div>
-    <button @click.prevent="showTools = !showTools" class="header-tools__expand">
-      <span class="pointer-events-none header-tools__icon--users">
+    <div @click="handleClick" class="header-tools__expand cursor-pointer">
+      <span class="header-tools__icon--users">
         <UsersIcon/>
       </span>
-      <span class="pointer-events-none header-tools__icon--expand">
+      <span class="ml-4">
+        切换账户
+      </span>
+      <span class="header-tools__icon--users">
         <ChevronDownIcon/>
       </span>
-    </button>
-    <ul v-click-outside="onClickOutside" class="header-tools" :class="showTools ? 'showTools' : 'hideTools'">
-      <li class="header-tools__item" v-for="(item, index) in walletList" :key="index">
-        <div class="header-tools__link" @click="switchAccount(item)">
+    </div>
+    <ul v-if="showTools" v-click-outside="onClickOutside" class="header-tools">
+      <li class="header-tools__item w-fit" v-for="(item, index) in walletList" :key="index">
+        <div class="header-tools__link w-fit" @click="switchAccount(item)">
           <span class="header-tools__icon">
-            <KeyIcon :class="address.toLowerCase() == publicKeyToAddress(item.p1).toLowerCase() ? 'green':''"/>
+            <KeyIcon :class="address.toLowerCase() == publicKeyToAddress(item.p1).toLowerCase() && 'green'"/>
           </span>
-          {{ item.walletName }}
-          {{ truncateCode(publicKeyToAddress(item.p1), 19) }}
+          <el-text line-clamp="2" class="w-full overflow-ellipsis overflow-hidden whitespace-nowrap">
+            {{ item.walletName }} <br/>
+            {{ publicKeyToAddress(item.p1) }}
+          </el-text>
         </div>
       </li>
     </ul>
@@ -61,14 +66,9 @@ export default {
     this.walletList = await storage.getWalletList(storage.getHighestWalletVersion())
   },
   methods: {
-    truncateCode(code, maxLength) {
-      if (code.length > maxLength) {
-        const truncatedCode = code.slice(0, maxLength) + '...'
-        return truncatedCode
-      }
-      else {
-        return code
-      }
+    handleClick() {
+      console.log(1)
+      this.showTools = !this.showTools
     },
     async switchAccount(walletItem) {
       await storage.switchWallet(walletItem.p1, JSON.parse(JSON.stringify(walletItem.p2)), walletItem.walletName, storage.getHighestWalletVersion())
@@ -81,8 +81,6 @@ export default {
       if (window.location.href.indexOf('connectWallet') == -1) {
         await this.$router.push('overview')
       }
-
-
     },
     publicKeyToAddress(publicKey) {
       if (publicKey !== undefined) return ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
@@ -135,15 +133,6 @@ export default {
   color: green;
 }
 
-.header-tools.showTools {
-  @apply block md:flex;
-}
-
-.header-tools.hideTools {
-  /*@apply block md:hidden;*/
-  @apply hidden;
-}
-
 .header-tools__expand {
   /*@apply hidden md:flex items-center text-gray transition-colors hover:text-white;*/
   @apply flex items-center text-gray transition-colors hover:text-white;
@@ -166,13 +155,13 @@ export default {
 }
 
 .header-tools__icon--users {
-  @apply flex-shrink-0 w-20;
+  @apply w-20;
 }
 
 /*@screen md {*/
 .header-tools {
   /*@apply flex-col space-y-10 absolute top-40 w-56 right-0 bg-black p-0 rounded flex-wrap mt-0;*/
-  @apply flex-col space-y-10 absolute w-56 bg-black p-0 rounded flex-wrap mt-0;
+  @apply flex-col space-y-10 absolute w-56 bg-black p-0 rounded flex-wrap mt-2 right-0 top-40;
 }
 
 .header-tools__item {

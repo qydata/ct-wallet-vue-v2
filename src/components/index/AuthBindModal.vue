@@ -24,7 +24,7 @@
 
     <template v-slot:footer>
       <div class="px-24 border-gray-700 border-solid border-t-default border-opacity-30 pb-54">
-        <form>
+        <el-form>
           <div class="flex items-start leading-8 text-gray mb-14">
           <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
             <ShieldExclamationIcon/>
@@ -35,58 +35,60 @@
           </div>
 
           <div class="form-group" :class="{'form-group__error': v$.mobile.$error}">
-            <label for="tel-number">你的手机号码</label>
-            <div style="display: flex">
-              <input
-                type="text"
-                autocomplete="off"
-                placeholder="请输入你的手机号码"
-                id="tel-number"
-                v-model="v$.mobile.$model"
-                style="flex: 1"
-              />
-
-              <button class="mx-auto button button--success" type="button" @click.prevent="sendMsgCode">
-                {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
-              </button>
-            </div>
-
+            <label>你的手机号码</label>
+            <el-input
+              type="text"
+              autocomplete="off"
+              placeholder="请输入你的手机号码"
+              id="tel-number"
+              v-model="v$.mobile.$model"
+            >
+              <template #suffix>
+                <button class="mx-auto button button--success" type="button" @click.prevent="sendMsgCode">
+                  {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
+                </button>
+              </template>
+            </el-input>
             <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.mobile.$errors" :key="error.$uid">
               {{ error.$message }}
             </div>
 
-            <div style="padding-top: 10px; display: flex; justify-content: center">
+          </div>
+
+          <div class="grid grid-cols-12 gap-5">
+            <div class="col-span-3">
 
               <!--              <VueHcaptcha theme="dark"-->
               <!--                           sitekey="a0bce798-5c05-4ab9-96ae-d15863e4e5fa"-->
               <!--                           @verify="onVerify"></VueHcaptcha>-->
-
+              <label for="very-code">点击进行验证</label>
               <el-checkbox
                 style="color: white;"
                 v-model="isVerifys"
                 @change="handleChange"
-                label="点击进行验证" border></el-checkbox>
+                size="large"
+                label="验证" border></el-checkbox>
               <VueClicaptcha
                 v-if="show" :callback="callback" :src="src"/>
             </div>
-          </div>
+            <div class="form-group col-span-9" :class="{'form-group__error': v$.msgCode.$error}">
+              <label for="very-code">你的验证码</label>
+              <input
+                type="text"
+                autocomplete="off"
+                placeholder="请输入你的验证码"
+                id="very-code"
+                v-model="v$.msgCode.$model"
+              />
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-for="error of v$.msgCode.$errors" :key="error.$uid">
+                {{ error.$message }}
+              </div>
 
-          <div class="form-group" :class="{'form-group__error': v$.msgCode.$error}">
-            <label for="very-code">你的验证码</label>
-            <input
-              type="text"
-              autocomplete="off"
-              placeholder="请输入你的验证码"
-              id="very-code"
-              v-model="v$.msgCode.$model"
-            />
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.msgCode.$errors" :key="error.$uid">
-              {{ error.$message }}
             </div>
-
           </div>
+
           <div class="form-group" :class="{'form-group__error': v$.realName.$error}">
             <label for="real-name">你的姓名</label>
             <input
@@ -140,11 +142,12 @@
             <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{ passwordError }}
             </div>
           </div>
-        </form>
+        </el-form>
 
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
 
-          <button v-if="isInIframe() === false" class="w-full button button--outline-success" @click="skip">跳过</button>
+          <button v-if="isInIframe() === false" class="w-full button button--outline-success" @click="skip">跳过
+          </button>
           <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="create">下一步</button>
         </div>
       </div>
@@ -223,6 +226,7 @@ export default {
       hcaptchaResp: null
     }
   },
+
   validations() {
     return {
       password: [

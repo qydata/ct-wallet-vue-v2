@@ -14,7 +14,6 @@ import MintPanel from '@/views/MintPanel'
 import Nodes from '@/views/Nodes'
 import Overview from '@/views/Overview'
 import Staking from '@/views/Staking'
-import Transactions from '@/views/Transactions'
 import {createRouter, createWebHistory} from 'vue-router'
 import Index from '../views/Index.vue'
 
@@ -33,11 +32,6 @@ const routes = [
     path: '/overview',
     name: 'Overview',
     component: Overview
-  },
-  {
-    path: '/transactions/:page(\\d+)?',
-    name: 'Transactions',
-    component: Transactions
   },
   {
     path: '/display',

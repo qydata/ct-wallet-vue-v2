@@ -178,14 +178,13 @@
             <div class="chat-input" v-if="messages.length != 0">
 
               <div style="flex: 1;">
-                <el-input
+                <input
                   v-model="newMessage"
                   :rows="4"
                   type="textarea"
                   placeholder="在这里输入你要发送的消息"
-                >
+                />
 
-                </el-input>
               </div>
               <div style="display: flex;align-self: end;">
                 <el-button
@@ -314,7 +313,7 @@ export default {
     WithdrawModal,
     ClipboardCopyIcon
   },
-  computed: mapState(['address', 'balance', 'usdBalance']),
+  computed: mapState(['address', 'balance', 'cnyBalance']),
   data() {
     return {
       id: '',
@@ -947,14 +946,6 @@ export default {
 </script>
 
 <style scoped>
-.account-panel {
-  @apply bg-black-100 pt-16 pb-30;
-}
-
-.account-panel__left,
-.account-panel__right {
-  @apply w-full;
-}
 
 .account-panel__address {
   @apply text-gray text-sm2 mb-7 w-full;
@@ -980,34 +971,9 @@ export default {
   @apply bottom-0 text-half;
 }
 
-.account-panel__buttons {
-  @apply grid gap-6 grid-cols-1 w-full flex-shrink-0 mt-12;
-}
-
-.account-panel__buttons button {
-  @apply w-full;
-}
-
-#walletName {
-  padding-left: 0;
-}
-
-.account-panel__balance {
-  @apply flex-grow mb-6;
-}
-
-.account-panel__modals {
-  width: 1px;
-}
-
 @screen md {
   .account-panel .container {
     @apply flex flex-row justify-between items-end;
-  }
-
-  .account-panel__left,
-  .account-panel__right {
-    @apply w-auto;
   }
 
   .account-panel__address {
@@ -1018,31 +984,6 @@ export default {
     @apply inline;
   }
 
-  .account-panel__buttons {
-    @apply grid grid-cols-3 mt-0;
-  }
-
-  .account-panel__buttons.staking-buttons {
-    @apply grid-cols-1;
-  }
-
-  .account-panel__buttons > button {
-    width: 140px;
-  }
-
-  .account-panel__buttons.staking-buttons > button {
-    width: 170px;
-  }
-
-  .account-panel__balance {
-    @apply mb-0;
-  }
-}
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 }
 
 .contents {

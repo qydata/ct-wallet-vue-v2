@@ -1,12 +1,12 @@
 <template>
   <tr :class="item.pending && 'pending'">
-    <td data-title="Date:">
-      <span class="monospace lg:font-sans lg:inline-block">
+    <td data-title="日期:">
+      <span class="monospace text-black lg:font-sans lg:inline-block">
         {{ date }}
       </span>
     </td>
 
-    <td data-title="Tx Hash:" :title="item.hash">
+    <td data-title="交易哈希:" :title="item.hash">
       <a :href="explorerTxUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
           {{ item.hash }}
@@ -14,46 +14,46 @@
       </a>
     </td>
 
-    <td v-if="sent" data-title="To:" class="from-to" :title="item.recipient">
+    <td v-if="sent" data-title="到:" class="from-to" :title="item.to==null?'':item.to.hash">
       <span>
         <span class="icon-wrap"><ArrowUpIcon class="icon inline-icon icon-red"/></span>
         <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
           <span class="monospace lg:inline-block">
-            {{ item.recipient }}
+            {{ item.to == null ? '' : item.to.hash }}
           </span>
         </a>
       </span>
     </td>
-    <td v-else data-title="From:" class="from-to" :title="item.sender">
+    <td v-else data-title="从:" class="from-to" :title="item.from.hash">
       <span>
         <span class="icon-wrap"><ArrowDownIcon class="icon inline-icon icon-green"/></span>
         <a :href="explorerFromAddressUrl" target="_blank" rel="noreferrer">
           <span class="monospace lg:inline-block">
-            {{ item.sender }}
+            {{ item.from.hash }}
           </span>
         </a>
       </span>
     </td>
 
-<!--    <td data-title="备忘录:" :title="item.description || 'None'">-->
-<!--      <span class="monospace lg:font-sans lg:inline-block" :class="!item.description && 'text-gray'">-->
-<!--        {{ item.description || 'None' }}-->
-<!--      </span>-->
-<!--    </td>-->
+    <!--    <td data-title="备忘录:" :title="item.description || 'None'">-->
+    <!--      <span class="monospace lg:font-sans lg:inline-block" :class="!item.description && 'text-gray'">-->
+    <!--        {{ item.description || 'None' }}-->
+    <!--      </span>-->
+    <!--    </td>-->
 
-    <td data-title="Status:">
+    <td data-title="状态:">
       <span v-if="isConfirmed">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon/></span>
-        <span class="monospace lg:font-sans">{{ statusFormatted }}</span>
+        <span class="monospace text-green lg:font-sans">{{ statusFormatted }}</span>
       </span>
       <span v-else>
         <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
-        <span class="monospace lg:font-sans text-gray-400">{{ statusFormatted }}</span>
+        <span class="monospace lg:font-sans text-gray">{{ statusFormatted }}</span>
       </span>
     </td>
 
-    <td data-title="Amount (CT):" class="amount-col" :title="`${sent ? '-' : ''}${formattedAmount}`">
-      <span class="monospace">
+    <td data-title="草田分数量:" class="amount-col" :title="`${sent ? '-' : ''}${formattedAmount}`">
+      <span class="monospace  text-black">
         {{ `${sent && formattedAmount < 0 ? '-' : ''}${formattedAmount}` }}
       </span>
     </td>
@@ -65,6 +65,7 @@
 
 const ethers = require('ethers')
 import {ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon} from '@heroicons/vue/outline'
+import dayjs from 'dayjs'
 import {mapState} from 'vuex'
 
 export default {
@@ -81,31 +82,39 @@ export default {
   computed: {
     ...mapState(['address']),
     date() {
-      return new Date(this.item.timestamp * 1000).toLocaleString()
+      // return this.item.timestamp
+      const formattedDate = dayjs(this.item.timestamp).format('YYYY/MM/DD HH:mm:ss')
+      return formattedDate
     },
     explorerFromAddressUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.sender}`
+      return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.from.hash}`
     },
     explorerToAddressUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.recipient}`
+      if(this.item.to == null) {
+        return `${process.env.VUE_APP_EXPLORER_URL}/address/0x000000000000000000000000000000000000000000`
+      }
+      else {
+        return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.to.hash}`
+      }
     },
     explorerTxUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/tx/${this.item.hash}`
     },
     formattedAmount() {
-      return ethers.utils.formatEther(this.item.amount)
+      return ethers.utils.formatEther(this.item.value)
     },
     isConfirmed() {
-      return ((this.item.confirmations || 0) >= 10)
+      return ((this.item.confirmations || 0) >= 5)
     },
     statusFormatted() {
       if (this.item.pending) return '确认中'
       if (this.item.confirmations === 1) return `${this.item.confirmations} 确认`
-      if (this.item.confirmations < 10) return `${this.item.confirmations} 确认`
+      if (this.item.confirmations < 5) return `${this.item.confirmations} 确认`
       return '已确认'
     },
     sent() {
-      return this.item.sender === this.item.recipient || this.address === this.item.sender
+      // return this.item.sender === this.item.recipient || this.address === this.item.sender
+      return this.item.from.hash.toLowerCase() === this.address.toLowerCase()
     }
   }
 }

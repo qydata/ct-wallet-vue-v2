@@ -63,6 +63,7 @@ import ForgetModal from '@/components/index/ForgetModal'
 import RestoreModal from '@/components/index/RestoreModal'
 import UnlockModal from '@/components/index/UnlockModal'
 import Logo from '@/components/Logo'
+import {fetchCardlist} from '@/utils/api'
 import {mapState} from 'vuex'
 
 export default {

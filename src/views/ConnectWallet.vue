@@ -30,7 +30,7 @@ export default {
     address: 'address',
     balance: 'balance',
     locked: 'locked',
-    usdBalance: 'usdBalance',
+    cnyBalance: 'cnyBalance',
     hasWallet: state => state.address.length > 0
   }),
 
@@ -113,6 +113,8 @@ export default {
       }, this.callBack)
     },
     openGetWalletModal() {
+      // TODO 获取支付信息
+
       this.modal = 'getWallet'
     }
   }
@@ -121,18 +123,6 @@ export default {
 </script>
 
 <style scoped>
-.account-panel {
-  @apply bg-black-100 pt-16 pb-30;
-}
-
-.account-panel__left,
-.account-panel__right {
-  @apply w-full;
-}
-
-.account-panel__address {
-  @apply text-gray text-sm2 mb-7 w-full;
-}
 
 .account-panel__address span {
   @apply text-white break-all block;
@@ -154,38 +144,9 @@ export default {
   @apply bottom-0 text-half;
 }
 
-.account-panel__buttons {
-  @apply grid gap-6 grid-cols-1 w-full flex-shrink-0 mt-12;
-}
-
-.account-panel__buttons button {
-  @apply w-full;
-}
-
-#walletName {
-  padding-left: 0;
-}
-
-.account-panel__balance {
-  @apply flex-grow mb-6;
-}
-
-.account-panel__modals {
-  width: 1px;
-}
-
 @screen md {
   .account-panel .container {
     @apply flex flex-row justify-between items-end;
-  }
-
-  .account-panel__left,
-  .account-panel__right {
-    @apply w-auto;
-  }
-
-  .account-panel__address {
-    @apply pr-9 my-12;
   }
 
   .account-panel__address span {

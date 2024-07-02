@@ -6,11 +6,20 @@
 
 <script>
 const ethers = require('ethers')
+import {useDark, useToggle} from '@vueuse/core'
+
 export default {
   title() {
     return '草田链'
   },
-
+  mounted: function () {
+    useToggle(useDark())
+    this.setViewHeight()
+    window.addEventListener('resize', () => {
+      this.setViewHeight()
+    })
+    this.blockEvemt()
+  },
   methods: {
     blockEvemt() {
       let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
@@ -26,13 +35,6 @@ export default {
       const vh = window.innerHeight * 0.01
       document.documentElement.style.setProperty('--vh', `${vh}px`)
     }
-  },
-  mounted: function () {
-    this.setViewHeight()
-    window.addEventListener('resize', () => {
-      this.setViewHeight()
-    })
-    this.blockEvemt()
   }
 }
 </script>

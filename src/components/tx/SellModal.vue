@@ -2,67 +2,53 @@
   <div>
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
-        <h2 class="mb-8">Sell CT<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">提现余额<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="CT"/> 可用
+          <Amount :value="xctBalance" :decimalPlaces="2" currency="XCT"/> 可用
         </span>
       </template>
       <template v-slot:body>
-        <div class="pb-4 min-h-410">
-          <div class="form-group mb-8" :class="{'form-group__error': v$.recipient.$error}">
-            <label for="recipient" class="flex items-center space-x-3 label">
-              Ethereum address
-              <Tooltip
-                class="ml-3" position="right" theme="dark" :wide="true"
-                text="This is the Ethereum wallet that will hold your USDC">
-                <InformationCircleIcon class="hidden md:block button__icon w-15" />
-              </Tooltip>
-            </label>
-            <input
-              type="text"
-              placeholder="Ethereum address"
-              id="recipient"
-              maxlength="43"
-              v-model="v$.recipient.$model"
-            />
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
+        <div class="pb-4 min-h-350">
+          <div class="mb-16 form-group">
+            <label>选择提现方式</label>
+            <div class="grid grid-cols-4 gap-2 mt-12">
+              <Radio v-for="(items,index) in payTypeArr"
+                     v-bind:key="index"
+                     name="stake-type-host"
+                     :id="index"
+                     :extraName="items.card_name"
+                     :label="`${items.card_id}`"
+                     :selected="payType === items"
+                     @click="setStakeType(items)"
+              />
+            </div>
           </div>
-
           <div
             class="mt-32 lg-input-group"
             :class="{'form-group__error': v$.amount.$error}">
             <label for="amount">数量</label>
             <div class="relative input-wrap">
               <input
-                type="text"
+                type="number"
                 id="amount"
                 placeholder="0.00"
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
-              <span class="absolute right-0 text-xl curren top-23">CT</span>
+              <span class="absolute right-0 text-xl curren top-23">XCT</span>
               <!-- eslint-disable-next-line max-len -->
-              <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
+              <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors"
+                   :key="error.$uid">{{ error.$message }}
+              </div>
             </div>
           </div>
 
           <div class="mt-32 mb-8 form-group">
             <label class="flex items-center space-x-3">
-              Exchange Rate
-              <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`Last updated ${rateAge}`">
-                <InformationCircleIcon class="hidden md:block button__icon w-15" />
-              </Tooltip>
-            </label>
-            <Amount :value="exchangeRate.rate" currency="USDC" sub/>
-          </div>
-
-          <div class="mt-32 mb-8 form-group">
-            <label class="flex items-center space-x-3">
-              Transaction Fee
+              手续费
               <!-- eslint-disable-next-line max-len -->
-              <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`This covers the cost of the Ethereum transaction`">
-                <InformationCircleIcon class="hidden md:block button__icon w-15" />
+              <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`这涵盖了草田链交易的成本`">
+                <InformationCircleIcon class="hidden md:block button__icon w-15"/>
               </Tooltip>
             </label>
             <Amount :value="fee" currency="CT" short sub/>
@@ -73,34 +59,38 @@
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <!-- eslint-disable-next-line max-len -->
-          <div class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
+          <div
+            class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="md:flex">
               <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
                 <div class="md:flex-grow">
-                  <span class="block mb-3 text-gray">You are selling</span>
+                  <span class="block mb-3 text-gray">您正在提现</span>
                   <span class="block text-xl text-white price">
-                    <Amount :value="amountParsed" currency="CT" short/>
+                    <Amount :value="amountParsed" currency="XCT" short/>
                   </span>
                 </div>
                 <!-- eslint-disable-next-line max-len -->
-                <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
-                  <img src="/assets/logo.svg" alt="CT" class="flex-shrink-0">
+                <span
+                  class="flex justify-center bg-white py-12  mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
+                  <img src="/assets/e-logo-alt.svg" alt="XCT" class="flex-shrink-0">
                 </span>
                 <!-- eslint-disable-next-line max-len -->
-                <span class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
+                <span
+                  class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                   <ArrowRightIcon class="hidden md:block"/>
                   <ArrowDownIcon class="block md:hidden"/>
                 </span>
               </div>
               <div class="right md:w-1/2 md:flex md:pl-18">
                 <!-- eslint-disable-next-line max-len -->
-                <span class="flex justify-center p-8 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
-                  <img src="/assets/usd-coin-usdc-logo.svg" alt="USDC" class="flex-shrink-0">
+                <span
+                  class="flex justify-center p-8   bg-white mx-auto mb-12 border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
+                  <img src="/assets/usd-coin-cny-logo.svg" alt="CNY" class="flex-shrink-0">
                 </span>
                 <div class="md:flex-grow">
-                  <span class="block mb-3 text-gray">You will receive</span>
+                  <span class="block mb-3 text-gray">您将收到</span>
                   <span class="block text-xl text-white price">
-                    <Amount :value="usdcAmount" currency="USDC"/>
+                    <Amount :value="usdcAmount" currency="CNY"/>
                   </span>
                 </div>
               </div>
@@ -108,7 +98,7 @@
           </div>
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="cancel">返回</button>
-            <button class="w-full button button--success" :disabled="!canReadySell" @click="readySell">Sell</button>
+            <button class="w-full button button--success" :disabled="!canReadySell" @click="readySell">提现</button>
           </div>
         </div>
       </template>
@@ -116,34 +106,35 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <h2 class="mb-8">Sell CT<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">提现余额<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="CT"/> 可用
+          <Amount :value="xctBalance" currency="XCT" :decimalPlaces="2"/> 可用
         </span>
       </template>
       <template v-slot:body>
         <div class="pb-12 min-h-300">
           <div class="form-group mb-14">
-            <label>You are selling</label>
-            <Amount :value="amountParsed" currency="CT" short sub/>
+            <label>您正在提现</label>
+            <Amount :value="amountParsed" currency="XCT" short sub/>
           </div>
 
           <div class="form-group mb-14">
-            <label class="label">From</label>
-            <HashLink to="explorer" :wallet="address" />
+            <label class="label">从</label>
+            <HashLink to="explorer" :wallet="address"/>
           </div>
 
           <div class="form-group mb-14">
-            <label class="label">To</label>
-            <HashLink to="etherscan" :wallet="recipient" />
+            <label class="label">到</label>
+            <div>{{ payType.card_name }}</div>
+            <div>{{ payType.card_id }}</div>
           </div>
 
           <div class="form-group mb-14">
             <label class="flex items-center space-x-3">
-              Transaction Fee
+              手续费
               <!-- eslint-disable-next-line max-len -->
-              <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`This covers the cost of the Ethereum transaction`">
-                <InformationCircleIcon class="hidden md:block button__icon w-15" />
+              <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`这涵盖了草田链交易的成本`">
+                <InformationCircleIcon class="hidden md:block button__icon w-15"/>
               </Tooltip>
             </label>
             <Amount :value="fee" currency="CT" short sub/>
@@ -151,27 +142,18 @@
 
           <div class="form-group mb-14">
             <label class="flex items-center space-x-3">
-              Exchange Rate
-              <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`Last updated ${rateAge}`">
-                <InformationCircleIcon class="hidden md:block button__icon w-15" />
-              </Tooltip>
+              您将收到
             </label>
-            <Amount :value="exchangeRate.rate" currency="USDC" sub/>
-          </div>
-
-          <div class="form-group mb-14">
-            <label class="flex items-center space-x-3">
-              You will receive
-            </label>
-            <Amount :value="usdcAmount" currency="USDC" sub/>
+            <Amount :value="usdcAmount" currency="CNY" sub/>
           </div>
         </div>
 
         <!-- eslint-disable-next-line max-len -->
-        <div v-if="!withinSaleLimit" class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
+        <div v-if="!withinSaleLimit"
+             class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
           <div class="">
             <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-              汇率已更新。交换最大值现在是 {{exchangeRate.limit}} CT.
+              汇率已更新。交换最大值现在是 {{ exchangeRate.limit }} XCT.
             </span>
           </div>
         </div>
@@ -180,7 +162,8 @@
       <template v-slot:footer>
         <div class="px-24 py-32 border-t border-gray-700 border-opacity-30">
           <!-- eslint-disable-next-line max-len -->
-          <div class="mb-24 form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
+          <div class="mb-24 form-group"
+               :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
             <form>
               <label for="password">输入密码</label>
               <div class="relative input-wrap">
@@ -197,14 +180,19 @@
                 />
               </div>
               <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+              <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
+                {{ error.$message }}
+              </div>
               <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
+              <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">
+                {{ passwordError }}
+              </div>
             </form>
           </div>
 
           <!-- eslint-disable-next-line max-len -->
-          <div v-if="submitError" class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
+          <div v-if="submitError"
+               class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
                 发生了错误 ({{ submitError }})。 请再试一次。
@@ -213,8 +201,12 @@
           </div>
 
           <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
-            <button class="w-full button button--outline-success" @click="() => goto(1)">返回</button>
-            <button class="w-full button button--success" :disabled="!canSell" @click="sell">Confirm</button>
+            <el-button class="w-full" type="success" size="large" plain @click="() => goto(1)">
+              返回
+            </el-button>
+            <el-button class="w-full" :loading="loading" type="success" :disabled="!canSell" size="large" @click="sell">
+              确认
+            </el-button>
           </div>
         </div>
       </template>
@@ -222,49 +214,50 @@
 
     <Modal :close="cancel" :visible="visible && step === 3">
       <template v-slot:header>
-        <h2 class="mb-8">Sale accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">提现已接受<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
         <div class="pb-14 min-h-410">
 
           <div class="form-group mb-14">
-            <label>You are selling</label>
-            <Amount :value="completedTx.amount / 1e6" currency="CT" short sub/>
+            <label>您正在提现</label>
+            <Amount :value="completedTx.amount" currency="XCT" short sub/>
           </div>
 
           <div class="form-group mb-14">
-            <label>From</label>
-            <HashLink to="explorer" :wallet="address" />
+            <label>从</label>
+            <HashLink to="explorer" :wallet="address"/>
           </div>
 
           <div class="form-group mb-14">
-            <label>To</label>
-            <HashLink to="etherscan" :wallet="completedTx.data.destination" />
+            <label>到</label>
+            <div>{{ payType.card_name }}</div>
+            <div>{{ payType.card_id }}</div>
           </div>
 
           <div class="form-group mb-14">
-            <label>Transaction Fee</label>
+            <label>手续费</label>
             <Amount :value="feeOnSubmit" currency="CT" short sub/>
           </div>
 
+          <!--          <div class="form-group mb-14">-->
+          <!--            <label>汇率</label>-->
+          <!--            <Amount :value="exchangeRateOnSubmit" currency="CNY" sub/>-->
+          <!--          </div>-->
+
           <div class="form-group mb-14">
-            <label>Exchange Rate</label>
-            <Amount :value="exchangeRateOnSubmit" currency="USDC" sub/>
+            <label>您将收到</label>
+            <Amount :value="usdcAmountOnSubmit" currency="CNY" sub/>
           </div>
 
           <div class="form-group mb-14">
-            <label>You will receive</label>
-            <Amount :value="usdcAmountOnSubmit" currency="USDC" sub/>
-          </div>
-
-          <div class="form-group mb-14">
-            <label>Transaction hash</label>
-            <HashLink to="explorer" :transaction="completedTx.hash" truncated />
+            <label>交易哈希</label>
+            <HashLink to="explorer" :transaction="completedTx.hash" truncated/>
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">您的请求已被接受，应该会尽快处理。如果您的请求因任何原因无法处理，您的 CT 将被退回。</p>
+            <p class="mb-0">您的请求已被接受，应该会尽快处理。如果您的请求因任何原因无法处理，您的余额将被退回。</p>
           </div>
         </div>
       </template>
@@ -274,7 +267,8 @@
           <button
             @click="cancel"
             class="block w-full mx-auto text-center button button--success md:w-1/2"
-          >Close</button>
+          >关闭
+          </button>
         </div>
       </template>
     </Modal>
@@ -282,30 +276,30 @@
 </template>
 
 <script>
-/*global process*/
 
+import Radio from '@/components/Radio.vue'
+import ABI_const from '@/contract/ABI_const'
+import {fetchExchangeRates, fetchGasRates} from '@/utils/api'
+import {parseAmount} from '@/utils/form'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
-import * as xe from '@edge/xe-utils'
+import {ArrowDownIcon, ArrowRightIcon, LockOpenIcon} from '@heroicons/vue/outline'
+import {InformationCircleIcon} from '@heroicons/vue/solid'
+import useVuelidate from '@vuelidate/core'
+import {mapState} from 'vuex'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
-import { InformationCircleIcon } from '@heroicons/vue/solid'
 import Modal from '../Modal'
 import Tooltip from '../Tooltip'
-import { helpers } from '@vuelidate/validators'
-import { mapState } from 'vuex'
-import { parseAmount } from '@/utils/form'
-import { toMicroXe } from '@edge/wallet-utils'
-import useVuelidate from '@vuelidate/core'
-import { ArrowDownIcon, ArrowRightIcon, LockOpenIcon } from '@heroicons/vue/outline'
-import { fetchExchangeRates, fetchGasRates } from '@/utils/api'
 
+const ethers = require('ethers')
 const exchangeRateUpdateInterval = 15 * 1000
 const gasRatesUpdateInterval = 15 * 1000
 
 export default {
   name: 'SellModal',
   components: {
+    Radio,
     Amount,
     ArrowDownIcon,
     ArrowRightIcon,
@@ -328,7 +322,6 @@ export default {
       iExchangeRate: null,
       iGasRates: null,
 
-      recipient: '',
       amount: '',
       password: '',
       passwordError: '',
@@ -337,33 +330,36 @@ export default {
       submitError: '',
       feeOnSubmit: 0,
       exchangeRateOnSubmit: 0,
-      usdcAmountOnSubmit: 0
+      usdcAmountOnSubmit: 0,
+      payType: {},
+      payTypeArr: [
+        // {name: '建设银行', value: '****5678'},
+        // {name: '农业银行', value: '****5679'},
+        // {name: '中信银行', value: '****5670'}
+      ],
+      loading: false
     }
   },
   validations() {
     return {
-      recipient: [
-        validation.required,
-        validation.ethAddress
-      ],
       amount: [
         validation.required,
-        ...validation.amount(this.balance, this.amountParsed),
-        helpers.withParams(
-          { saleLimit: this.saleLimit },
-          helpers.withMessage(`The exchange maximum is ${this.saleLimit} CT.`, () => this.withinSaleLimit)
-        )
+        ...validation.amount(this.xctBalance, this.amountParsed)
+        // helpers.withParams(
+        //   { saleLimit: this.saleLimit },
+        //   helpers.withMessage(`The exchange maximum is ${this.saleLimit} CT.`, () => this.withinSaleLimit)
+        // )
       ],
       password: [validation.passwordRequired]
     }
   },
   computed: {
-    ...mapState(['address', 'balance', 'nextNonce']),
+    ...mapState(['address', 'balance', 'xctBalance']),
     amountParsed() {
       return parseAmount(this.amount)
     },
     canReadySell() {
-      return ![this.v$.recipient, this.v$.amount].map(f => f.$invalid).includes(true) && this.usdcAmount > 0
+      return ![this.v$.amount].map(f => f.$invalid).includes(true) && this.usdcAmount > 0
     },
     canSell() {
       return !this.v$.$invalid && this.withinSaleLimit && this.usdcAmount > 0
@@ -385,7 +381,7 @@ export default {
     minimumFee() {
       if (this.gasRates.minimumHandlingFee === undefined) return NaN
       if (this.exchangeRate.gas === undefined) return NaN
-      const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
+      const {handlingFeePercentage, minimumHandlingFee} = this.gasRates
       const percentageFee = this.amountParsed * (handlingFeePercentage / 100)
       return Math.max(percentageFee, minimumHandlingFee)
     },
@@ -415,7 +411,19 @@ export default {
       }
     }
   },
+  mounted() {
+    let cardList = this.$cookies.get('cardList')
+    console.log(cardList)
+    if (cardList) {
+      this.payTypeArr = cardList['card_lists']
+      this.payType = this.payTypeArr[0]
+    }
+  },
   methods: {
+
+    setStakeType(type) {
+      this.payType = type
+    },
     cancel() {
       this.reset()
       this.close()
@@ -436,7 +444,7 @@ export default {
     },
     readySell() {
       // validate only step 1
-      const fields = [this.v$.recipient, this.v$.amount]
+      const fields = [this.v$.amount]
       fields.forEach(f => f.$touch())
       if (fields.map(f => f.$error).includes(true)) return
       this.goto(2)
@@ -444,7 +452,6 @@ export default {
     reset() {
       this.goto(1)
 
-      this.recipient = ''
       this.amount = ''
       this.password = ''
 
@@ -462,37 +469,47 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+        chainId: 27
+      })
+      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      let CtXCTAddress = this.$store.state.config.env.VUE_APP_XCT_ADDRESS
+      CtXCTAddress = '0x26cc2bE0E3de1371F464a9896Fa8274231992FbA'
+      const contract = new ethers.Contract(
+        CtXCTAddress,
+        ABI_const['XCT'].abi,
+        customHttpProvider
+      )
 
-      // create tx
-      const tx = xe.tx.sign({
-        timestamp: Date.now(),
-        sender: this.address,
-        recipient: process.env.VUE_APP_BRIDGE_WALLET_ADDRESS,
-        amount: toMicroXe(this.amountParsed),
-        data: {
-          destination: this.recipient,
-          ref: this.exchangeRate.ref,
-          memo: 'CT Sale',
-          token: 'USDC'
-        },
-        nonce: this.nextNonce
-      }, privateKey)
+      let contractWithSigner = contract.connect(wallet)
+
+      let value = this.amountParsed * 100
 
       // submit tx to blockchain
       try {
-        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
-        if (metadata.accepted) {
-          this.completedTx = results[0]
-          this.feeOnSubmit = this.fee
-          this.exchangeRateOnSubmit = this.exchangeRate.rate
-          this.usdcAmountOnSubmit = this.usdcAmount
-          this.goto(3)
+        this.loading = true
+        const tx = await contractWithSigner.redeem(value, 1)
+        // const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        // if (metadata.accepted) {
+        //   this.completedTx = results[0]
+        //   this.feeOnSubmit = this.fee
+        //   this.exchangeRateOnSubmit = this.exchangeRate.rate
+        //   this.usdcAmountOnSubmit = this.usdcAmount
+        //   this.goto(3)
+        // }
+        // else {
+        //   this.submitError = results[0].reason
+        // }
+        this.completedTx = {
+          amount: this.amount,
+          hash: tx.hash
         }
-        else {
-          this.submitError = results[0].reason
-        }
-      }
-      catch (err) {
+        this.feeOnSubmit = this.fee
+        this.exchangeRateOnSubmit = this.exchangeRate.rate
+        this.usdcAmountOnSubmit = this.usdcAmount
+        this.goto(3)
+      } catch (err) {
+        this.loading = false
         console.error(err)
         this.submitError = err.message
       }

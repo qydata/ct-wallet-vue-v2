@@ -14,7 +14,7 @@
         v-else
         :to="item.link"
         class="main-nav__link"
-        :class="location && (item.text === 'Transactions' && location.startsWith('/transactions')) ? 'router-link-active' : ''"
+        :class="location && (item.text === 'Transactions' && location.startsWith('/transactions')) && 'router-link-active'"
       >
         {{ item.text }}
       </router-link>

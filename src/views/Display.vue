@@ -5,71 +5,56 @@
 
     <div class="bg-gray-200 py-25">
       <div class="container">
-        <!--        <button :class="'button ' + tabModel == 'erc20' ? 'button&#45;&#45;success': 'button&#45;&#45;outline-success'" @click="openErc20">-->
-        <button :class="{
-        'button': true,
-        'button--success': tabModel == 'erc20',
-        'button--outline-success': tabModel != 'erc20'
-        }"
-                style="margin-right: 10px; color: black"
-                @click="openErc20">
-          通证
-        </button>
-
-        <button :class="{
-        'button': true,
-        'button--success': tabModel == 'nft',
-        'button--outline-success': tabModel != 'nft'
-        }"
-                style="margin-right: 10px; color: black"
-                @click="openNft">
-          NFT
-        </button>
-
-        <button :class="{
-        'button': true,
-        'button--success': tabModel == 'other',
-        'button--outline-success': tabModel != 'other'
-        }" style="margin-right: 10px; color: black"
-                @click="openOther">
-          其它
-        </button>
+        <el-button v-bind:key="index" v-for="(items,index) in tabArray"
+                   :type="tabModel === items.name?'success':'default'"
+                   size="large"
+                   @click="items.fun">
+          {{ items.name }}
+        </el-button>
       </div>
     </div>
-    <div class="bg-gray-200 py-15">
+    <div class="bg-gray-200">
 
       <div class="container">
-        <Erc20Table
+        <ERC20Table
           :limit="limit"
           :send="send"
-          v-if="tabModel == 'erc20'"
+          :transactions="transactions"
+          :loaded="loaded"
+          :loading="loading"
+          v-if="tabModel === 'ERC-20'"
           :receiveMetadata="onTransactionsUpdate"
           :page="currentPage"
-          :sortable="true"
         />
-        <NftTable
+        <ERC721Table
           :limit="limit"
           :send="send"
-          v-if="tabModel == 'nft'"
+          :transactions="transactions"
+          :loaded="loaded"
+          :loading="loading"
+          v-if="tabModel === 'ERC-721'"
           :receiveMetadata="onTransactionsUpdate"
           :page="currentPage"
-          :sortable="true"
         />
-        <OtherTable
+        <ERC1155Table
           :limit="limit"
           :send="send"
-          v-if="tabModel == 'other'"
+          :transactions="transactions"
+          :loaded="loaded"
+          :loading="loading"
+          v-if="tabModel === 'ERC-1155'"
           :receiveMetadata="onTransactionsUpdate"
           :page="currentPage"
-          :sortable="true"
         />
-        <Pagination
-          v-if="metadata.totalCount > limit"
-          baseRoute="Transactions"
-          :currentPage="currentPage"
-          :limit="limit"
-          :totalCount="metadata.totalCount"
-        />
+        <div class="mt-10">
+          <el-pagination layout="prev, pager, next"
+                         :current-page="currentPage"
+                         background
+                         @current-change="handlePage"
+                         :total="transactionsAllPage.length"/>
+
+        </div>
+
       </div>
     </div>
     <SendModal :close="closeSendModal" :visible="model === 'send'" :item="item"/>
@@ -78,76 +63,140 @@
 
 <script>
 import AccountPanel from '@/components/AccountPanel'
-import Erc20Table from '@/components/Erc20Table'
+import ERC1155Table from '@/components/ERC1155Table'
+import ERC20Table from '@/components/ERC20Table'
+import ERC721Table from '@/components/ERC721Table'
 import Header from '@/components/Header'
-import Menu from '@/components/Menu'
-import NftTable from '@/components/NftTable'
-import OtherTable from '@/components/OtherTable'
 import Pagination from '@/components/PaginationNew'
-import TransactionsTable from '@/components/TransactionsTable'
 import SendModal from '@/components/tx/SendModal'
+import {fetchTokenBalance} from '@/utils/api'
+import {mapState} from 'vuex'
+
+const txsRefreshInterval = 5 * 1000
 
 export default {
   name: 'ViewTransactions',
-  title: '展示',
+  title: '通证',
   data: function () {
     return {
       metadata: {totalCount: 0},
-      limit: 20,
-      tabModel: 'erc20',
-      erc20List: [],
+      limit: 5,
+      tabModel: 'ERC-20',
       nftList: [],
       otherList: [],
+      iTransactions: 0,
+      transactions: [],
+      transactionsAll: [],
+      transactionsAllPage: [],
       item: null,
-      model: ''
-    }
-  },
-  watch: {
-    tabModel(oldVal, newVal) {
-
+      model: '',
+      loaded: false,
+      loading: false,
+      tabArray: [
+        {
+          name: 'ERC-20', fun: () => {
+            this.openErc20()
+          }
+        },
+        {
+          name: 'ERC-721', fun: () => {
+            this.openErc721()
+          }
+        },
+        {
+          name: 'ERC-1155', fun: () => {
+            this.openErc1155()
+          }
+        }
+      ],
+      currentPage: 1
     }
   },
   components: {
     AccountPanel,
     Header,
     Pagination,
-    TransactionsTable,
-    Erc20Table,
-    NftTable,
-    OtherTable,
-    Menu,
+    ERC20Table,
+    ERC721Table,
+    ERC1155Table,
     SendModal
   },
   computed: {
-    currentPage() {
-      return Math.max(1, parseInt(this.$route.query.page) || 1)
-    },
+    ...mapState(['address']),
     lastPage() {
-      return Math.max(1, Math.ceil(this.metadata.totalCount / this.limit))
+      return Math.max(1, Math.ceil(this.transactions.length / this.limit))
     }
   },
+  mounted() {
+    this.updateTransactions()
+    // initiate polling
+    this.iTransactions = setInterval(() => {
+      this.updateTransactions()
+    }, txsRefreshInterval)
+  },
+  unmounted() {
+    clearInterval(this.iTransactions)
+  },
   methods: {
+    handlePage(val) {
+      this.currentPage = val
+      this.processTransactionPage()
+    },
+    processTransactionPage() {
+      this.transactions = this.transactionsAllPage.slice((this.currentPage - 1) * this.limit, this.currentPage * this.limit)
+      this.loading = false
+    },
+    async updateTransactions() {
+      this.loading = true
+      // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
+      this.transactionsAll = (await fetchTokenBalance(this.address)).data
+      this.processTransaction()
+    },
     send(item) {
       this.item = item
+      this.item.type = item.token.type
+      this.item.balance = item.value
+      this.item.decimals = item.token.decimals
+      this.item.name = item.token.name
+      this.item.symbol = item.token.symbol
       this.model = 'send'
     },
-    closeSendModal(tabName) {
+    closeSendModal() {
       this.model = ''
     },
     openErc20() {
-      this.tabModel = 'erc20'
+      this.transactionsAllPage = []
+      this.tabModel = 'ERC-20'
+      this.processTransaction()
     },
-    openNft() {
-      this.tabModel = 'nft'
+    openErc721() {
+      this.transactionsAllPage = []
+      this.tabModel = 'ERC-721'
+      this.processTransaction()
     },
-    openOther() {
-      this.tabModel = 'other'
+    openErc1155() {
+      this.transactionsAllPage = []
+      this.tabModel = 'ERC-1155'
+      this.processTransaction()
+    },
+    processTransaction() {
+      this.transactionsAllPage = []
+      for (const tempErc20 of this.transactionsAll) {
+        if (tempErc20 && tempErc20.token.type && tempErc20.token.type === this.tabModel) {
+          this.transactionsAllPage.push(tempErc20)
+        }
+      }
+      this.loaded = true
+      this.processTransactionPage()
     },
     onTransactionsUpdate(metadata) {
       this.metadata = metadata
     }
   },
   watch: {
+    tabModel(oldVal, newVal) {
+      console.log(oldVal, newVal)
+    },
     metadata() {
       const numRegEx = /^[-+]?\d*$/
       if (this.$route.query.page) {
@@ -163,18 +212,6 @@ export default {
 </script>
 
 <style scoped>
-.account-panel {
-  @apply bg-black-100 pt-16 pb-30;
-}
-
-.account-panel__left,
-.account-panel__right {
-  @apply w-full;
-}
-
-.account-panel__address {
-  @apply text-gray text-sm2 mb-7 w-full;
-}
 
 .account-panel__address span {
   @apply text-white break-all block;
@@ -196,55 +233,15 @@ export default {
   @apply bottom-0 text-half;
 }
 
-.account-panel__buttons {
-  @apply grid gap-6 grid-cols-1 w-full flex-shrink-0 mt-12;
-}
-
-.account-panel__buttons button {
-  @apply w-full;
-}
-
-.account-panel__balance {
-  @apply flex-grow mb-6;
-}
-
-.account-panel__modals {
-  width: 1px;
-}
-
 @screen md {
   .account-panel .container {
     @apply flex flex-row justify-between items-end;
-  }
-
-  .account-panel__left,
-  .account-panel__right {
-    @apply w-auto;
-  }
-
-  .account-panel__address {
-    @apply pr-9 my-12;
   }
 
   .account-panel__address span {
     @apply inline;
   }
 
-  .account-panel__buttons {
-    @apply grid grid-cols-3 mt-0;
-  }
-
-  .account-panel__buttons.staking-buttons {
-    @apply grid-cols-1;
-  }
-
-  .account-panel__buttons > button {
-    width: 140px;
-  }
-
-  .account-panel__buttons.staking-buttons > button {
-    width: 170px;
-  }
 
   .account-panel__balance {
     @apply mb-0;

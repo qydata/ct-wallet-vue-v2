@@ -25,7 +25,7 @@ export default {
     TransactionsTable
   },
   props: ['overviews', 'transactions'],
-  methods: {},
+  methods: {}
 }
 </script>
 

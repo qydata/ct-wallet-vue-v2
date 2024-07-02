@@ -2,20 +2,33 @@
   <div class="transaction-table">
     <table>
       <thead class="hidden lg:table-header-group">
-      <tr>
-        <TableHeader width="50%" header="名称" :sortQuery="sortQuery"
-                     sortParam="timestamp" :onSortingUpdate="updateSorting"
-        />
-        <TableHeader width="50%" header="链接" :sortQuery="sortQuery"
-                     sortParam="hash" :onSortingUpdate="updateSorting"
-        />
-      </tr>
 
-      </thead>
-      <tbody>
       <tr>
-        <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
-          没有数据
+        <th>名称</th>
+        <th>符号</th>
+        <th>合约地址</th>
+        <th>余额</th>
+        <th>类型</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody v-if="transactions.length">
+      <ERC721TableItem
+        v-for="(item, index) in transactions"
+        :key="index"
+        :item="item"
+        :sendNft="sendNft"
+      />
+      </tbody>
+      <tbody v-else-if="!loaded && loading">
+      <td colspan="12" class="text-black block w-full text-center bg-white lg:table-cell py-35">
+        正在载入...
+      </td>
+      </tbody>
+      <tbody v-else>
+      <tr>
+        <td colspan="12" class="block w-full text-center bg-white lg:table-cell py-35 text-black">
+          没有数字NFT.
         </td>
       </tr>
       </tbody>
@@ -24,34 +37,32 @@
 </template>
 
 <script>
-/*global process*/
 
-import TableHeader from '@/components/TableHeader'
-import TransactionsTableItem from '@/components/TransactionsTableItem'
+import ERC721TableItem from '@/components/ERC721TableItem'
+import {fetchDisplay} from '@/utils/api'
 import {mapState} from 'vuex'
 
 const txsRefreshInterval = 5 * 1000
 
 export default {
-  name: 'TransactionsTable',
+  name: 'Erc20Table',
   data: function () {
     return {
-      loaded: false,
-      loading: false,
       metadata: null,
-      transactions: [],
       iTransactions: null
     }
   },
   components: {
-    TableHeader,
-    TransactionsTableItem
+    ERC721TableItem
   },
   props: [
     'limit',
     'page',
     'receiveMetadata',
-    'sortable'
+    'transactions',
+    'loaded',
+    'loading',
+    'send'
   ],
   computed: {
     ...mapState(['address']),
@@ -70,12 +81,15 @@ export default {
     clearInterval(this.iTransactions)
   },
   methods: {
+    sendNft(nftItem) {
+      this.send(nftItem)
+    },
     async updateTransactions() {
       this.loading = true
       // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
 
-      // const {transactions} = await fetchTransactions(this.address,
-      //   {limit: this.limit, page: this.page})
+      const {transactions} = await fetchDisplay(this.address,
+        {limit: this.limit, page: this.page})
       // const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-timestamp` : '-timestamp'
       // const transactions = await index.tx.transactions(
       //   process.env.VUE_APP_INDEX_API_URL,
@@ -86,7 +100,13 @@ export default {
       //     sort: sortQuery
       //   }
       // )
-      // this.transactions = transactions
+      this.transactions = []
+      for (const transactionsKey in transactions) {
+        let temperc20 = transactions[transactionsKey]
+        if (temperc20 && temperc20.token.type && temperc20.token.type == 'ERC-721') {
+          this.transactions.push(temperc20)
+        }
+      }
       // if (this.receiveMetadata) this.receiveMetadata(transactions.metadata)
       this.loaded = true
       this.loading = false

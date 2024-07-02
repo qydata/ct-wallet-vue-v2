@@ -27,7 +27,7 @@ export default {
       if (this.value === undefined) return '...'
       if (isNaN(this.value)) return '&mdash;'
       if (typeof this.value === 'string') {
-        return Number(this.value).toFixed(6)
+        return Number(this.value).toFixed(this.decimalPlaces || 6)
       }
       if (this.isCT && !this.short) {
         // return ethers.utils.formatEther(this.value)

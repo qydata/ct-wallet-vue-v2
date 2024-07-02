@@ -29,7 +29,7 @@
         <div class="form-group" :class="{'form-group__error': v$.firstMessage.$error}">
           <label for="firstMessage">消息内容</label>
           <div class="relative">
-            <el-input
+            <input
               v-model="v$.firstMessage.$model"
               :rows="3"
               type="textarea"
@@ -37,7 +37,7 @@
               placeholder="请输入消息内容"
             >
 
-            </el-input>
+            </input>
 
 <!--            <input-->
 <!--              type="text"-->

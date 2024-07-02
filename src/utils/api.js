@@ -3,32 +3,15 @@
 // that can be found in the LICENSE.md file. All rights reserved.
 
 /*global process*/
-
-const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
 const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
 const BASE_URL = process.env.VUE_APP_BASE_URL
 const BASE_API = process.env.VUE_APP_BASE_API
-const fetchBlocks = async (options = {}) => {
-  if (!options.page) {
-    options.page = 1
-  }
-
-  if (!options.limit) {
-    options.limit = 10
-  }
-
-  return getBlockNoByTimestampList(options).then((resultBlock) =>
-    // console.log('resultBlock', resultBlock)
-    ({
-      blocks: resultBlock.data.result
-    })
-  )
-}
+const fetchBlocks = async () => getBlocks().then((resultBlock) => resultBlock.data)
 
 const fetchData = (url, options = {}, payload) => {
   const fetchOptions = {
     method: options.method || 'get',
-    headers: {
+    headers: options.headers || {
       'content-type': 'application/json'
     }
   }
@@ -55,10 +38,14 @@ const fetchData = (url, options = {}, payload) => {
     }))
 }
 
-const fetchPendingTransactions = (address) => {
-  const url = `${BLOCKCHAIN_API_URL}/transactions/pending/${address}`
-
-  return fetchData(url)
+const fetchTokenBalance = (address) => {
+  const url = `https://ctblock.cn/api/v2/addresses/${address}/token-balances`
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponseGet`, {
+    method: 'post'
+  }, {
+    target_url:
+    url
+  })
 }
 
 const fetchGasRates = async () => fetchData(`${INDEX_API_URL}/gasrates`)
@@ -72,17 +59,7 @@ const fetchSessionsStats = async (wallet, options = {}) => {
   if (!wallet) options.wallet = null
   const url = `${INDEX_API_URL}/nodes/activity/?range=${options.range}&count=${options.count}&wallet=${wallet}`
 
-  const results = await fetchData(url)
-  return results
-}
-
-function getTxList(addressHash, page, offset) {
-  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`, {
-    method: 'post'
-  }, {
-    target_url:
-      `http://ctblock.cn/api?module=account&action=txlist&address=${addressHash}&page=${page}&offset=${offset}`
-  })
+  return await fetchData(url)
 }
 
 function sendTelCode(data) {
@@ -112,6 +89,14 @@ function putChangeReq(data) {
   }, data)
 }
 
+const fetchCardlist = async (options = {}) => {
+  const url = `${INDEX_API_URL}/cardlist?signature=${options.signature}&timestamp=${options.timestamp}`
+  return await fetchData(url, {
+    method: 'post',
+    headers: {}
+  })
+}
+
 function checkPay(data) {
   return fetchData(`${BASE_URL}${BASE_API}/index.php?a=check_pay&order_id=` + data.order_id, {
     method: 'get',
@@ -130,119 +115,45 @@ function userCert(data) {
   }, data)
 }
 
-function getPendingTxList(addressHash, page, offset) {
-  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`,
+function getBlocks() {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponseGet`,
     {method: 'post'},
     {
-      target_url:
-        `http://ctblock.cn/api?module=account&action=pendingtxlist&address=${addressHash}&page=${page}&offset=${offset}`
+      target_url: 'https://ctblock.cn/api/v2/main-page/blocks'
     })
 }
 
-function getBlockNoByTimestampList(options) {
-  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`,
+function getTransactions(address) {
+  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponseGet`,
     {method: 'post'},
     {
-      target_url: `http://ctblock.cn/api?module=account&action=getminedblocks&address=0xcEBcbF16494EDbAd87d7FEAb0260ADe82c571E5D&page=${options.page}&offset=${options.limit}`
+      // TODO这里是测试代码
+      // TEST
+      // target_url: 'https://ctblock.cn/api/v2/main-page/transactions'
+      // PROD
+      target_url: `https://ctblock.cn/api/v2/addresses/${address}/transactions?filter=to%20%7C%20from`
     })
 }
 
-const fetchTransactions = async (address, options = {}) => {
-  if (!options.page) {
-    options.page = 1
-  }
+const fetchTransactions = async (address) => getTransactions(address).then((resultTx) => ({
+  transactions: resultTx.data.items
+}))
 
-  if (!options.limit) {
-    options.limit = 20
-  }
-
-  let txResults = []
-  return getPendingTxList(address, options.page, options.limit).then((resultPending) => {
-    // console.log('getPendingTxList', resultPending)
-    txResults = txResults.concat(formatTransactions(address, resultPending.data.result, true))
-    // Fetch confirmed transactions.
-    // console.log('txResults_getPendingTxList', txResults)
-    return getTxList(address, options.page, options.limit).then((resultTx) => {
-      // console.log('getTxList', resultTx)
-      txResults = txResults.concat(formatTransactions(address, resultTx.data.result))
-      // console.log('txResults_getTxList', txResults)
-      return {
-        transactions: txResults
-      }
-    })
-  })
-}
-
-function getTokenList(addressHash) {
-  return fetchData(`${BASE_URL}${BASE_API}/index.php?a=getTargetResponse`,
-    {method: 'post'},
-    {
-      target_url: `http://ctblock.cn/api?module=account&action=tokenlist&address=${addressHash}`
-    })
-}
-
-const fetchDisplay = async (address, options = {}) => {
-  if (!options.page) {
-    options.page = 1
-  }
-
-  if (!options.limit) {
-    options.limit = 20
-  }
-
-  // address = '0x39a1E670db3F586122150067F79937716Dd48230'
-
-  return getTokenList(address).then((resultTokenList) =>
-      // console.log('getPendingTxList', resultPending)
-      // Fetch confirmed transactions.
-      // eslint-disable-next-line brace-style
-    {
-      return {
-        transactions: resultTokenList.data.result
-      }
-    }
-  )
-}
-
-const formatTransactions = (address, data, pending) => {
-  const transactions = []
-
-  data.forEach(tx => {
-
-    transactions.push({
-      address: tx.from === address ? tx.to : tx.from,
-      amount: tx.value,
-      // '16/04/2021 13:06',
-      date: tx.timeStamp,
-      description: tx.input || 'None',
-      hash: tx.hash,
-      recipient: tx.to,
-      sender: tx.from,
-      timestamp: tx.timeStamp,
-      type: tx.from === address ? 'Sent' : 'Received',
-      confirmations: tx.confirmations,
-      pending
-    })
-  })
-
-  return transactions
-}
-
-const fetchTokenValue = async () => fetchData(`${INDEX_API_URL}/token/current`)
+// const fetchTokenValue = async () => fetchData(`${INDEX_API_URL}/token/current`)
+const fetchTokenValue = async () => ({cnyPerCT: 0.1})
 
 export {
   fetchBlocks,
-  fetchPendingTransactions,
   fetchGasRates,
   fetchExchangeRates,
   fetchSessionsStats,
   fetchTransactions,
-  fetchDisplay,
   sendTelCode,
   queryCert,
   userCert,
   putChangeReq,
   checkPay,
-  formatTransactions,
-  fetchTokenValue
+  fetchTokenValue,
+  fetchTokenBalance,
+  fetchCardlist
 }

@@ -2,11 +2,17 @@
   <div>
     <ForgetWallet :close="closeForgetWalletModal" :afterForget="afterForgetWallet" :visible="showForgetWalletModal"/>
     <ExportKey :close="closeExportKeyModal" :visible="showExportKeyModal"/>
-    <CreateModal :afterCreate="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'create'"/>
-    <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal == 'import'"/>
-    <AuthBindModal :afterAuthBind="gotoCharge" :close="closeCreateModal" :visible="createAndImportModal == 'authBind'"/>
-    <ChargeModal :afterCharge="gotoOverview" :visible="createAndImportModal == 'charge'"/>
-    <header class="relative z-10 py-16 header md:pb-15" :class="{'menu-open':showNav}">
+    <CreateModal :afterCreate="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal === 'create'"/>
+    <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal === 'import'"/>
+    <AuthBindModal :afterAuthBind="gotoCharge" :close="closeCreateModal"
+                   :visible="createAndImportModal === 'authBind'"/>
+    <ChargeModal :afterCharge="gotoOverview" :visible="createAndImportModal === 'charge'" :label="'header'"/>
+    <PayCardModal
+      :afterCharge="closeCreateModal"
+      :showAddPay="showAddPay"
+      :visible="createAndImportModal === 'card'"/>
+    <AddPayCardModal :afterCharge="openCardModal" :visible="createAndImportModal === 'addcard'"/>
+    <header class="relative z-10 py-10 header md:pb-10" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">
         <Logo/>
         <BurgerButton @click="showNav = !showNav"/>
@@ -21,7 +27,11 @@
                        :openExportKeyModal="openExportKeyModal"
                        :openAuthBindModal="openAuthBindModal"
                        :openCreateModal="openCreateModal"
-                       :openImportKeyModal="openImportKeyModal"/>
+                       :openImportKeyModal="openImportKeyModal"
+                       :openCardModal="openCardModal"
+
+          />
+
         </div>
       </div>
     </header>
@@ -29,16 +39,16 @@
 </template>
 
 <script>
-/* global process */
-
 import BurgerButton from '@/components/BurgerButton'
 import HeaderTools from '@/components/HeaderTools'
+import AddPayCardModal from '@/components/index/AddPayCardModal'
 import AuthBindModal from '@/components/index/AuthBindModal'
 import ChargeModal from '@/components/index/ChargeModal'
 import CreateModal from '@/components/index/CreateModal'
 import ExportKey from '@/components/index/ExportModal'
 import ForgetWallet from '@/components/index/ForgetModal'
 import ImportKey from '@/components/index/ImportModal'
+import PayCardModal from '@/components/index/PayCardModal'
 import Logo from '@/components/Logo'
 import Menu from '@/components/Menu'
 import WalletList from '@/components/WalletList'
@@ -61,10 +71,10 @@ export default {
           link: '/overview',
           text: '总览'
         },
-        {
-          link: '/transactions',
-          text: '交易'
-        },
+        // {
+        //   link: '/transactions',
+        //   text: '交易'
+        // },
         // {
         //   link: '/staking',
         //   text: 'Staking'
@@ -75,7 +85,7 @@ export default {
         // },
         {
           link: '/display',
-          text: '展示'
+          text: '通证'
         },
 
         // {
@@ -94,7 +104,7 @@ export default {
         {
           link: 'https://github.com/qydata/ct-wallet-vue-v2',
           external: 'https://github.com/qydata/ct-wallet-vue-v2',
-          text: '开源连接'
+          text: '开源链接'
         }
       ]
     }
@@ -151,12 +161,17 @@ export default {
       this.showNav = false
       this.createAndImportModal = 'authBind'
     },
-    closeImportKeyModal() {
-      this.createAndImportModal = ''
-    },
     openImportKeyModal() {
       this.showNav = false
       this.createAndImportModal = 'import'
+    },
+    openCardModal() {
+      this.showNav = false
+      this.createAndImportModal = 'card'
+    },
+    showAddPay() {
+      this.showNav = false
+      this.createAndImportModal = 'addcard'
     },
     async gotoAuthBind() {
 
@@ -245,7 +260,9 @@ export default {
     ImportKey,
     CreateModal,
     AuthBindModal,
-    ChargeModal
+    ChargeModal,
+    PayCardModal,
+    AddPayCardModal
   }
 }
 </script>

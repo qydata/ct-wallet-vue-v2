@@ -192,7 +192,7 @@
             <Amount :value="returnAmountParsed" currency="CT" short sub/>
           </div>
           <div class="form-group mb-14">
-            <label>Transaction hash</label>
+            <label>交易哈希</label>
             <HashLink to="explorer" :transaction="completedTx.hash" truncated />
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
@@ -207,7 +207,7 @@
           <button
             @click="cancel"
             class="block w-full mx-auto text-center button button--success md:w-1/2"
-          >Close</button>
+          >关闭</button>
         </div>
       </template>
     </Modal>

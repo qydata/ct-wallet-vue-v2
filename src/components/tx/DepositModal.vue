@@ -2,16 +2,18 @@
   <div>
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
-        <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">质押 XCT<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <!-- eslint-disable max-len -->
-        <span v-if="browserSupport" class="sub-heading d-block text-gray text-caption">Connect to MetaMask to deposit EDGE for swap.</span>
-        <span v-else class="sub-heading d-block text-gray text-caption">您的浏览器不支持 MetaMask 浏览器扩展。请使用 Brave、Chrome、CTChain 或 Firefox 充值 EDGE。</span>
+        <span v-if="browserSupport"
+              class="sub-heading d-block text-gray text-caption">连接到 MetaMask 存入 XCT 进行交换。</span>
+        <span v-else class="sub-heading d-block text-gray text-caption">您的浏览器不支持 MetaMask 浏览器扩展。请使用 Brave、Chrome、CTChain 或 Firefox 充值 XCT。</span>
         <!-- eslint-enable max-len -->
       </template>
       <template v-slot:body>
         <div class="pb-15">
           <!-- eslint-disable-next-line max-len -->
-          <div v-if="connectError" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
+          <div v-if="connectError"
+               class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
                 {{ connectError }}
@@ -19,10 +21,17 @@
             </div>
           </div>
           <!-- eslint-disable max-len -->
-          <button v-if="connectStatus === 'onboarding'" class="w-full mb-16 button button--success" disabled>Waiting for MetaMask...</button>
-          <button v-else-if="connectStatus === 'connecting'" class="w-full mb-16 button button--success" disabled>Connecting to MetaMask...</button>
-          <button v-else-if="hasMetaMask" class="w-full mb-16 button button--success" @click="connect">Connect MetaMask</button>
-          <button v-else class="w-full mb-16 button button--success" @click="installMetaMask" :disabled="!browserSupport">Click to install MetaMask</button>
+          <button v-if="connectStatus === 'onboarding'" class="w-full mb-16 button button--success" disabled>等待
+            MetaMask...
+          </button>
+          <button v-else-if="connectStatus === 'connecting'" class="w-full mb-16 button button--success" disabled>正在连接到
+            MetaMask...
+          </button>
+          <button v-else-if="hasMetaMask" class="w-full mb-16 button button--success" @click="connect">连接 MetaMask
+          </button>
+          <button v-else class="w-full mb-16 button button--success" @click="installMetaMask"
+                  :disabled="!browserSupport">点击安装MetaMask
+          </button>
           <!-- eslint-enable max-len -->
           <button class="w-full button button--outline-success" @click="cancel">返回</button>
         </div>
@@ -33,9 +42,9 @@
       <template v-slot:header>
         <div class="flex justify-between">
           <div>
-            <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+            <h2 class="mb-8">质押 XCT<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
             <span class="sub-heading d-block text-gray text-caption">
-              <Amount :value="edgeBalance" currency="EDGE"/> 可用
+              <Amount :value="edgeBalance" currency="XCT"/> 可用
             </span>
           </div>
           <div>
@@ -46,26 +55,28 @@
       <template v-slot:body>
         <div>
           <div class="form-group mb-30">
-            <span class="label">Depositing from</span>
-            <HashLink to="etherscan" :wallet="ethAddress" />
+            <span class="label">质押来源</span>
+            <HashLink to="etherscan" :wallet="ethAddress"/>
           </div>
           <div class="form-group mb-30">
-            <span class="label">Depositing to</span>
-            <HashLink to="explorer" :wallet="address" />
+            <span class="label">质押至</span>
+            <HashLink to="explorer" :wallet="address"/>
           </div>
           <div class="lg-input-group" :class="{'form-group__error': v$.amount.$error}">
             <label for="key">数量</label>
             <div class="relative input-wrap">
               <input
-                type="text"
+                type="number"
                 id="amount-send"
                 placeholder="0.000000"
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
-              <span class="absolute right-0 text-xl curren top-23">EDGE</span>
+              <span class="absolute right-0 text-xl curren top-23">XCT</span>
               <!-- eslint-disable-next-line max-len -->
-              <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
+              <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors"
+                   :key="error.$uid">{{ error.$message }}
+              </div>
             </div>
           </div>
           <div class="flex flex-wrap justify-end pt-12 radio-list">
@@ -76,8 +87,9 @@
             <label class="flex items-center space-x-3">
               Transaction fee
               <!-- eslint-disable-next-line max-len -->
-              <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} CT handling fee`">
-                <InformationCircleIcon class="hidden md:block button__icon w-15" />
+              <Tooltip class="ml-3" position="right" theme="dark"
+                       :text="`Inclusive of a ${minimumFee} CT handling fee`">
+                <InformationCircleIcon class="hidden md:block button__icon w-15"/>
               </Tooltip>
             </label>
             <Amount :value="fee" currency="CT" short sub/>
@@ -89,28 +101,32 @@
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <!-- eslint-disable-next-line max-len -->
-          <div class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
+          <div
+            class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="md:flex">
               <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">You are depositing</span>
                   <span class="block text-lg text-white price">
-                    <Amount :value="amountParsed" currency="EDGE"/>
+                    <Amount :value="amountParsed" currency="XCT"/>
                   </span>
                 </div>
                 <!-- eslint-disable-next-line max-len -->
-                <span class="flex justify-center p-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
+                <span
+                  class="flex justify-center  px-6 py-12  mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                   <img src="/assets/e-logo-alt.svg" alt="image description" class="flex-shrink-0">
                 </span>
                 <!-- eslint-disable-next-line max-len -->
-                <span class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
+                <span
+                  class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                   <ArrowRightIcon class="hidden md:block"/>
                   <ArrowDownIcon class="block md:hidden"/>
                 </span>
               </div>
               <div class="right md:w-1/2 md:flex md:pl-18">
                 <!-- eslint-disable-next-line max-len -->
-                <span class="flex justify-center p-8 pl-12 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
+                <span
+                  class="flex justify-center p-8 pl-12 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
                   <img src="/assets/logo.svg" alt="CT Wallet" class="flex-shrink-0">
                 </span>
                 <div class="md:flex-grow">
@@ -124,7 +140,8 @@
           </div>
 
           <!-- eslint-disable-next-line max-len -->
-          <div v-if="depositMessage" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
+          <div v-if="depositMessage"
+               class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="deposit-message flex w-full overflow-hidden text-white overflow-ellipsis">
                 {{ depositMessage }}
@@ -132,7 +149,8 @@
             </div>
           </div>
           <!-- eslint-disable-next-line max-len -->
-          <div v-if="depositError" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
+          <div v-if="depositError"
+               class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden text-red overflow-ellipsis">
                 {{ depositError }}
@@ -144,8 +162,9 @@
             <button
               @click="cancel"
               class="w-full button button--outline-success"
-            >返回</button>
-            <button class="w-full button button--success" :disabled="!canDeposit" @click="deposit">Deposit</button>
+            >返回
+            </button>
+            <button class="w-full button button--success" :disabled="!canDeposit" @click="deposit">质押</button>
           </div>
         </div>
       </template>
@@ -153,27 +172,27 @@
 
     <Modal :close="cancel" :visible="visible && step === 3">
       <template v-slot:header>
-        <h2 class="mb-8">Deposit accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">质押 已接受<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
         <div>
           <div class="form-group mb-14">
             <label>You are depositing</label>
-            <Amount :value="amountParsed" currency="EDGE" sub/>
+            <Amount :value="amountParsed" currency="XCT" sub/>
           </div>
 
           <div class="form-group mb-14">
             <label>From</label>
-            <HashLink to="etherscan" :wallet="completedTx.from" />
+            <HashLink to="etherscan" :wallet="completedTx.from"/>
           </div>
 
           <div class="form-group mb-14">
             <label>To</label>
-            <HashLink to="explorer" :wallet="address" />
+            <HashLink to="explorer" :wallet="address"/>
           </div>
 
           <div class="form-group mb-14">
-            <span class="mb-4 label tracking text-base3">Transaction fee</span>
+            <span class="mb-4 label tracking text-base3">手续费</span>
             <div class="relative input-wrap">
               <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                 <Amount :value="fee" currency="CT" short sub/>
@@ -187,12 +206,12 @@
           </div>
 
           <div class="form-group mb-14">
-            <label>Transaction hash</label>
-            <HashLink to="etherscan" :transaction="completedTx.hash" truncated />
+            <label>交易哈希</label>
+            <HashLink to="etherscan" :transaction="completedTx.hash" truncated/>
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">
-            <p class="mb-0">Your request has been accepted and should be processed within 24 hours.</p>
+            <p class="mb-0">您的请求已被接受，应在 24 小时内处理。</p>
           </div>
         </div>
       </template>
@@ -200,7 +219,7 @@
       <template v-slot:footer>
         <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
           <!-- eslint-disable-next-line max-len -->
-          <button class="block w-full mx-auto text-center button button--success md:w-3/6" @click="cancel">Close</button>
+          <button class="block w-full mx-auto text-center button button--success md:w-3/6" @click="cancel">关闭</button>
         </div>
       </template>
     </Modal>
@@ -208,24 +227,24 @@
 </template>
 
 <script>
+import {fetchGasRates} from '@/utils/api'
+import {parseAmount} from '@/utils/form'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
+import bridge from '@edge/bridge-utils'
+import {ArrowDownIcon, ArrowRightIcon} from '@heroicons/vue/outline'
+import {InformationCircleIcon} from '@heroicons/vue/solid'
+import MetaMaskOnboarding from '@metamask/onboarding'
+import useVuelidate from '@vuelidate/core'
+import {helpers} from '@vuelidate/validators'
+import {detect} from 'detect-browser'
+import {ethers} from 'ethers'
+import {mapState} from 'vuex'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
-import { InformationCircleIcon } from '@heroicons/vue/solid'
-import MetaMaskOnboarding from '@metamask/onboarding'
 import Modal from '../Modal'
 import Radio from '../Radio'
 import Tooltip from '../Tooltip'
-import bridge from '@edge/bridge-utils'
-import { detect } from 'detect-browser'
-import { ethers } from 'ethers'
-import { fetchGasRates } from '@/utils/api'
-import { helpers } from '@vuelidate/validators'
-import { mapState } from 'vuex'
-import { parseAmount } from '@/utils/form'
-import useVuelidate from '@vuelidate/core'
-import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/vue/outline'
 
 const gasRatesUpdateInterval = 15 * 1000
 
@@ -291,11 +310,11 @@ export default {
       amount: [
         validation.required,
         helpers.withParams(
-          { p: this.amountParsed },
+          {p: this.amountParsed},
           helpers.withMessage('Invalid amount.', () => !isNaN(this.amountParsed) && this.amountParsed > 0)
         ),
         helpers.withParams(
-          { b: this.edgeBalance, p: this.amountParsed },
+          {b: this.edgeBalance, p: this.amountParsed},
           helpers.withMessage('Insufficient funds.', () => {
             if (isNaN(this.amountParsed)) return false
             return this.amountParsed <= this.edgeBalance
@@ -324,7 +343,7 @@ export default {
     },
     fee() {
       if (isNaN(this.minimumFee)) return NaN
-      const { handlingFeePercentage } = this.gasRates
+      const {handlingFeePercentage} = this.gasRates
       const percentageFee = this.amountParsed * (handlingFeePercentage / 100)
       return Math.round(Math.max(percentageFee, this.minimumFee))
     },
@@ -374,18 +393,17 @@ export default {
       this.connectStatus = 'connecting'
       try {
         // https://eips.ethereum.org/EIPS/eip-1102#eth_requestaccounts
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        const accounts = await window.ethereum.request({method: 'eth_requestAccounts'})
 
         // https://eips.ethereum.org/EIPS/eip-695
-        this.setChainId(await window.ethereum.request({ method: 'eth_chainId' }))
+        this.setChainId(await window.ethereum.request({method: 'eth_chainId'}))
         window.ethereum.on('chainChanged', this.setChainId)
 
         this.setAccounts(accounts)
         window.ethereum.on('accountsChanged', this.setAccounts)
 
         this.goto(2)
-      }
-      catch (err) {
+      } catch (err) {
         console.error(err)
         this.connectError = err.message
         this.connectStatus = ''
@@ -407,8 +425,7 @@ export default {
         this.completedTx = tx
         this.depositInProgress = false
         this.goto(3)
-      }
-      catch (err) {
+      } catch (err) {
         console.error(err)
         this.depositInProgress = false
         if (err.code === 4001) {
@@ -452,7 +469,7 @@ export default {
       // https://eips.ethereum.org/EIPS/eip-1193#user-account-exposure-and-account-changes
       const [ethAddress] = accounts
       if (ethAddress === undefined) {
-        this.connectError = 'No Ethereum address found.'
+        this.connectError = 'No 草天链地址 found.'
         this.connectStatus = ''
         return
       }
@@ -476,7 +493,7 @@ export default {
     setChainId(chainId) {
       // https://eips.ethereum.org/EIPS/eip-1193#chain-changes
       if (networks[chainId] === undefined) {
-        this.connectError = '不支持的网络。请使用以太坊主网或 Rinkeby 测试网络。'
+        this.connectError = '不支持的网络。请使用草天链主网。'
         this.connectStatus = ''
         return
       }
@@ -503,7 +520,7 @@ export default {
 </script>
 
 <style scoped>
-.sub-heading  :deep(.amount .currency) {
+.sub-heading :deep(.amount .currency) {
   @apply ml-5;
 }
 

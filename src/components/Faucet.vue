@@ -24,7 +24,7 @@
         <button
           class="request-button py-8 button button--solid"
           :disabled="!urlIsValid || submitting"
-          @click="requestXE">
+          @click="requestCT">
           {{ submitting ? 'Submitting' : 'Request CT' }}
         </button>
       </div>
@@ -48,7 +48,7 @@ export default {
       twitterUrl: 'https://twitter.com/intent/tweet?text=',
       twitterMsg: encodeURIComponent(
         'Requesting faucet funds for xe_0000000000000000000000000000000000000000 on https://test.network/'
-        + '\n\n@edgenetwork $XE $EDGE'
+        + '\n\n@edgenetwork $CT $XCT'
       )
     }
   },
@@ -65,7 +65,7 @@ export default {
     }
   },
   methods: {
-    requestXE: function() {
+    requestCT: function() {
       this.submitting = true
 
       // POST request to faucet using superagent

@@ -21,7 +21,7 @@
                 />
                 <img
                   class="qrcode__image"
-                  src="assets/logo.png"
+                  src="assets/logo.svg"
                   alt="ct logo"
                 >
               </figure>

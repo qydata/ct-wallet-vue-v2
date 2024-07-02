@@ -1,15 +1,15 @@
 <template>
   <div class="w-full">
-    <h3>最近的区块</h3>
+    <h3 class="text-black">最近的区块</h3>
 
     <table class="w-full">
       <thead class="hidden lg:table-header-group">
       <tr>
-        <th width="50%">区块高度</th>
-        <th width="50%">时间</th>
-        <!--          <th width="10%">Txs</th>-->
-        <!--          <th width="25%" class="amount-col">Total CT</th>-->
-        <!--          <th width="30%">Mined</th>-->
+        <th width="20%" class="whitespace-nowrap">区块高度</th>
+        <th width="25%" class="whitespace-nowrap">哈希</th>
+        <th width="10%" class="whitespace-nowrap">交易数</th>
+        <th width="25%" class="whitespace-nowrap amount-col">总草田分</th>
+        <th width="20%" class="whitespace-nowrap">已验证</th>
       </tr>
       </thead>
       <tbody v-if="loading">
@@ -21,35 +21,39 @@
       </tbody>
       <tbody v-if="blocks.length">
       <tr v-for="block in blocks" :key="block.hash">
-        <td data-title="Height:">
+        <td data-title="区块高度:">
           <!-- eslint-disable-next-line max-len -->
-          <a :href="`${explorerUrl}/block/${block.blockNumber}`" target="_blank" rel="noreferrer"
-             class="monospace lg:inline-block">
-            {{ block.blockNumber }}
+          <a :href="`${explorerUrl}/block/${block.height}`" target="_blank" rel="noreferrer"
+             class="monospace text-black lg:inline-block">
+            {{ block.height }}
           </a>
         </td>
-        <td data-title="Hash:" :title="block.timeStamp">
-          <a :href="`${explorerUrl}/block/${block.blockNumber}`" target="_blank" rel="noreferrer">
-            <span class="monospace lg:inline-block">{{ formatDate(block.timeStamp) }}</span>
+        <td data-title="哈希:" :title="block.hash">
+          <a :href="`${explorerUrl}/block/${block.hash}`" target="_blank" rel="noreferrer">
+            <span class="monospace  text-black lg:inline-block">{{ block.hash }}</span>
           </a>
         </td>
-        <!--          <td data-title="Txs:">-->
-        <!--            <span class="monospace lg:inline-block">{{ block.transactions.length }}</span>-->
-        <!--          </td>-->
-        <!--          <td data-title="Total CT:" class="amount-col">-->
-        <!--            <span class="monospace lg:inline-block">{{ formatAmount(block.total) }}</span>-->
-        <!--          </td>-->
-        <!--          <td data-title="Mined:" class="text-gray-600 lg:text-gray">-->
-        <!--            <span class="lg:inline-block">-->
-        <!--              <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon /></span>-->
-        <!--              <span class="monospace lg:font-sans lg:text-gray-400">-->
-        <!--                {{ timeSince(block.timestamp) }}-->
-        <!--              </span>-->
-        <!--            </span>-->
-        <!--          </td>-->
+        <td data-title="交易数:">
+          <span class="monospace  text-black lg:inline-block">{{ block.tx_count }}</span>
+        </td>
+        <td data-title="总草田分:" class="amount-col">
+          <span class="monospace  text-black lg:inline-block">{{ formatAmount(block.tx_fees) }}</span>
+        </td>
+        <td data-title="已验证:" class="text-gray-600 lg:text-gray">
+                    <span class="lg:inline-block">
+                      <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
+                      <span class="monospace lg:font-sans lg:text-gray">
+                        {{ timeSince(block.timestamp) }}
+                      </span>
+                    </span>
+        </td>
       </tr>
       </tbody>
     </table>
+    <!--    <div class="w-full text-right my-20">-->
+    <!--      <el-button type="success" @click="open(`https://ctblock.cn/blocks`)">展示所有-->
+    <!--      </el-button>-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -60,12 +64,15 @@ import dayjs from 'dayjs'
 import moment from 'moment'
 import {fetchBlocks} from '../utils/api'
 
+moment.locale('zh-cn') //设置语言 或 moment.lang('zh-cn');
+moment.suppressDeprecationWarnings = true
+
 const ethers = require('ethers')
 export default {
   name: 'RecentBlocks',
   data: function () {
     return {
-      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network',
+      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://ctblock.cn',
       loading: false,
       polling: null,
       blocks: [],
@@ -82,6 +89,9 @@ export default {
     this.formatDate()
   },
   methods: {
+    open(url) {
+      window.open(url)
+    },
     formatDate(date_time_str) {
 
       // let date_time_str = '2023-05-09 07:10:37.000000Z'
@@ -89,9 +99,18 @@ export default {
       return formattedDate
     },
     async fetchBlocks() {
-      const limit = this.isTestnet ? 5 : 7
-      const {blocks} = await fetchBlocks({limit})
-      this.blocks = blocks
+      const limit = this.isTestnet ? 5 : 6
+      let tempBlocks = await fetchBlocks({limit})
+
+      let tempBlocks1 = [...tempBlocks, ...this.blocks]
+
+      let newObj = {}
+      let repeatData = tempBlocks1.reduce((preVal, curVal) => {
+        newObj[curVal.height] ? '' : newObj[curVal.height] = preVal.push(curVal)
+        return preVal
+      }, [])
+      this.blocks = repeatData.slice(0, limit)
+
       this.loading = false
     },
     formatAmount(amount) {

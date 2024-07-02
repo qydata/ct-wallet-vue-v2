@@ -123,7 +123,7 @@
               <span class="icon">
                 <EditPen/>
               </span>
-              <el-input
+              <input
                 :rows="3"
                 type="textarea"
                 autocomplete="off"
@@ -144,7 +144,7 @@
                 <LockOpenIcon/>
               </span>
               <input
-                type="text"
+                type="number"
                 autocomplete="off"
                 placeholder="请输入发行数量"
                 id="supply"

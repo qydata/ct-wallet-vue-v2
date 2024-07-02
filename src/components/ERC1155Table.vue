@@ -2,52 +2,32 @@
   <div class="transaction-table">
     <table>
       <thead class="hidden lg:table-header-group">
-      <tr v-if="sortable">
-        <TableHeader width="15%" header="名称" :sortQuery="sortQuery"
-                     sortParam="timestamp" :onSortingUpdate="updateSorting"
-        />
-        <TableHeader width="15%" header="符号" :sortQuery="sortQuery"
-                     sortParam="hash" :onSortingUpdate="updateSorting"
-        />
-        <TableHeader width="20%" header="余额" :sortQuery="sortQuery"
-                     sortParam="sortAddress" :onSortingUpdate="updateSorting"
-        />
-        <TableHeader width="15%" header="类型" :sortQuery="sortQuery"
-                     sortParam="data.memo" :onSortingUpdate="updateSorting"
-        />
-        <TableHeader width="20%" header="精度" :sortQuery="sortQuery"
-                     sortParam="block.height" :onSortingUpdate="updateSorting"
-        />
-        <TableHeader class="amount-col" width="15%" header="操作" :sortQuery="sortQuery"
-                     sortParam="amount" :onSortingUpdate="updateSorting"
-        />
-      </tr>
-      <tr v-else>
-        <th width="15%">名称</th>
-        <th width="15%">符号</th>
-        <th width="20%">余额</th>
-        <th width="15%">精度</th>
-        <th width="20%">类型</th>
-        <th width="15%">操作</th>
+      <tr>
+        <th>名称</th>
+        <th>符号</th>
+        <th>余额</th>
+        <th>类型</th>
+        <th>Token ID</th>
+        <th>操作</th>
       </tr>
       </thead>
       <tbody v-if="transactions.length">
-      <Erc20TableItem
+      <ERC1155TableItem
         v-for="(item, index) in transactions"
         :key="index"
         :item="item"
-        :sendErc20="sendErc20"
+        :sendNft="sendNft"
       />
       </tbody>
       <tbody v-else-if="!loaded && loading">
-      <td colspan="12" class="block w-full text-center bg-white lg:table-cell py-35">
+      <td colspan="12" class="text-black block w-full text-center bg-white lg:table-cell py-35">
         正在载入...
       </td>
       </tbody>
       <tbody v-else>
       <tr>
-        <td colspan="12" class="block w-full text-center bg-white lg:table-cell py-35">
-          没有通证.
+        <td colspan="12" class="block w-full text-center bg-white lg:table-cell py-35 text-black">
+          没有数字NFT.
         </td>
       </tr>
       </tbody>
@@ -56,35 +36,30 @@
 </template>
 
 <script>
-/*global process*/
 
-import Erc20TableItem from '@/components/Erc20TableItem'
-import TableHeader from '@/components/TableHeader'
+import ERC1155TableItem from '@/components/ERC1155TableItem'
 import {fetchDisplay} from '@/utils/api'
 import {mapState} from 'vuex'
 
-const txsRefreshInterval = 5 * 1000
 
 export default {
-  name: 'Erc20Table',
+  name: 'Erc1155Table',
   data: function () {
     return {
-      loaded: false,
-      loading: false,
       metadata: null,
-      transactions: [],
       iTransactions: null
     }
   },
   components: {
-    TableHeader,
-    Erc20TableItem
+    ERC1155TableItem
   },
   props: [
     'limit',
     'page',
     'receiveMetadata',
-    'sortable',
+    'transactions',
+    'loaded',
+    'loading',
     'send'
   ],
   computed: {
@@ -93,19 +68,10 @@ export default {
       return this.$route.query.sort
     }
   },
-  mounted() {
-    this.updateTransactions()
-    // initiate polling
-    this.iTransactions = setInterval(() => {
-      this.updateTransactions()
-    }, txsRefreshInterval)
-  },
-  unmounted() {
-    clearInterval(this.iTransactions)
-  },
+
   methods: {
-    sendErc20(erc20Item) {
-      this.send(erc20Item)
+    sendNft(nftItem) {
+      this.send(nftItem)
     },
     async updateTransactions() {
       this.loading = true
@@ -126,7 +92,7 @@ export default {
       this.transactions = []
       for (const transactionsKey in transactions) {
         let temperc20 = transactions[transactionsKey]
-        if (temperc20 && temperc20.type && temperc20.type == 'ERC-20') {
+        if (temperc20 && temperc20.token.type && temperc20.token.type == 'ERC-1155') {
           this.transactions.push(temperc20)
         }
       }

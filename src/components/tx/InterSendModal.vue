@@ -40,7 +40,7 @@
           <label for="amount-send">数量</label>
           <div class="relative input-wrap">
             <input
-              type="text"
+              type="number"
               id="amount-send"
               placeholder="0.00"
               disabled

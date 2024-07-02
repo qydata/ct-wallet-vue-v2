@@ -2,20 +2,19 @@
   <th :class="classes" :width="width" @click="updateSorting">
     {{ header }}
     <span class="mr-1 -mt-2 icon">
-      <ChevronUpIcon v-if="isAscending" />
+      <ChevronUpIcon v-if="isAscending"/>
       <ChevronDownIcon v-else-if="isDescending"/>
     </span>
   </th>
 </template>
 
 <script>
-import { ChevronDownIcon, ChevronUpIcon} from '@heroicons/vue/outline'
+import {ChevronDownIcon, ChevronUpIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'TableHeader',
   data: function () {
-    return {
-    }
+    return {}
   },
   components: {
     ChevronDownIcon,

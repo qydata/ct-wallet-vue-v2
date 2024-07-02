@@ -19,8 +19,8 @@ import { required as _required, helpers, minLength } from '@vuelidate/validators
  * @returns ValidationRuleWithParams[]
  */
 export const amount = (b, p) => [
-  helpers.withParams({ p }, helpers.withMessage('Invalid amount.', () => !isNaN(p) && p > 0)),
-  helpers.withParams({ b, p }, helpers.withMessage('Insufficient funds.', () => {
+  helpers.withParams({ p }, helpers.withMessage('金额无效。', () => !isNaN(p) && p > 0)),
+  helpers.withParams({ b, p }, helpers.withMessage('余额不足。', () => {
     if (isNaN(p)) return false
     return p <= (b)
   }))
@@ -47,7 +47,7 @@ const ethAddressRegexp = /^0x[a-fA-F0-9]{40}$/
 /**
  * Ethereum address validator.
  */
-export const ethAddress = helpers.withMessage('Invalid Ethereum address.', v => ethAddressRegexp.test(v))
+export const ethAddress = helpers.withMessage('无效的 草天链地址.', v => ethAddressRegexp.test(v))
 
 /**
  * Password length validator.

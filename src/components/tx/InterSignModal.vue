@@ -114,7 +114,7 @@ import HashLink from '../HashLink'
 import ModalInter from '../ModalInter'
 import Radio from '../Radio'
 
-const EthereumTx = require('ethereumjs-tx').Transaction
+const EthereumTx = require('@ethereumjs/tx').Transaction
 const Common = require('ethereumjs-common')
 const Web3 = require('web3')
 const ABI_const = require('@/contract/ABI_const.js')

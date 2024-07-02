@@ -38,7 +38,6 @@ module.exports = {
           '^/blockChain': ''
         }
       }
-    },
-    disableHostCheck: true
+    }
   }
 }

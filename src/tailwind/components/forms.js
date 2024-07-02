@@ -22,6 +22,7 @@ const formStyles = ({theme}) => ({
       borderColor: colors.red.DEFAULT,
       color: colors.red.DEFAULT
     }
+
   },
   formGroup: {
     position: 'relative',

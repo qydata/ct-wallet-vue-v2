@@ -14,8 +14,12 @@ const comparePassword = async password => {
 
 const getAddress = async () => {
   const publicKey = await getPublicKey()
-  if (publicKey !== undefined) return ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
-  return undefined
+  if (publicKey !== undefined) {
+    return ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
+  }
+  else {
+    return undefined
+  }
 }
 
 const getPrivateKey = async (password) => {

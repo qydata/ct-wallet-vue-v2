@@ -9,6 +9,7 @@ const JiFenToken = require('./JiFenToken.json')
 const Lottery = require('./Lottery.json')
 const ScoreToken = require('./ScoreToken.json')
 const JobContract = require('./JobContract.json')
+const XCT = require('./XCT.json')
 const ABI_const = {
   AuthController,
   CtMultCall,
@@ -20,6 +21,7 @@ const ABI_const = {
   JiFenToken,
   Lottery,
   JobContract,
+  XCT,
   ScoreToken
 }
 module.exports = ABI_const

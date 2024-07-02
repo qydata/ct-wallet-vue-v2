@@ -20,7 +20,7 @@
       <li class="header-tools__item">
         <div class="header-tools__link" @click="exportKey">
           <span class="header-tools__icon">
-            <KeyIcon/>
+            <SortDescendingIcon/>
           </span>
           导出私钥
         </div>
@@ -44,9 +44,17 @@
       <li class="header-tools__item">
         <div class="header-tools__link" @click="importKey">
           <span class="header-tools__icon">
-            <KeyIcon/>
+            <SortAscendingIcon/>
           </span>
           导入账户
+        </div>
+      </li>
+      <li class="header-tools__item">
+        <div class="header-tools__link" @click="openCard">
+          <span class="header-tools__icon">
+            <CreditCardIcon/>
+          </span>
+          我的支付
         </div>
       </li>
       <li class="header-tools__item">
@@ -70,7 +78,17 @@
 </template>
 
 <script>
-import {ChevronDownIcon, CogIcon, KeyIcon, UserIcon, PlusIcon, LockOpenIcon, LogoutIcon} from '@heroicons/vue/outline'
+import {
+  ChevronDownIcon,
+  CogIcon,
+  CreditCardIcon,
+  LockOpenIcon,
+  LogoutIcon,
+  PlusIcon,
+  SortAscendingIcon,
+  SortDescendingIcon,
+  UserIcon
+} from '@heroicons/vue/outline'
 import {SupportIcon} from '@heroicons/vue/solid'
 import vClickOutside from 'click-outside-vue3'
 
@@ -79,10 +97,12 @@ export default {
   components: {
     ChevronDownIcon,
     CogIcon,
-    KeyIcon,
+    SortAscendingIcon,
+    SortDescendingIcon,
     UserIcon,
     PlusIcon,
     LockOpenIcon,
+    CreditCardIcon,
     LogoutIcon,
     SupportIcon
   },
@@ -124,6 +144,10 @@ export default {
     importKey() {
       this.showTools = false
       this.openImportKeyModal()
+    },
+    openCard() {
+      this.showTools = false
+      this.openCardModal()
     }
   },
   props: {
@@ -131,7 +155,8 @@ export default {
     openExportKeyModal: Function,
     openCreateModal: Function,
     openAuthBindModal: Function,
-    openImportKeyModal: Function
+    openImportKeyModal: Function,
+    openCardModal: Function
   }
 }
 </script>
@@ -175,7 +200,7 @@ export default {
 
 @screen md {
   .header-tools {
-    @apply flex-col space-y-10 absolute top-40 w-56 right-0 bg-black p-0 rounded flex-wrap mt-0;
+    @apply flex-col space-y-10 absolute top-40 w-56 right-0 bg-black p-0 rounded flex-wrap mt-2;
   }
 
   .header-tools__item {

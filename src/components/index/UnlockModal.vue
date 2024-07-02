@@ -58,13 +58,17 @@
 </template>
 
 <script>
+import {fetchCardlist} from '@/utils/api'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import {LockOpenIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {mapState} from 'vuex'
-import * as storage from '@/utils/storage'
-import * as validation from '@/utils/validation'
 import Modal from '../Modal'
 
+const CryptoJS = require('crypto-js')
+const WALLET_EXPIRY = 5 * 60
+const ethers = require('ethers')
 export default {
   name: 'UnlockModal',
   components: {
@@ -109,6 +113,10 @@ export default {
         return false
       }
     },
+    sha256(message) {
+      return CryptoJS.SHA256(message).toString(CryptoJS.enc.Hex)
+    },
+
     async unlock() {
       this.passwordError = ''
 
@@ -125,6 +133,33 @@ export default {
       this.$store.commit('unlock')
       this.$store.dispatch('refresh')
 
+      const wallet = new ethers.Wallet(privateKey)
+      const currentTime = Math.floor(Date.now()).toString() // 获取当前时间戳并转换为字符串
+      // 使用钱包签名时间戳
+
+      // console.log('currentTime:', currentTime)
+      const signature = await wallet.signMessage(currentTime)
+      // console.log('signature:', signature)
+
+      // 验证签名
+      const recoveredAddress = ethers.utils.verifyMessage(currentTime, signature)
+      // console.log('Recovered Address:', recoveredAddress)
+      // console.log('Signer Address:', wallet.address)
+
+      // TODO 获取支付信息
+      const cardList = await fetchCardlist({
+        signature: signature,
+        timestamp: currentTime
+      })
+      // console.log('cardList:', cardList)
+      this.$cookies.set('cardList', cardList,
+        WALLET_EXPIRY,
+        {
+        secure: true,
+        httpOnly: true,
+        // domain: '.ctblock.cn',
+        path: '/'
+      })
       this.afterUnlock()
     },
     unlockOnEnter(event) {

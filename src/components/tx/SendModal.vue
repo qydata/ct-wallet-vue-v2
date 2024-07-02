@@ -46,7 +46,7 @@
             <label for="amount-send">数量</label>
             <div class="relative input-wrap">
               <input
-                type="text"
+                type="number"
                 id="amount-send"
                 placeholder="0.00"
                 v-model="v$.amount.$model"
@@ -222,13 +222,13 @@
 /*global process*/
 
 import LoadingModal from '@/components/index/LoadingModal'
+import {parseAmount} from '@/utils/form'
+import * as storage from '@/utils/storage'
+import * as validation from '@/utils/validation'
 import {LockOpenIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers} from '@vuelidate/validators'
 import {mapState} from 'vuex'
-import {parseAmount} from '@/utils/form'
-import * as storage from '@/utils/storage'
-import * as validation from '@/utils/validation'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import Modal from '../Modal'
@@ -344,8 +344,14 @@ export default {
       }
     },
     formattedAmount() {
-      this.item.decimals = this.item.decimals == '' ? 0 : this.item.decimals
-      return ethers.utils.formatUnits(this.item.balance, this.item.decimals)
+      console.log(this.item.decimals)
+      console.log(this.item.balance)
+      if (this.item.decimals == '' || this.item.decimals == null) {
+        return Number(this.item.balance)
+      }
+      else {
+        return Number(ethers.utils.formatUnits(this.item.balance, this.item.decimals))
+      }
     }
   },
   watch: {
@@ -570,7 +576,7 @@ export default {
           // console.log('recept', recept)
           this.loading = false
           if (recept.status === TRANSACTION_RECEIPT_STATUS.REVERTED) {
-            throw  'Transaction Reverted'
+            throw 'Transaction Reverted'
           }
           if (recept.status === TRANSACTION_RECEIPT_STATUS.SUCCESS) {
             this.completedTx = tx.data
@@ -622,7 +628,7 @@ export default {
           // console.log('recept', recept)
           this.loading = false
           if (recept.status === TRANSACTION_RECEIPT_STATUS.REVERTED) {
-            throw  'Transaction Reverted'
+            throw 'Transaction Reverted'
           }
           if (recept.status === TRANSACTION_RECEIPT_STATUS.SUCCESS) {
             this.completedTx = tx.data
@@ -671,7 +677,7 @@ export default {
           // console.log('recept', recept)
           this.loading = false
           if (recept.status === TRANSACTION_RECEIPT_STATUS.REVERTED) {
-            throw  'Transaction Reverted'
+            throw 'Transaction Reverted'
           }
           if (recept.status === TRANSACTION_RECEIPT_STATUS.SUCCESS) {
             this.completedTx = tx.data
@@ -717,7 +723,7 @@ export default {
             })
           this.loading = false
           if (recept.status === TRANSACTION_RECEIPT_STATUS.REVERTED) {
-            throw  'Transaction Reverted'
+            throw 'Transaction Reverted'
           }
           if (recept.status === TRANSACTION_RECEIPT_STATUS.SUCCESS) {
             this.completedTx = results

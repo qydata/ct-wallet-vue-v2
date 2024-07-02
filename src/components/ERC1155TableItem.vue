@@ -1,65 +1,59 @@
 <template>
   <tr>
     <td data-title="名称:">
-      <span class="monospace lg:font-sans lg:inline-block">
-        {{ item.name }}
+      <span class="monospace lg:font-sans lg:inline-block text-black">
+        {{ item.token.name }}
       </span>
     </td>
 
-    <td data-title="符号:" :title="item.symbol">
-        <span class="monospace lg:inline-block">
-          {{ item.symbol }}
+    <td data-title="符号:" :title="item.token.symbol">
+        <span class="monospace lg:inline-block text-black">
+          {{ item.token.symbol }}
         </span>
     </td>
 
-    <td data-title="To:" class="from-to" :title="item.balance">
+    <td data-title="余额:" class="from-to" :title="item.value">
       <span>
         <span class="icon-wrap"></span>
-          <span class="monospace lg:inline-block">
-            {{ item.balance }}
+          <span class="monospace lg:inline-block text-black">
+            {{ item.value }}
           </span>
       </span>
     </td>
-    <td data-title="To:" class="from-to" :title="JSON.stringify(item.metadata)">
+    <!--    <td data-title="To:" class="from-to" :title="JSON.stringify(item.metadata)">-->
+    <!--      <span>-->
+    <!--        <span class="icon-wrap"></span>-->
+    <!--          <span class="monospace lg:inline-block text-black">-->
+    <!--            {{ item.metadata }}-->
+    <!--          </span>-->
+    <!--      </span>-->
+    <!--    </td>-->
+    <td data-title="类型:" class="from-to" :title="item.token.type">
       <span>
         <span class="icon-wrap"></span>
-          <span class="monospace lg:inline-block">
-            {{ item.metadata }}
+          <span class="monospace lg:inline-block text-black">
+            {{ item.token.type }}
           </span>
       </span>
     </td>
-    <td data-title="To:" class="from-to" :title="item.type">
-      <span>
-        <span class="icon-wrap"></span>
-          <span class="monospace lg:inline-block">
-            {{ item.type }}
-          </span>
-      </span>
-    </td>
-    <td data-title="From:" class="from-to" :title="item.id">
+    <td data-title="Token ID:" class="from-to" :title="item.token_id">
       <span>
         <span class="icon-wrap"></span>
         <a :href="explorerIdUrl" target="_blank" rel="noreferrer">
-          <span class="monospace lg:inline-block">
-            {{ item.id }}
+          <span class="monospace lg:inline-block text-black">
+            {{ item.token_id }}
           </span>
         </a>
       </span>
     </td>
 
-    <td data-title="Status:">
-       <span>
-            <button class="button button--success" @click="sendNft(item)">发送</button>
-      </span>
+    <td data-title="操作:">
+      <el-button type="success" @click="sendNft(item)">发送</el-button>
     </td>
   </tr>
 </template>
 
 <script>
-/*global process*/
-
-const ethers = require('ethers')
-import {ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon} from '@heroicons/vue/outline'
 import {mapState} from 'vuex'
 
 export default {
@@ -74,39 +68,14 @@ export default {
     'sendNft'
   ],
   components: {
-    ArrowDownIcon,
-    ArrowUpIcon,
-    CheckCircleIcon,
-    ClockIcon
   },
   computed: {
     ...mapState(['address']),
     date() {
       return new Date(this.item.timestamp * 1000).toLocaleString()
     },
-    explorerFromAddressUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.sender}`
-    },
-    explorerToAddressUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.recipient}`
-    },
-    explorerTxUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/tx/${this.item.hash}`
-    },
     explorerIdUrl() {
       return `https://ctblock.cn/token/${this.item.contractAddress}/instance/${this.item.id}/token-transfers`
-    },
-    formattedAmount() {
-      return ethers.utils.formatEther(this.item.balance)
-    },
-    isConfirmed() {
-      return ((this.item.confirmations || 0) >= 10)
-    },
-    statusFormatted() {
-      if (this.item.pending) return '确认中'
-      if (this.item.confirmations === 1) return `${this.item.confirmations} confirmation`
-      if (this.item.confirmations < 10) return `${this.item.confirmations} confirmations`
-      return '已确认'
     },
     sent() {
       return this.item.sender === this.item.recipient || this.address === this.item.sender
@@ -191,12 +160,8 @@ td.from-to span {
     @apply pl-20 pt-13;
   }
 
-  td.amount-col {
-    @apply text-right
-  }
-
   td:last-child {
-    @apply pr-30 pb-10 text-right border-b-2;
+    @apply pr-30 pb-10 border-b-2;
   }
 
   td:before {

@@ -5,8 +5,8 @@
     </template>
 
     <template v-slot:footer>
-      <div class="px-24 pt-48 border-gray-700 border-solid border-t-default border-opacity-30 pb-54">
-        <form>
+      <div class="pt-48 border-gray-700 border-solid border-t-default border-opacity-30 pb-54">
+        <form class="px-24 ">
           <div class="flex items-start leading-8 text-gray mb-14">
           <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
             <ShieldExclamationIcon/>
@@ -19,6 +19,7 @@
             <label for="charge-address">充值至地址:</label>
             <input
               type="text"
+              readonly
               autocomplete="off"
               id="charge-address"
               placeholder="请输入地址"
@@ -32,7 +33,7 @@
           <div class="form-group" :class="{'form-group__error': v$.tovalue.$error}">
             <label for="charge-amount">充值金额:</label>
             <input
-              type="text"
+              type="number"
               autocomplete="off"
               id="charge-amount"
               placeholder="请填写充值金额"
@@ -44,16 +45,65 @@
             </div>
           </div>
 
-          <div class="flex items-start leading-8 text-gray mb-14">
-          <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
-            <ShieldExclamationIcon/>
-          </span>
-            <p>1 ￥ = 10 草田分.</p>
+          <div class="form-group mb-14">
+            <label class="flex items-center space-x-3">
+              汇率
+              <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`最后更新 ${timeSince(new Date().getTime())}`">
+                <InformationCircleIcon class="hidden md:block button__icon w-15" />
+              </Tooltip>
+            </label>
+            1 ￥ = {{ exchangeRate }} 草田分
           </div>
 
         </form>
-        <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-          <button class="w-full button button--outline-success" @click="skip">跳过</button>
+        <div class="px-24 pt-12 border-t border-gray-700 border-opacity-30">
+          <div
+            class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
+            <div class="md:flex">
+              <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
+                <div class="md:flex-grow">
+                  <span class="block mb-3 text-gray">您正在充值</span>
+                  <span class="block text-xl text-white price">
+                    <Amount :value="Number(tovalue)" currency="CNY" :decimalPlaces="2"/>
+                  </span>
+                </div>
+                <!-- eslint-disable-next-line max-len -->
+                <span
+                  class="flex justify-center  bg-white p-8   mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
+                  <img src="/assets/usd-coin-cny-logo.svg" alt="CT Wallet" class="flex-shrink-0">
+                </span>
+                <!-- eslint-disable-next-line max-len -->
+                <span
+                  class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
+                  <ArrowRightIcon class="hidden md:block"/>
+                  <ArrowDownIcon class="block md:hidden"/>
+                </span>
+              </div>
+              <div class="right md:w-1/2 md:flex md:pl-18">
+                <!-- eslint-disable-next-line max-len -->
+                <span
+                  class="bg-white flex justify-center p-8 mx-auto mb-12 border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
+                  <img src="/assets/logo.svg" alt="image description" class="flex-shrink-0">
+                </span>
+                <div class="md:flex-grow">
+                  <span class="block mb-3 text-gray">您将收到</span>
+                  <span class="block text-xl text-white price">
+                    <Amount :value="Number(tovalue)*exchangeRate" currency="草田分"/>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class=" px-24 grid grid-cols-1 gap-24 md:grid-cols-2">
+          <button class="w-full button button--outline-success" @click="skip">
+            {{
+              // label == 'header' ? '跳过' : '关闭'
+              label == 'accountPanel' ? '关闭' : '跳过'
+            }}
+
+          </button>
           <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="create">下一步</button>
         </div>
       </div>
@@ -62,6 +112,8 @@
 </template>
 
 <script>
+import Amount from '@/components/Amount.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import {putChangeReq, queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
 import {ShieldExclamationIcon} from '@heroicons/vue/outline'
@@ -69,29 +121,45 @@ import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
 import {mapState} from 'vuex'
 import Modal from '../Modal'
+import { InformationCircleIcon } from '@heroicons/vue/solid'
+import moment from 'moment'
+import {ArrowDownIcon, ArrowRightIcon, LockOpenIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'AuthBindModal',
   components: {
+    Tooltip,
+    Amount,
     Modal,
-    ShieldExclamationIcon
+    ShieldExclamationIcon,
+    InformationCircleIcon,
+    ArrowDownIcon,
+    ArrowRightIcon
   },
   props: {
     afterCharge: Function,
     close: Function,
-    visible: Boolean
+    visible: Boolean,
+    label: String
+  },
+  computed: {
+    ...mapState(['address']),
+    canSubmit() {
+      return !this.v$.$invalid
+    }
   },
   data() {
     return {
       privateKey: '',
       publicKey: '',
-
+      exchangeRate: 10,
       toaddress: '',
       tovalue: '',
       passwordError: '',
       canCopy: !!navigator.clipboard
     }
   },
+
   validations() {
     return {
       toaddress: [
@@ -111,25 +179,31 @@ export default {
       ]
     }
   },
-  computed: {
-    ...mapState(['address']),
-    canSubmit() {
-      return !this.v$.$invalid
-    }
-  },
+
   watch: {
     address(newVal, oldVal) {
       this.toaddress = this.address
     }
   },
+  async mounted() {
+    this.toaddress = await storage.getAddress(storage.getHighestWalletVersion())
+  },
   methods: {
+    timeSince(ts) {
+      return moment(ts).fromNow()
+    },
     cancel() {
       this.reset()
       this.close()
     },
     skip() {
-      this.reset()
-      this.afterCharge()
+      if(this.label == 'accountPanel') {
+        this.cancel()
+      }
+      else {
+        this.reset()
+        this.afterCharge()
+      }
     },
     async create() {
       if (!await this.v$.$validate()) return
@@ -196,13 +270,10 @@ export default {
 
     reset() {
       this.password = ''
-      this.tovalue = ''
       this.v$.$reset()
     }
   },
-  async mounted() {
-    this.toaddress = await storage.getAddress(storage.getHighestWalletVersion())
-  },
+
   setup() {
     return {
       v$: useVuelidate()
