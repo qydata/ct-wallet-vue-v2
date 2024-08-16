@@ -107,7 +107,7 @@ const buttonsStyles = ({ theme }) => ({
     appearance: 'none',
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.black.DEFAULT,
+    borderColor: colors.white.DEFAULT,
     borderRadius: rem(4),
     color: colors.white,
 

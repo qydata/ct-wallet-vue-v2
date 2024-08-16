@@ -22,19 +22,11 @@ const fetchData = (url, options = {}, payload) => {
 
   return fetch(url, fetchOptions)
     .then(res => {
-      // a non-200 response code
-      if (!res.ok) {
-        // create error instance with HTTP status text
-        const error = new Error(res.statusText)
-        error.json = res.json()
-        throw error
-      }
-
       return res.json()
     })
     .catch(() => ({
-      results: [],
-      metdata: {}
+      code: 500,
+      results: []
     }))
 }
 
@@ -91,6 +83,14 @@ function putChangeReq(data) {
 
 const fetchCardlist = async (options = {}) => {
   const url = `${INDEX_API_URL}/cardlist?signature=${options.signature}&timestamp=${options.timestamp}`
+  return await fetchData(url, {
+    method: 'post',
+    headers: {}
+  })
+}
+
+const postBindcard = async (options = {}) => {
+  const url = `${INDEX_API_URL}/bindcard?signature=${options.signature}&timestamp=${options.timestamp}&name=${options.name}&address=${options.address}&mobile=${options.mobile}&card_id=${options.card_id}&card_type=${options.card_type}&card_name=${options.card_name}`
   return await fetchData(url, {
     method: 'post',
     headers: {}
@@ -155,5 +155,6 @@ export {
   checkPay,
   fetchTokenValue,
   fetchTokenBalance,
-  fetchCardlist
+  fetchCardlist,
+  postBindcard
 }

@@ -64,6 +64,7 @@ import * as validation from '@/utils/validation'
 import {LockOpenIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {mapState} from 'vuex'
+import {getPrivateKey, getPublicKey, getWalletName, setCardList} from '../../utils/storage'
 import Modal from '../Modal'
 
 const CryptoJS = require('crypto-js')
@@ -123,9 +124,9 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
 
-      const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
-      const publicKey = await storage.getPublicKey(this.walletVersion)
-      const walletName = await storage.getWalletName(this.walletVersion)
+      const privateKey = await getPrivateKey(this.password, this.walletVersion)
+      const publicKey = await getPublicKey(this.walletVersion)
+      const walletName = await getWalletName(this.walletVersion)
 
       // do not specify wallet version here - this forces migration to highest version
       await storage.setWallet({privateKey, publicKey}, walletName, this.password)
@@ -137,14 +138,10 @@ export default {
       const currentTime = Math.floor(Date.now()).toString() // 获取当前时间戳并转换为字符串
       // 使用钱包签名时间戳
 
-      // console.log('currentTime:', currentTime)
       const signature = await wallet.signMessage(currentTime)
-      // console.log('signature:', signature)
 
       // 验证签名
       const recoveredAddress = ethers.utils.verifyMessage(currentTime, signature)
-      // console.log('Recovered Address:', recoveredAddress)
-      // console.log('Signer Address:', wallet.address)
 
       // TODO 获取支付信息
       const cardList = await fetchCardlist({
@@ -152,15 +149,12 @@ export default {
         timestamp: currentTime
       })
       // console.log('cardList:', cardList)
-      this.$cookies.set('cardList', cardList,
-        WALLET_EXPIRY,
-        {
-        secure: true,
-        httpOnly: true,
-        // domain: '.ctblock.cn',
-        path: '/'
+      setCardList(wallet.address, cardList).then(() => {
+        console.log('Object stored successfully!')
+        this.afterUnlock()
+      }).catch(err => {
+        console.error('Failed to store object:', err)
       })
-      this.afterUnlock()
     },
     unlockOnEnter(event) {
       if (event.charCode !== 13) return

@@ -12,6 +12,7 @@ import ConnectWallet from '@/views/ConnectWallet'
 import InterSign from '@/views/InterSign'
 import MintPanel from '@/views/MintPanel'
 import Nodes from '@/views/Nodes'
+import Publicity from '@/views/Publicity'
 import Overview from '@/views/Overview'
 import Staking from '@/views/Staking'
 import {createRouter, createWebHistory} from 'vue-router'
@@ -27,6 +28,11 @@ const routes = [
     path: '/nodes',
     name: 'Nodes',
     component: Nodes
+  },
+  {
+    path: '/publicity',
+    name: 'Publicity',
+    component: Publicity
   },
   {
     path: '/overview',

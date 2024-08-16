@@ -26,12 +26,14 @@
                      @click="setStakeType(items)"
               />
             </div>
-
           </div>
-          <div class="grid grid-cols-12 gap-8 pb-10 mt-10">
-            <div v-for="(items, index) in cardTypeArr" v-bind:key="index" class="col-span-4 bg-white bg-opacity-20 rounded-md py-10 px-8">
-              <div class="text-md col-span-4 py-4 text-sm">
-                <el-tooltip class="box-item" effect="dark" content="建设银行（储蓄卡）"
+
+          <div class="grid grid-cols-12 gap-4 pb-10 mt-10">
+            <el-card class="col-span-4" shadow="always"
+                     v-for="(items, index) in cardTypeArr" v-bind:key="index">
+
+              <div class="text-md  py-4 text-sm">
+                <el-tooltip class="box-item" effect="dark" :content="items.card_name+'('+items.card_type+')'"
                             placement="right-end">
                   <el-icon class=" mb-1 align-middle">
                     <InfoFilled/>
@@ -42,7 +44,7 @@
               <div class="text-sm col-span-5 py-4 overflow-hidden overflow-ellipsis">
                 {{ items.card_id }}
               </div>
-            </div>
+            </el-card>
           </div>
         </form>
         <el-divider/>
@@ -66,6 +68,7 @@ import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
 import moment from 'moment'
 import {mapState} from 'vuex'
+import {getCardList} from '../../utils/storage'
 import Modal from '../Modal'
 
 export default {
@@ -136,17 +139,22 @@ export default {
     address(newVal, oldVal) {
       this.toaddress = this.address
       console.log(newVal, oldVal)
+    },
+    async visible(v, oldv) {
+      if (v === oldv) return
+      if (v) {
+        this.toaddress = this.address
+        this.payType = this.payTypeArr[0]
+        console.log(this.toaddress)
+        let cardList = await getCardList(this.toaddress)
+        console.log(cardList)
+        if (cardList) {
+          this.cardTypeArr = cardList['card_lists']
+        }
+      }
     }
   },
   async mounted() {
-    this.toaddress = await storage.getAddress(storage.getHighestWalletVersion())
-    this.payType = this.payTypeArr[0]
-    let cardList = this.$cookies.get('cardList')
-    console.log(cardList)
-    if (cardList) {
-      this.cardTypeArr = cardList['card_lists']
-    }
-
   },
   methods: {
 

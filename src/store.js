@@ -23,8 +23,7 @@ const init = async () => {
   const address = await (async () => {
     try {
       return await getAddress(version)
-    }
-    catch (err) {
+    } catch (err) {
       console.debug(err)
       return ''
     }

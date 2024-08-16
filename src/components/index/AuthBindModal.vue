@@ -38,6 +38,7 @@
             <label>你的手机号码</label>
             <el-input
               type="text"
+              size="large"
               autocomplete="off"
               placeholder="请输入你的手机号码"
               id="tel-number"

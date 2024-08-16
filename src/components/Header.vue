@@ -88,6 +88,11 @@ export default {
           text: '通证'
         },
 
+        {
+          link: '/publicity',
+          text: '公示'
+        },
+
         // {
         //   link: process.env.VUE_APP_GOVERNANCE_URL,
         //   text: 'Governance',

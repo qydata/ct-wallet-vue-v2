@@ -67,18 +67,15 @@ const expire = () => del(KEY_UNLOCK_EXPIRY, store)
  * @param {number|undefined} version Storage version
  * @returns Promise<string>
  */
-const getAddress = version => {
-  if (version === undefined) version = getHighestWalletVersion()
-  switch (version) {
-  case 0:
-    return v0.getAddress()
-  case 1:
-    return v1.getAddress()
-  case 2:
-    return v2.getAddress()
-  default:
+const getAddress = (version = getHighestWalletVersion()) => {
+  const versions = [v0, v1, v2]
+  const selectedVersion = versions[version]
+
+  if (!selectedVersion) {
     throw invalidVersion(version)
   }
+
+  return selectedVersion.getAddress()
 }
 
 const getWalletName = version => {
@@ -118,18 +115,19 @@ const getHighestWalletVersion = () => 2
  * @param {number|undefined} version Storage version
  * @returns Promise<string>
  */
-const getPrivateKey = (password, version) => {
-  if (version === undefined) version = getHighestWalletVersion()
-  switch (version) {
-  case 0:
-    return v0.getPrivateKey()
-  case 1:
-    return v1.getPrivateKey(password)
-  case 2:
-    return v2.getPrivateKey(password)
-  default:
+const getPrivateKey = (password, version = getHighestWalletVersion()) => {
+  const versionHandlers = {
+    0: () => v0.getPrivateKey(),
+    1: () => v1.getPrivateKey(password),
+    2: () => v2.getPrivateKey(password)
+  }
+
+  const handler = versionHandlers[version]
+  if (!handler) {
     throw invalidVersion(version)
   }
+
+  return handler()
 }
 
 /**
@@ -141,19 +139,17 @@ const getPrivateKey = (password, version) => {
  * @param {number|undefined} version Storage version
  * @returns Promise<string>
  */
-const getPublicKey = version => {
-  if (version === undefined) version = getHighestWalletVersion()
-  switch (version) {
-  case 0:
-    return v0.getPublicKey()
-  case 1:
-    return v1.getPublicKey()
-  case 2:
-    return v2.getPublicKey()
-  default:
+const getPublicKey = (version = getHighestWalletVersion()) => {
+  const versionHandlers = [v0, v1, v2]
+
+  const handler = versionHandlers[version]
+  if (!handler) {
     throw invalidVersion(version)
   }
+
+  return handler.getPublicKey()
 }
+
 const getWalletList = version => {
   if (version === undefined) version = getHighestWalletVersion()
   switch (version) {
@@ -195,6 +191,9 @@ const getWalletVersion = async () => {
  * @returns Promise<void>
  */
 const setUnlockExpiry = (date) => set(KEY_UNLOCK_EXPIRY, date.toString(), store)
+
+const setCardList = (_address, date) => set('cardList' + _address.toLowerCase(), date, store)
+const getCardList = async (_address) => get('cardList' + _address.toLowerCase(), store)
 
 /**
  * Save wallet in storage.
@@ -265,6 +264,8 @@ export {
   getUnlockExpiry,
   getWalletVersion,
   setUnlockExpiry,
+  setCardList,
+  getCardList,
   setWallet,
   setWalletVersion,
   getWalletList,

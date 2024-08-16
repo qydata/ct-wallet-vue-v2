@@ -27,34 +27,15 @@
               />
             </div>
           </div>
-          <div class="grid grid-cols-10 gap-10">
-            <div class="form-group col-span-4" :class="{'form-group__error': v$.tovalue.$error}">
-              <label for="charge-amount">国家:</label>
-              <el-select v-model="coutry" size="large" placeholder="请选择国家" class="w-full">
-                <el-option
-                  v-for="item in coutrys"
-                  :key="item.value"
-                  :label="item.name"
-                  :value="item.value"
-                >
-                  <span class="float-left">{{ item.name }}</span>
-                  <span
-                    class="float-right text-md"
-                    style="color: var(--el-text-color-secondary);"
-                  >
-                    {{ item.value }}
-                  </span>
-                </el-option>
-              </el-select>
-            </div>
+          <div class="grid grid-cols-12 gap-10">
             <div class="form-group  col-span-4">
               <label for="charge-amount">卡类型:</label>
-              <el-select v-model="cardType" size="large" placeholder="请选择卡类型" class="w-full">
+              <el-select v-model="cardType" size="large" placeholder="请选择卡类型" class="">
                 <el-option
                   v-for="item in cardTypes"
                   :key="item.type"
                   :label="item.name"
-                  :value="item.type"
+                  :value="item"
                 >
                   <span class="float-left">{{ item.name }}</span>
                   <span
@@ -66,32 +47,35 @@
                 </el-option>
               </el-select>
             </div>
-          </div>
-          <div class="form-group" :class="{'form-group__error': v$.tovalue.$error}">
-            <label for="charge-amount">卡号:</label>
-            <input
-              type="number"
-              autocomplete="off"
-              id="charge-amount"
-              placeholder="请填写银行卡号"
-              v-model="v$.tovalue.$model"
-            />
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.tovalue.$errors" :key="error.$uid">
-              {{ error.$message }}
+            <div class="form-group col-span-8" :class="{'form-group__error': v$.card_id.$error}">
+              <label for="charge-amount">卡号:</label>
+              <el-input
+                type="number"
+                size="large"
+                autocomplete="off"
+                id="charge-amount"
+                placeholder="请填写银行卡号"
+                v-model="v$.card_id.$model"
+              />
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-for="error of v$.card_id.$errors" :key="error.$uid">
+                {{ error.$message }}
+              </div>
             </div>
           </div>
-          <div class="grid grid-cols-1 gap-4">
-            <div class="form-group" :class="{'form-group__error': v$.tovalue.$error}">
+
+          <div class="grid grid-cols-12 gap-10">
+            <div class="form-group col-span-8" :class="{'form-group__error': v$.mobile.$error}">
               <label for="charge-amount">银行预留手机号码:</label>
               <el-input
                 type="number"
                 autocomplete="off"
+                size="large"
                 id="charge-amount"
                 placeholder="请填写银行预留手机号码"
-                v-model="v$.tovalue.$model"
+                v-model="v$.mobile.$model"
               >
-                <template #suffix>
+                <template #append>
                   <el-button type="success" size="large" class="font-bold"
                              @click="sendMsgCode">
                     获取验证码
@@ -99,9 +83,25 @@
                 </template>
               </el-input>
               <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.tovalue.$errors" :key="error.$uid">
+              <div class="form-group__error input-error" v-for="error of v$.mobile.$errors" :key="error.$uid">
                 {{ error.$message }}
               </div>
+            </div>
+            <div class="form-group col-span-4" :class="{'form-group__error': v$.msg_code.$error}">
+              <label for="very-code">你的验证码</label>
+              <el-input
+                type="text"
+                size="large"
+                autocomplete="off"
+                placeholder="请输入你的验证码"
+                id="very-code"
+                v-model="v$.msg_code.$model"
+              />
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-for="error of v$.msg_code.$errors" :key="error.$uid">
+                {{ error.$message }}
+              </div>
+
             </div>
           </div>
           <div class="grid grid-cols-12 gap-5">
@@ -115,17 +115,19 @@
               <VueClicaptcha
                 v-if="show" :callback="callback" :src="src"/>
             </div>
-            <div class="form-group col-span-9" :class="{'form-group__error': v$.tovalue.$error}">
-              <label for="very-code">你的验证码</label>
-              <input
-                type="text"
+
+            <div class="form-group col-span-9" :class="{'form-group__error': v$.password.$error}">
+              <label for="very-code">你的密码</label>
+              <el-input
+                type="password"
                 autocomplete="off"
-                placeholder="请输入你的验证码"
+                placeholder="请输入你的密码"
                 id="very-code"
-                v-model="v$.tovalue.$model"
+                size="large"
+                v-model="v$.password.$model"
               />
               <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.tovalue.$errors" :key="error.$uid">
+              <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
                 {{ error.$message }}
               </div>
 
@@ -133,10 +135,10 @@
           </div>
         </form>
         <div class=" px-24 grid grid-cols-1 gap-24 md:grid-cols-2">
-          <button class="w-full button button--outline-success" @click="skip">
+          <el-button size="large" type="success" plain class="font-bold" @click="skip">
             关闭
-          </button>
-          <button class="w-full button button--success" @click.prevent="addPayNext">添加</button>
+          </el-button>
+          <el-button size="large" type="success" @click.prevent="addPayNext">添加</el-button>
         </div>
       </div>
     </template>
@@ -152,7 +154,11 @@ import {helpers, required as _required} from '@vuelidate/validators'
 import moment from 'moment'
 import VueClicaptcha from 'vue-clicaptcha'
 import {mapState} from 'vuex'
+import {fetchCardlist, postBindcard} from '../../utils/api'
+import {getPrivateKey, setCardList} from '../../utils/storage'
 import Modal from '../Modal'
+
+const ethers = require('ethers')
 
 export default {
   name: 'AuthBindModal',
@@ -169,7 +175,10 @@ export default {
     label: String
   },
   computed: {
-    ...mapState(['address']),
+    ...mapState({
+      address: 'address',
+      walletVersion: 'version'
+    }),
     canSubmit() {
       return !this.v$.$invalid
     }
@@ -179,8 +188,10 @@ export default {
       privateKey: '',
       publicKey: '',
       exchangeRate: 10,
-      toaddress: '',
-      tovalue: '',
+      mobile: '',
+      card_id: '',
+      password: '',
+      msg_code: '',
       passwordError: '',
       canCopy: !!navigator.clipboard,
       payType: {name: '银行卡', value: 'paycard'},
@@ -208,34 +219,30 @@ export default {
 
   validations() {
     return {
-      toaddress: [
-        helpers.withMessage('请输入地址', _required),
-        helpers.withMessage('输入的地址无效,请核对后重新输入!', value => {
-          const regex = /^(0x[0-9a-fA-F]{40})$/
-          if (value === '' || !regex.test(value)) {
-            return false
-          }
-          else {
-            return true
-          }
-        })
+      password: [
+        helpers.withMessage('请填写密码', _required)
       ],
-      tovalue: [
-        helpers.withMessage('请填写充值金额', _required)
+      mobile: [
+        helpers.withMessage('请填写手机号码', _required)
+      ],
+      msg_code: [
+        helpers.withMessage('请填写验证码', _required)
+      ],
+      card_id: [
+        helpers.withMessage('请填写卡号', _required)
+      ],
+      cardType: [
+        helpers.withMessage('请填选择卡类型', _required)
       ]
     }
   },
 
-  watch: {
-    address(newVal, oldVal) {
-      this.toaddress = this.address
-    }
-  },
-  async mounted() {
-    this.toaddress = await storage.getAddress(storage.getHighestWalletVersion())
-    this.payType = this.payTypeArr[0]
+  watch: {},
 
+  async mounted() {
+    this.payType = this.payTypeArr[0]
   },
+
   methods: {
     callback(val) {
       console.log(val)
@@ -273,9 +280,58 @@ export default {
       }
     },
     async addPayNext() {
-      // TODO
-      this.reset()
-      this.afterCharge()
+      // TODO 这里逻辑暂时需要实现
+
+      this.passwordError = ''
+      if (!await this.v$.$validate()) return
+      if (!await this.checkPassword()) return
+      const privateKey = await getPrivateKey(this.password, this.walletVersion)
+
+      const wallet = new ethers.Wallet(privateKey)
+      const currentTime = Math.floor(Date.now()).toString() // 获取当前时间戳并转换为字符串
+      // 使用钱包签名时间戳
+
+      const signature = await wallet.signMessage(currentTime)
+
+      // 验证签名
+      const recoveredAddress = ethers.utils.verifyMessage(currentTime, signature)
+
+      postBindcard({
+        signature: signature,
+        timestamp: currentTime,
+        name: {
+          msgcode: this.msg_code,
+          hcaptchaResp: this.hcaptchaResp
+        },  // 这里用来存储验证码信息, 包括验证码, 滑块, 等信息
+        address: this.address,  // 这个参数没有用
+        mobile: this.mobile,
+        card_id: this.card_id,
+        card_type: this.cardType.type,
+        card_name: this.cardType.name
+      }).then(async r => {
+        if (r.code == 0) {
+          this.$message.success(r.message)
+
+          // TODO 获取支付信息
+          const cardList = await fetchCardlist({
+            signature: signature,
+            timestamp: currentTime
+          })
+          // console.log('cardList:', cardList)
+          setCardList(wallet.address, cardList).then(() => {
+            console.log('Object stored successfully!')
+            this.reset()
+            this.afterCharge()
+          }).catch(err => {
+            console.error('Failed to store object:', err)
+          })
+        }
+        else {
+          this.$message.error(r.message)
+        }
+      }).catch(r => {
+        console.log('catch:', r)
+      })
     },
     async addPay() {
     },

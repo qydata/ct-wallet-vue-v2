@@ -199,6 +199,7 @@ import {ArrowDown, Connection, EditPen, InfoFilled, Menu} from '@element-plus/ic
 
 import {ArrowDownIcon, ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@heroicons/vue/outline'
 import {mapState} from 'vuex'
+import {getWalletName, setWalletName} from '../utils/storage'
 import Amount from './Amount.vue'
 import ChargeModal from './index/ChargeModal'
 import PayModal from './index/PayModal'
@@ -289,7 +290,7 @@ export default {
   },
   watch: {
     async address() {
-      this.walletName = await storage.getWalletName()
+      this.walletName = await getWalletName()
       this.getTokenBalance()
     },
     balance(oldVal, newVal) {
@@ -298,7 +299,7 @@ export default {
     }
   },
   async mounted() {
-    this.walletName = await storage.getWalletName()
+    this.walletName = await getWalletName()
     this.isInIframe()
     this.getTokenBalance()
   },
@@ -320,7 +321,9 @@ export default {
     },
     getTokenBalance() {
       fetchTokenBalance(this.address).then(r => {
-        this.tokenBalances = r.data
+        if (r.data instanceof Array) {
+          this.tokenBalances = r.data
+        }
       })
     },
     isInIframe() {
@@ -351,7 +354,7 @@ export default {
     },
     async createOnEnter() {
       // 修改钱包名称
-      await storage.setWalletName(this.walletName, this.address, storage.getHighestWalletVersion())
+      await setWalletName(this.walletName, this.address, storage.getHighestWalletVersion())
       this.dialogVisible = false
     },
 

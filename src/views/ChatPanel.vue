@@ -256,6 +256,7 @@ import {ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@h
 import dayjs from 'dayjs'
 import ipfsAPI from 'ipfs-api'
 import {mapState} from 'vuex'
+import {getWalletName} from '../utils/storage'
 
 const ABI_const = require('@/contract/ABI_const.js')
 const ethUtil = require('ethereumjs-util')
@@ -349,7 +350,7 @@ export default {
   },
   watch: {
     async address() {
-      this.walletName = await storage.getWalletName()
+      this.walletName = await getWalletName()
     },
     balance(oldVal, newVal) {
       // console.log('balance newVal', newVal)
@@ -361,7 +362,7 @@ export default {
 
   },
   async mounted() {
-    this.walletName = await storage.getWalletName()
+    this.walletName = await getWalletName()
     this.blockNumber = window.localStorage.getItem('blockNumber')
     this.dateTime = new Date().getTime()
     console.log('this.blockNumber', this.blockNumber)

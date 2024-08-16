@@ -112,7 +112,7 @@
         </span>
       </template>
       <template v-slot:body>
-        <div class="pb-12 min-h-300">
+        <div class="pb-12 min-h-300" v-loading="loading" :element-loading-text="loadingText">
           <div class="form-group mb-14">
             <label>您正在提现</label>
             <Amount :value="amountParsed" currency="XCT" short sub/>
@@ -287,11 +287,13 @@ import {ArrowDownIcon, ArrowRightIcon, LockOpenIcon} from '@heroicons/vue/outlin
 import {InformationCircleIcon} from '@heroicons/vue/solid'
 import useVuelidate from '@vuelidate/core'
 import {mapState} from 'vuex'
+import {getCardList} from '../../utils/storage'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import Modal from '../Modal'
 import Tooltip from '../Tooltip'
 
+const _addressC = require('@/config/address.json')
 const ethers = require('ethers')
 const exchangeRateUpdateInterval = 15 * 1000
 const gasRatesUpdateInterval = 15 * 1000
@@ -337,7 +339,8 @@ export default {
         // {name: '农业银行', value: '****5679'},
         // {name: '中信银行', value: '****5670'}
       ],
-      loading: false
+      loading: false,
+      loadingText: ''
     }
   },
   validations() {
@@ -411,8 +414,8 @@ export default {
       }
     }
   },
-  mounted() {
-    let cardList = this.$cookies.get('cardList')
+  async mounted() {
+    let cardList = await getCardList(this.address)
     console.log(cardList)
     if (cardList) {
       this.payTypeArr = cardList['card_lists']
@@ -473,8 +476,8 @@ export default {
         chainId: 27
       })
       let wallet = new ethers.Wallet(privateKey, customHttpProvider)
-      let CtXCTAddress = this.$store.state.config.env.VUE_APP_XCT_ADDRESS
-      CtXCTAddress = '0x26cc2bE0E3de1371F464a9896Fa8274231992FbA'
+      let CtXCTAddress = _addressC['XCT']
+
       const contract = new ethers.Contract(
         CtXCTAddress,
         ABI_const['XCT'].abi,
@@ -488,6 +491,7 @@ export default {
       // submit tx to blockchain
       try {
         this.loading = true
+        this.loadingText = '提现请求上链中'
         const tx = await contractWithSigner.redeem(value, 1)
         // const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
         // if (metadata.accepted) {
@@ -507,12 +511,20 @@ export default {
         this.feeOnSubmit = this.fee
         this.exchangeRateOnSubmit = this.exchangeRate.rate
         this.usdcAmountOnSubmit = this.usdcAmount
-        this.goto(3)
+        // TODO 这里向支付网关发起提现请求
+        setTimeout(() => {
+          this.cleanLoad()
+          this.goto(3)
+        }, 1000)
       } catch (err) {
         this.loading = false
         console.error(err)
         this.submitError = err.message
       }
+    },
+    cleanLoad() {
+      this.loading = false
+      this.loadingText = ''
     },
     sellOnEnter(event) {
       if (event.charCode !== 13) return
