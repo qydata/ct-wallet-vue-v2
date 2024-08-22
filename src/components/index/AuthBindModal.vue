@@ -443,7 +443,7 @@ export default {
         this.$message.error('手机号码输入有误,请重新输入!')
       }
       else if (this.hcaptchaResp == null) {
-        alert('请先通过验证')
+        this.$message.error('请先通过验证')
       }
       else {
         sendTelCode({tel: this.mobile, hcaptcha: this.hcaptchaResp}).then(res => {

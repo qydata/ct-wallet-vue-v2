@@ -145,7 +145,7 @@ export default {
       if (v) {
         this.toaddress = this.address
         this.payType = this.payTypeArr[0]
-        console.log(this.toaddress)
+        // console.log(this.toaddress)
         let cardList = await getCardList(this.toaddress)
         console.log(cardList)
         if (cardList) {

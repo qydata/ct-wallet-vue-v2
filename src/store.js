@@ -8,6 +8,9 @@ import {createStore} from 'vuex'
 import {fetchTokenValue} from './utils/api'
 import {empty, expire, getAddress, getUnlockExpiry, getWalletVersion, setUnlockExpiry} from './utils/storage'
 
+const GlobalConfig = require('@/config/GlobalConfig.json')
+const _address = require('@/config/address.json')
+
 // eslint-disable-next-line no-undef
 const ethers = require('ethers')
 // eslint-disable-next-line no-undef
@@ -43,11 +46,13 @@ const init = async () => {
       // TODO investigate whether we can set these in app mixin instead
       config: {
         blockchain: {
-          baseURL: process.env.VUE_APP_BLOCKCHAIN_API_URL
+          baseURL: GlobalConfig.BLOCK_CHAIN.RPC_URL[0]
         },
         index: {
           baseURL: process.env.VUE_APP_INDEX_API_URL
         },
+        MULT_CALL:GlobalConfig.MULT_CALL,
+        XCT: _address.XCT,
         env: process.env
       }
     },
@@ -104,8 +109,8 @@ const init = async () => {
         const customHttpProvider = new ethers.providers.JsonRpcProvider(state.config.blockchain.baseURL, {
           chainId: 27
         })
-        const CtMultCallAddress = state.config.env.VUE_APP_MULT_CALL
-        const CtXCTAddress = state.config.env.VUE_APP_XCT_ADDRESS
+        const CtMultCallAddress = state.config.MULT_CALL
+        const CtXCTAddress = state.config.XCT
         const contract = new ethers.Contract(
           CtMultCallAddress,
           ABI_const['CtMultCall'].abi,

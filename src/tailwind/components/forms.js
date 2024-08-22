@@ -5,6 +5,7 @@ const {baseTypography: typography} = require('../base/typography')
 const formStyles = ({theme}) => ({
   base: {
     width: '100%',
+    height: '57px',
     padding: `${rem(3)} ${rem(15)}`,
     margin: '0',
     backgroundColor: colors.black.DEFAULT,

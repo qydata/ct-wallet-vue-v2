@@ -28,13 +28,13 @@
             </div>
           </div>
           <div class="grid grid-cols-12 gap-10">
-            <div class="form-group  col-span-4">
+            <div class="form-group  col-span-5">
               <label for="charge-amount">卡类型:</label>
               <el-select v-model="cardType" size="large" placeholder="请选择卡类型" class="">
                 <el-option
                   v-for="item in cardTypes"
                   :key="item.type"
-                  :label="item.name"
+                  :label="item.name +' '+ item.type"
                   :value="item"
                 >
                   <span class="float-left">{{ item.name }}</span>
@@ -47,7 +47,9 @@
                 </el-option>
               </el-select>
             </div>
-            <div class="form-group col-span-8" :class="{'form-group__error': v$.card_id.$error}">
+          </div>
+          <div class="grid grid-cols-12 gap-10">
+            <div class="form-group col-span-12" :class="{'form-group__error': v$.card_id.$error}">
               <label for="charge-amount">卡号:</label>
               <el-input
                 type="number"
@@ -78,7 +80,7 @@
                 <template #append>
                   <el-button type="success" size="large" class="font-bold"
                              @click="sendMsgCode">
-                    获取验证码
+                    {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
                   </el-button>
                 </template>
               </el-input>
@@ -104,19 +106,27 @@
 
             </div>
           </div>
-          <div class="grid grid-cols-12 gap-5">
-            <div class="col-span-3">
+          <div class="grid grid-cols-12 mb-4">
+            <div class="col-start-6 col-span-5">
               <label for="very-code">点击进行验证</label>
               <el-checkbox
-                v-model="isVerifys"
+                v-model="v$.isVerifys.$model"
                 @change="handleChange"
                 size="large"
                 label="验证" border></el-checkbox>
               <VueClicaptcha
                 v-if="show" :callback="callback" :src="src"/>
             </div>
-
-            <div class="form-group col-span-9" :class="{'form-group__error': v$.password.$error}">
+          </div>
+          <div class=" form-group grid grid-cols-12 mb-4 " :class="{'form-group__error': v$.isVerifys.$error}">
+            <!-- eslint-disable-next-line max-len -->
+            <div class="form-group__error input-error col-start-6 col-span-5" v-for="error of v$.isVerifys.$errors"
+                 :key="error.$uid">
+              {{ error.$message }}
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-5">
+            <div class="form-group col-span-12" :class="{'form-group__error': v$.password.$error}">
               <label for="very-code">你的密码</label>
               <el-input
                 type="password"
@@ -213,7 +223,9 @@ export default {
       ],
       isVerifys: false,
       show: false,
-      src: 'https://wallet.ctblock.cn/api/clicaptcha.php'
+      src: 'https://wallet.ctblock.cn/api/clicaptcha.php',
+      nextTime: 0,
+      hcaptchaResp: null
     }
   },
 
@@ -223,16 +235,37 @@ export default {
         helpers.withMessage('请填写密码', _required)
       ],
       mobile: [
-        helpers.withMessage('请填写手机号码', _required)
+        helpers.withMessage('请填写手机号码', _required),
+        helpers.withMessage('姓名输入有误,请重新输入!', v => {
+
+          //截取用户提交的用户名的前两字节，也就是姓。
+          const phoneReg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/
+          return phoneReg.test(v)
+        })
       ],
       msg_code: [
-        helpers.withMessage('请填写验证码', _required)
+        helpers.withMessage('请填写验证码', _required),
+        helpers.withMessage('验证码输入有误,请重新输入!', v => {
+
+          //截取用户提交的用户名的前两字节，也就是姓。
+          const phoneReg = /^\d{4}$/
+          return phoneReg.test(v)
+        })
       ],
       card_id: [
-        helpers.withMessage('请填写卡号', _required)
+        helpers.withMessage('请填写卡号', _required),
+        helpers.withMessage('卡号输入有误,请重新输入!', v => {
+
+          //截取用户提交的用户名的前两字节，也就是姓。
+          const phoneReg = /^\d{16,19}$/
+          return phoneReg.test(v)
+        })
       ],
       cardType: [
         helpers.withMessage('请填选择卡类型', _required)
+      ],
+      isVerifys: [
+        helpers.withMessage('请验证!', v => v == true)
       ]
     }
   },
@@ -240,6 +273,7 @@ export default {
   watch: {},
 
   async mounted() {
+    this.cardType = this.cardTypes[0]
     this.payType = this.payTypeArr[0]
   },
 
@@ -259,6 +293,46 @@ export default {
       this.show = true
     },
     sendMsgCode() {
+
+      // 这里进行验证码验证
+      if (this.nextTime != 0) {
+        this.$message.error('当前验证码有效!')
+      }
+      else if (this.v$.mobile.$invalid) {
+        this.$message.error('手机号码输入有误,请重新输入!')
+      }
+      else if (this.hcaptchaResp == null) {
+        this.$message.error('请先通过验证')
+      }
+      else {
+        this.$message.success('发送成功!')
+        // 开始短信倒计时
+        this.nextTime = 60
+        this.countTime()
+        // sendTelCode({tel: this.mobile, hcaptcha: this.hcaptchaResp}).then(res => {
+        //   console.log(res)
+        //   if (res.code !== 1) {
+        //     this.$message.error(res.msg)
+        //   }
+        //   else {
+        //     this.$message.success('发送成功!')
+        //     // 开始短信倒计时
+        //     this.nextTime = 60
+        //     this.countTime()
+        //
+        //   }
+        // }).catch((e) => {
+        //   console.trace(e)
+        //   this.$message.error('网络请求失败')
+        // })
+      }
+    },
+    countTime() {
+      this.nextTime = this.nextTime - 1
+      if (this.nextTime == 0) {
+        return
+      }
+      window.setTimeout(this.countTime, 1000)
     },
     setPayType(type) {
       this.payType = type
@@ -299,11 +373,18 @@ export default {
       postBindcard({
         signature: signature,
         timestamp: currentTime,
-        name: {
+        other: {
           msgcode: this.msg_code,
           hcaptchaResp: this.hcaptchaResp
-        },  // 这里用来存储验证码信息, 包括验证码, 滑块, 等信息
-        address: this.address,  // 这个参数没有用
+          // hcaptchaResp: {
+          //   'info': '95,44-204,84-174,41-56,61;319;200',
+          //   'status': true,
+          //   'src': 'https://wallet.ctblock.cn/api/clicaptcha.php'
+          // }
+        },
+        // 这里用来存储验证码信息, 包括验证码, 滑块, 等信息
+        address: this.address,
+        // 这个参数没有用
         mobile: this.mobile,
         card_id: this.card_id,
         card_type: this.cardType.type,

@@ -23,13 +23,13 @@
     />
     </tbody>
     <tbody v-else-if="!loaded && loading">
-    <td colspan="10" class="block w-full text-center bg-white lg:table-cell py-35">
+    <td colspan="10" class="text-black-100 block w-full text-center bg-white lg:table-cell py-35">
       正在载入...
     </td>
     </tbody>
     <tbody v-else>
     <tr>
-      <td colspan="10" class="block w-full text-center bg-white lg:table-cell py-35">
+      <td colspan="10" class="text-black-100 block w-full text-center bg-white lg:table-cell py-35">
         没有订单。
       </td>
     </tr>

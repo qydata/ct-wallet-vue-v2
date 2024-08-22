@@ -256,7 +256,8 @@
           <div class="px-24 py-32 border-t border-gray-700 border-opacity-30">
             <!-- eslint-disable-next-line max-len -->
             <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
-              <button class="w-full button button--outline-success" @click="() => goto(1)">返回</button>
+              <button class="w-full button button--outline-success" :disabled="loading" @click="() => goto(1)">返回
+              </button>
               <button class="w-full button button--success" :disabled="!canBuy" @click="Declare">确认</button>
             </div>
           </div>
@@ -315,8 +316,8 @@
         <div v-else-if="step === 2">
           <div class="px-24 py-32 border-t border-gray-700 border-opacity-30 ">
             <!-- eslint-disable-next-line max-len -->
-            <div class="grid grid-cols-5 gap-10">
-              <div class="form-group col-span-3">
+            <div class="grid grid-cols-12 gap-10">
+              <div class="form-group col-span-7">
                 <label>你的手机号码</label>
                 <el-input
                   type="text"
@@ -335,7 +336,7 @@
                 </el-input>
 
               </div>
-              <div class="mb-24 form-group  col-span-2"
+              <div class="form-group  col-span-5"
                    :class="{'form-group__error': v$.msgCode.$error}">
                 <form>
                   <label for="pass-buy">输入验证码</label>
@@ -343,6 +344,7 @@
                     size="large"
                     autocomplete="off"
                     type="text"
+                    :readonly="loading"
                     placeholder='请输入你的验证码'
                     id="pass-buy"
                     v-model="v$.msgCode.$model"
@@ -354,7 +356,6 @@
                   </div>
                 </form>
               </div>
-
               <!-- eslint-disable-next-line max-len -->
               <div v-if="submitError"
                    class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
@@ -364,7 +365,7 @@
               </span>
                 </div>
               </div>
-              <div class="col-span-3">
+              <div class="col-start-6 col-span-6">
 
                 <!--              <VueHcaptcha theme="dark"-->
                 <!--                           sitekey="a0bce798-5c05-4ab9-96ae-d15863e4e5fa"-->
@@ -379,10 +380,19 @@
                 <VueClicaptcha
                   v-if="show" :callback="callback" :src="src"/>
               </div>
+              <div class=" form-group grid col-span-12 grid-cols-12 mb-4 "
+                   :class="{'form-group__error': v$.isVerifys.$error}">
+                <!-- eslint-disable-next-line max-len -->
+                <div class="form-group__error input-error col-start-6 col-span-5" v-for="error of v$.isVerifys.$errors"
+                     :key="error.$uid">
+                  {{ error.$message }}
+                </div>
+              </div>
             </div>
             <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
-              <button class="w-full button button--outline-success" @click="() => goto(1)">返回</button>
-              <button class="w-full button button--success" :disabled="!canBuy" @click="Chargebacks">确认</button>
+              <button class="w-full button button--outline-success" :disabled="loading" @click="() => goto(1)">返回
+              </button>
+              <button class="w-full button button--success" :disabled="loading" @click="Chargebacks">确认</button>
             </div>
           </div>
         </div>
@@ -398,11 +408,10 @@
 
   </div>
 </template>
-
 <script>
 
 import Radio from '@/components/Radio.vue'
-import {fetchGasRates, sendTelCode} from '@/utils/api'
+import {fetchGasRates} from '@/utils/api'
 import {parseAmount} from '@/utils/form'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
@@ -467,7 +476,7 @@ export default {
       ],
       msgCode: '',
       nextTime: 0,
-      mobile: '18294062242',
+      mobile: '',
       isVerifys: false,
       show: false,
       src: 'https://wallet.ctblock.cn/api/clicaptcha.php',
@@ -485,7 +494,16 @@ export default {
         validation.required
       ],
       msgCode: [
-        helpers.withMessage('请输入验证码', _required)
+        helpers.withMessage('请输入验证码', _required),
+        helpers.withMessage('验证码输入有误,请重新输入!', v => {
+
+          //截取用户提交的用户名的前两字节，也就是姓。
+          const phoneReg = /^\d{4}$/
+          return phoneReg.test(v)
+        })
+      ],
+      isVerifys: [
+        helpers.withMessage('请验证!', v => v == true)
       ]
     }
   },
@@ -532,8 +550,8 @@ export default {
         if (cardList) {
           this.payTypeArr = cardList['card_lists']
           this.payType = this.payTypeArr[0]
+          this.mobile = this.payType.mobile
         }
-
       }
       else {
         clearInterval(this.iGasRates)
@@ -566,25 +584,29 @@ export default {
         this.$message.error('当前验证码有效!')
       }
       else if (this.hcaptchaResp == null) {
-        alert('请先通过验证')
+        this.$message.error('请先通过验证')
       }
       else {
-        sendTelCode({tel: this.mobile, hcaptcha: this.hcaptchaResp}).then(res => {
-          console.log(res)
-          if (res.code !== 1) {
-            this.$message.error(res.msg)
-          }
-          else {
-            this.$message.success('发送成功!')
-            // 开始短信倒计时
-            this.nextTime = 60
-            this.countTime()
-
-          }
-        }).catch((e) => {
-          console.trace(e)
-          this.$message.error('网络请求失败')
-        })
+        this.$message.success('发送成功!')
+        // 开始短信倒计时
+        this.nextTime = 60
+        this.countTime()
+        // sendTelCode({tel: this.mobile, hcaptcha: this.hcaptchaResp}).then(res => {
+        //   console.log(res)
+        //   if (res.code !== 1) {
+        //     this.$message.error(res.msg)
+        //   }
+        //   else {
+        //     this.$message.success('发送成功!')
+        //     // 开始短信倒计时
+        //     this.nextTime = 60
+        //     this.countTime()
+        //
+        //   }
+        // }).catch((e) => {
+        //   console.trace(e)
+        //   this.$message.error('网络请求失败')
+        // })
       }
     },
     countTime() {
@@ -623,6 +645,7 @@ export default {
     },
     setPayType(type) {
       this.payType = type
+      this.mobile = this.payType.mobile
     },
     cancel() {
       this.reset()
@@ -664,12 +687,13 @@ export default {
 
       this.amount = ''
       this.password = ''
-
+      this.amount = ''
+      this.msgCode = ''
       this.submitError = ''
       this.completedTx = null
       this.edgeAmountOnSubmit = 0
       this.feeOnSubmit = 0
-
+      this.mobile = ''
       this.password = ''
     },
     async updateGasRates() {
@@ -678,6 +702,8 @@ export default {
     // 扣款
     async Chargebacks() {
 
+      this.passwordError = ''
+      if (!await this.v$.$validate()) return
       this.loading = true
       this.loadingText = '请求银行网关支付中'
       // TODO 请求银行网关支付
@@ -695,7 +721,6 @@ export default {
 
       try {
         this.passwordError = ''
-
         if (!await this.v$.$validate()) return
         if (!await this.checkPassword()) return
         const privateKey = await getPrivateKey(this.password)

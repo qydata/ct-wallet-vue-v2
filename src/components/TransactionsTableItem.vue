@@ -1,11 +1,11 @@
 <template>
   <tr :class="item.pending && 'pending'">
-    <td data-title="日期:">
-      <span class="monospace text-black lg:font-sans lg:inline-block">
-        {{ date }}
-      </span>
-    </td>
 
+    <td data-title="区块:" :title="item.blockNumber">
+        <span class="text-black-100 monospace lg:inline-block">
+          {{ item.blockNumber }}
+        </span>
+    </td>
     <td data-title="交易哈希:" :title="item.hash">
       <a :href="explorerTxUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
@@ -14,22 +14,23 @@
       </a>
     </td>
 
-    <td v-if="sent" data-title="到:" class="from-to" :title="item.to==null?'':item.to.hash">
+    <td v-if="sent" data-title="到:" class="from-to"
+        :title="item.toAddressHash==null?item.createdContractAddressHash:item.toAddressHash">
       <span>
         <span class="icon-wrap"><ArrowUpIcon class="icon inline-icon icon-red"/></span>
         <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
-          <span class="monospace lg:inline-block">
-            {{ item.to == null ? '' : item.to.hash }}
+          <span class="text-black-100 monospace lg:inline-block">
+            {{ item.toAddressHash == null ? item.createdContractAddressHash : item.toAddressHash }}
           </span>
         </a>
       </span>
     </td>
-    <td v-else data-title="从:" class="from-to" :title="item.from.hash">
+    <td v-else data-title="从:" class="from-to" :title="item.fromAddressHash">
       <span>
         <span class="icon-wrap"><ArrowDownIcon class="icon inline-icon icon-green"/></span>
         <a :href="explorerFromAddressUrl" target="_blank" rel="noreferrer">
           <span class="monospace lg:inline-block">
-            {{ item.from.hash }}
+            {{ item.fromAddressHash }}
           </span>
         </a>
       </span>
@@ -87,14 +88,14 @@ export default {
       return formattedDate
     },
     explorerFromAddressUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.from.hash}`
+      return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.fromAddressHash}`
     },
     explorerToAddressUrl() {
-      if(this.item.to == null) {
-        return `${process.env.VUE_APP_EXPLORER_URL}/address/0x000000000000000000000000000000000000000000`
+      if (this.item.toAddressHash == null) {
+        return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.createdContractAddressHash}`
       }
       else {
-        return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.to.hash}`
+        return `${process.env.VUE_APP_EXPLORER_URL}/address/${this.item.toAddressHash}`
       }
     },
     explorerTxUrl() {
@@ -104,17 +105,14 @@ export default {
       return ethers.utils.formatEther(this.item.value)
     },
     isConfirmed() {
-      return ((this.item.confirmations || 0) >= 5)
+      return this.item.status === 'OK'
     },
     statusFormatted() {
-      if (this.item.pending) return '确认中'
-      if (this.item.confirmations === 1) return `${this.item.confirmations} 确认`
-      if (this.item.confirmations < 5) return `${this.item.confirmations} 确认`
-      return '已确认'
+      if (this.item.status === 'OK') return '确认'
+      return '确认中'
     },
     sent() {
-      // return this.item.sender === this.item.recipient || this.address === this.item.sender
-      return this.item.from.hash.toLowerCase() === this.address.toLowerCase()
+      return this.item.fromAddressHash.toLowerCase() === this.address.toLowerCase()
     }
   }
 }

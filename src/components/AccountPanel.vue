@@ -69,7 +69,7 @@
             通证
           </div>
 
-          <el-dropdown trigger="click" class="col-span-7">
+          <el-dropdown trigger="click" class="col-span-7" :disabled="tokenBalances.length==0">
             <span class="el-dropdown-link border-2 border-gray-600 rounded-lg pb-5 pt-6 px-5 flex gap-2">
               <el-icon class="el-icon--right mr-10">
                 <Menu/>

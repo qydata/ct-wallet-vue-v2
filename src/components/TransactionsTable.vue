@@ -4,7 +4,7 @@
       <thead class="hidden lg:table-header-group">
 
       <tr>
-        <th width="15%">日期</th>
+        <th width="15%">区块</th>
         <th width="30%">交易哈希</th>
         <th width="30%">从/到</th>
         <!--        <th width="30%">附加数据</th>-->
@@ -14,9 +14,9 @@
       </thead>
       <tbody v-if="transactions.length">
       <TransactionsTableItem
-        v-for="item in transactions"
-        :key="item.hash"
-        :item="item"
+        v-for="(item, index)  in transactions"
+        :key="index"
+        :item="item.node"
       />
       </tbody>
       <tbody v-else-if="!loaded && loading">
@@ -54,7 +54,6 @@ export default {
     TransactionsTableItem
   },
   props: [
-    'limit',
     'page',
     'receiveMetadata',
     'transactions'
@@ -63,10 +62,8 @@ export default {
     ...mapState(['address'])
   },
 
-  methods: {
-  },
-  watch: {
-  }
+  methods: {},
+  watch: {}
 }
 </script>
 

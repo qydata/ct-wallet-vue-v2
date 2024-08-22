@@ -1,6 +1,6 @@
 // src/services/userService.js
 
-import {fetchGraphQL} from './graphql'
+import {fetchGraphQL, fetchGraphQLExploder} from './graphql'
 
 export function chainpayOrderEvents(skip, first, hideReleased) {
   let query
@@ -13,7 +13,6 @@ export function chainpayOrderEvents(skip, first, hideReleased) {
     $_chainpayOrder_state:BigInt
     ) {
       chainpayOrderEvents(
-        orderBy: _chainpayOrder_createAt
         skip: $skip
         where: {_chainpayOrder_state: $_chainpayOrder_state}
         first: $first
@@ -39,7 +38,6 @@ export function chainpayOrderEvents(skip, first, hideReleased) {
     query = `
     query ($skip:Int, $first:Int) {
       chainpayOrderEvents(
-        orderBy: _chainpayOrder_createAt
         skip: $skip
         first: $first) {
         id
@@ -61,4 +59,34 @@ export function chainpayOrderEvents(skip, first, hideReleased) {
 
   }
   return fetchGraphQL(query, variables)
+}
+
+export function transactionsByAddress(first, hash) {
+
+  let query = `
+    query ($hash:AddressHash!, $first:Int) {
+      address(hash: $hash) {
+        transactions(first: $first) {
+          edges {
+            cursor
+            node {
+              id
+              hash
+              status
+              fromAddressHash
+              toAddressHash
+              value
+              gas
+              earliestProcessingStart
+              blockNumber
+              createdContractAddressHash
+            }
+          }
+        }
+      }
+    }
+  `
+  let variables = {first: first, hash: hash}
+
+  return fetchGraphQLExploder(query, variables)
 }

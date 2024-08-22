@@ -36,7 +36,7 @@
           </span>
       </span>
     </td>
-    <td data-title="Token ID:" class="from-to" :title="item.token_id">
+    <td data-title="TokenID:" class="from-to" :title="item.token_id">
       <span>
         <span class="icon-wrap"></span>
         <a :href="explorerIdUrl" target="_blank" rel="noreferrer">

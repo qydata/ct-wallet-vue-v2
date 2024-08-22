@@ -14,7 +14,7 @@
       </thead>
       <tbody v-if="loading">
       <tr>
-        <td colspan="5" class="py-35 bg-white w-full text-center">
+        <td colspan="5" class="text-black-100 py-35 bg-white w-full text-center">
           正在加载最新的区块列表...
         </td>
       </tr>

@@ -7,7 +7,7 @@
         <th>符号</th>
         <th>余额</th>
         <th>类型</th>
-        <th>Token ID</th>
+        <th>TokenID</th>
         <th>操作</th>
       </tr>
       </thead>

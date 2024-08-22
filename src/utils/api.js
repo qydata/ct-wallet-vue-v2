@@ -89,12 +89,12 @@ const fetchCardlist = async (options = {}) => {
   })
 }
 
-const postBindcard = async (options = {}) => {
-  const url = `${INDEX_API_URL}/bindcard?signature=${options.signature}&timestamp=${options.timestamp}&name=${options.name}&address=${options.address}&mobile=${options.mobile}&card_id=${options.card_id}&card_type=${options.card_type}&card_name=${options.card_name}`
-  return await fetchData(url, {
-    method: 'post',
-    headers: {}
-  })
+const postBindcard = async (body = {}) => {
+  const url = `${INDEX_API_URL}/bindcard`
+  return await fetchData(
+    url,
+    {method: 'post'},
+    body)
 }
 
 function checkPay(data) {
