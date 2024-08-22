@@ -2,7 +2,7 @@
   <div>
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
-        <h2 class="mb-8">质押 XCT<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">质押 RMB<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <!-- eslint-disable max-len -->
         <span v-if="browserSupport"
               class="sub-heading d-block text-gray text-caption">连接到 MetaMask 存入 XCT 进行交换。</span>
@@ -44,7 +44,7 @@
           <div>
             <h2 class="mb-8">质押 XCT<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
             <span class="sub-heading d-block text-gray text-caption">
-              <Amount :value="edgeBalance" currency="XCT"/> 可用
+              <Amount :value="edgeBalance" currency="RMB"/> 可用
             </span>
           </div>
           <div>
@@ -72,7 +72,7 @@
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
-              <span class="absolute right-0 text-xl curren top-23">XCT</span>
+              <span class="absolute right-0 text-xl curren top-23">RMB</span>
               <!-- eslint-disable-next-line max-len -->
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors"
                    :key="error.$uid">{{ error.$message }}
@@ -108,7 +108,7 @@
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">You are depositing</span>
                   <span class="block text-lg text-white price">
-                    <Amount :value="amountParsed" currency="XCT"/>
+                    <Amount :value="amountParsed" currency="RMB"/>
                   </span>
                 </div>
                 <!-- eslint-disable-next-line max-len -->
@@ -178,7 +178,7 @@
         <div>
           <div class="form-group mb-14">
             <label>You are depositing</label>
-            <Amount :value="amountParsed" currency="XCT" sub/>
+            <Amount :value="amountParsed" currency="RMB" sub/>
           </div>
 
           <div class="form-group mb-14">

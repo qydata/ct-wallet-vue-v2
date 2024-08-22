@@ -41,7 +41,7 @@
             余额
           </div>
           <h1 class="text-md col-span-7 py-4">
-            <Amount :value="xctBalance" :decimalPlaces="2" currency="￥" sub/>
+            <Amount :value="xctBalance" :decimalPlaces="2" currency="rmb" sub/>
           </h1>
 
           <div class="text-md col-span-2 py-4">

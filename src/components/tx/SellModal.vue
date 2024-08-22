@@ -4,7 +4,7 @@
       <template v-slot:header>
         <h2 class="mb-8">提现余额<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="xctBalance" :decimalPlaces="2" currency="XCT"/> 可用
+          <Amount :value="xctBalance" :decimalPlaces="2" currency="RMB"/> 可用
         </span>
       </template>
       <template v-slot:body>
@@ -35,7 +35,7 @@
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
-              <span class="absolute right-0 text-xl curren top-23">XCT</span>
+              <span class="absolute right-0 text-xl curren top-23">RMB</span>
               <!-- eslint-disable-next-line max-len -->
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors"
                    :key="error.$uid">{{ error.$message }}
@@ -66,13 +66,13 @@
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">您正在提现</span>
                   <span class="block text-xl text-white price">
-                    <Amount :value="amountParsed" currency="XCT" short/>
+                    <Amount :value="amountParsed" currency="RMB" short/>
                   </span>
                 </div>
                 <!-- eslint-disable-next-line max-len -->
                 <span
                   class="flex justify-center bg-white py-12  mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
-                  <img src="/assets/e-logo-alt.svg" alt="XCT" class="flex-shrink-0">
+                  <img src="/assets/e-logo-alt.svg" alt="RMB" class="flex-shrink-0">
                 </span>
                 <!-- eslint-disable-next-line max-len -->
                 <span
@@ -108,14 +108,14 @@
       <template v-slot:header>
         <h2 class="mb-8">提现余额<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="xctBalance" currency="XCT" :decimalPlaces="2"/> 可用
+          <Amount :value="xctBalance" currency="RMB" :decimalPlaces="2"/> 可用
         </span>
       </template>
       <template v-slot:body>
         <div class="pb-12 min-h-300" v-loading="loading" :element-loading-text="loadingText">
           <div class="form-group mb-14">
             <label>您正在提现</label>
-            <Amount :value="amountParsed" currency="XCT" short sub/>
+            <Amount :value="amountParsed" currency="RMB" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -153,7 +153,7 @@
              class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
           <div class="">
             <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-              汇率已更新。交换最大值现在是 {{ exchangeRate.limit }} XCT.
+              汇率已更新。交换最大值现在是 {{ exchangeRate.limit }} RMB.
             </span>
           </div>
         </div>
@@ -221,7 +221,7 @@
 
           <div class="form-group mb-14">
             <label>您正在提现</label>
-            <Amount :value="completedTx.amount" currency="XCT" short sub/>
+            <Amount :value="completedTx.amount" currency="RMB" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -390,7 +390,7 @@ export default {
     },
     fee() {
       if (this.exchangeRate.gas === undefined) return NaN
-      return Math.round(this.minimumFee + this.exchangeRate.gas)
+      return this.minimumFee + this.exchangeRate.gas
     },
     usdcAmount() {
       return Math.max(0, this.amountParsed - this.fee) * this.exchangeRate.rate

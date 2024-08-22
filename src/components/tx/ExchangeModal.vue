@@ -24,7 +24,7 @@
           <div class="leading-7 text-caption mb-65">
             <strong>充值</strong>
             <p class="mb-25">在草天链网络上以 CNY 的价格充值。</p>
-            <img src="/assets/buy.svg" alt="提现 从 XCT 到 CT" class="account-panel__swap-img">
+            <img src="/assets/buy.svg" alt="提现 从 RMB 到 CT" class="account-panel__swap-img">
           </div>
           <button class="w-full button--outline-success button" @click="openBuy">
             <span class="w-12 button__icon">

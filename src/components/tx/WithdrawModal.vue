@@ -94,7 +94,7 @@
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">您将收到</span>
                   <span class="block text-xl text-white price">
-                    <Amount :value="edgeAmount" currency="XCT"/>
+                    <Amount :value="edgeAmount" currency="RMB"/>
                   </span>
                 </div>
               </div>
@@ -155,7 +155,7 @@
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
             </label>
-            <Amount :value="edgeAmount" currency="XCT" sub/>
+            <Amount :value="edgeAmount" currency="RMB" sub/>
           </div>
         </div>
       </template>
@@ -232,7 +232,7 @@
 
           <div class="form-group mb-14">
             <label>您将收到</label>
-            <Amount :value="edgeAmountOnSubmit" currency="XCT" sub/>
+            <Amount :value="edgeAmountOnSubmit" currency="RMB" sub/>
           </div>
 
           <div class="form-group mb-14">

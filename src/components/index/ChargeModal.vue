@@ -52,7 +52,7 @@
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
             </label>
-            1 ￥ = {{ exchangeRate }} 草田分
+            1 rmb = {{ exchangeRate }} 草田分
           </div>
 
         </form>

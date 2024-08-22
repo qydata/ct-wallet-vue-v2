@@ -8,21 +8,21 @@
         <div v-if="step === -1">
           <h2 class="mb-8">充值声明<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="xctBalance" :decimalPlaces="2" currency="XCT"/> 可用
+          <Amount :value="xctBalance" :decimalPlaces="2" currency="RMB"/> 可用
         </span>
 
         </div>
         <div v-else-if="step === 1">
           <h2 class="mb-8">充值余额<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="xctBalance" :decimalPlaces="2" currency="XCT"/> 可用
+          <Amount :value="xctBalance" :decimalPlaces="2" currency="RMB"/> 可用
         </span>
 
         </div>
         <div v-else-if="step === 2"><h2 class="mb-8">充值余额<span class="testnet-header"
                                                                    v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="xctBalance" currency="XCT" :decimalPlaces="2"/> 可用
+          <Amount :value="xctBalance" currency="RMB" :decimalPlaces="2"/> 可用
         </span></div>
         <div v-else-if="step === 3"><h2 class="mb-8">充值已接受<span class="testnet-header"
                                                                      v-if="isTestnet">(Testnet)</span></h2></div>
@@ -129,7 +129,7 @@
                   v-model="v$.amount.$model"
                   class="placeholder-white placeholder-opacity-100"
                 >
-                <span class="absolute right-0 text-xl curren top-23">￥</span>
+                <span class="absolute right-0 text-xl curren top-23">rmb</span>
                 <!-- eslint-disable-next-line max-len -->
                 <div class="mt-5 form-group__error input-error" style="color: #CD5F4E"
                      v-for="error of v$.amount.$errors"
@@ -142,7 +142,7 @@
               <label class="flex items-center space-x-3">
                 手续费
                 <Tooltip
-                  :text="`包含 ${minimumFee} CT 手续费`"
+                  :text="`包含 ${minimumFee} rmb手续费`"
                   class="ml-3"
                   position="right"
                   theme="dark"
@@ -150,7 +150,7 @@
                   <InformationCircleIcon class="hidden md:block button__icon w-15"/>
                 </Tooltip>
               </label>
-              <Amount :value="fee" currency="CT" short sub/>
+              <Amount :value="fee" currency="rmb" short sub/>
             </div>
           </div>
         </div>
@@ -189,11 +189,11 @@
             <div class="form-group mb-14">
               <label class="flex items-center space-x-3">
                 手续费
-                <Tooltip class="ml-3" position="right" theme="dark" :text="`包括 ${minimumFee} CT 的手续费`">
+                <Tooltip class="ml-3" position="right" theme="dark" :text="`包括 ${minimumFee} rmb 的手续费`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15"/>
                 </Tooltip>
               </label>
-              <Amount :value="fee" currency="CT" short sub/>
+              <Amount :value="fee" currency="rmb" short sub/>
             </div>
 
             <div class="form-group mb-14">
@@ -205,7 +205,7 @@
                   <InformationCircleIcon class="hidden md:block button__icon w-15"/>
                 </Tooltip>
               </label>
-              <Amount :value="edgeAmount" currency="XCT" sub/>
+              <Amount :value="edgeAmount" currency="RMB" sub/>
             </div>
           </div>
         </div>
@@ -235,7 +235,7 @@
 
             <div class="form-group mb-14">
               <label>您将收到</label>
-              <Amount :value="edgeAmount" currency="XCT" sub/>
+              <Amount :value="edgeAmount" currency="RMB" sub/>
             </div>
 
             <div class="form-group mb-14">
@@ -296,7 +296,7 @@
                   <div class="md:flex-grow">
                     <span class="block mb-3 text-gray">您将收到</span>
                     <span class="block text-xl text-white price">
-                    <Amount :value="edgeAmount" currency="XCT"/>
+                    <Amount :value="edgeAmount" currency="RMB"/>
                   </span>
                   </div>
                 </div>
@@ -530,7 +530,7 @@ export default {
     },
     fee() {
       if (this.gasRate === undefined || isNaN(this.amountParsed)) return NaN
-      return Math.round(this.minimumFee + this.gasRate)
+      return this.minimumFee + this.gasRate
     },
     edgeAmount() {
       return Math.max(0, this.amountParsed - this.fee)
@@ -772,7 +772,7 @@ export default {
             destination: this.recipient,
             memo: 'CT Withdrawal',
             ref: this.gasRates.ref,
-            token: 'XCT'
+            token: 'RMB'
           }
         }
         this.goto(3)
