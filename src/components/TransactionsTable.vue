@@ -26,7 +26,7 @@
       </tbody>
       <tbody v-else>
       <tr>
-        <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
+        <td colspan="6" class="text-black-100 block w-full text-center bg-white lg:table-cell py-35">
           没有交易.
         </td>
       </tr>
