@@ -3,7 +3,7 @@
 import axios from 'axios'
 
 const GRAPH_NODE_URL = 'https://graph-node.ctblock.cn/subgraphs/name/ctOraclePay'
-const GRAPH_EXPLODER_URL = 'https://ctblock.cn/api/v1/graphql'
+const GRAPH_EXPLODER_URL = 'https://wallet.ctblock.cn/api/v1/graphql'
 
 export function fetchGraphQL(query, variables = {}) {
   return axios.post(GRAPH_NODE_URL, {
