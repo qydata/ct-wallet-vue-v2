@@ -14,6 +14,8 @@ export default {
   },
   mounted: function () {
     useToggle(useDark())
+    // 强制应用黑夜模式
+    this.setDarkMode()
     this.setViewHeight()
     window.addEventListener('resize', () => {
       this.setViewHeight()
@@ -21,6 +23,12 @@ export default {
     this.blockEvemt()
   },
   methods: {
+    setDarkMode() {
+      document.body.classList.add('dark-mode')
+    },
+    toggleTheme() {
+      document.body.classList.toggle('dark-mode')
+    },
     blockEvemt() {
       let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27

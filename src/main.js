@@ -4,10 +4,10 @@
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import './assets/css/css-vars.css'
 import './index.css'
 // main.ts
 // if you just want to import css
-import './assets/css/css-vars.css'
 // import 'element-plus/theme-chalk/dark/css-vars.css'
 /*global process*/
 import {createApp} from 'vue'
