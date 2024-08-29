@@ -43,9 +43,13 @@
     <!--    </td>-->
 
     <td data-title="状态:">
-      <span v-if="isConfirmed">
+      <span v-if="item.status === 'OK'">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon/></span>
         <span class="monospace text-green lg:font-sans">{{ statusFormatted }}</span>
+      </span>
+      <span v-else-if="item.status === 'ERROR'">
+        <span class="mr-1 -mt-2 icon icon-red"><XCircleIcon/></span>
+        <span class="monospace lg:font-sans text-gray">{{ statusFormatted }}</span>
       </span>
       <span v-else>
         <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
@@ -65,7 +69,7 @@
 /*global process*/
 
 const ethers = require('ethers')
-import {ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon} from '@heroicons/vue/outline'
+import {ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon, XCircleIcon} from '@heroicons/vue/outline'
 import dayjs from 'dayjs'
 import {mapState} from 'vuex'
 
@@ -78,6 +82,7 @@ export default {
     ArrowDownIcon,
     ArrowUpIcon,
     CheckCircleIcon,
+    XCircleIcon,
     ClockIcon
   },
   computed: {
@@ -104,11 +109,9 @@ export default {
     formattedAmount() {
       return ethers.utils.formatEther(this.item.value)
     },
-    isConfirmed() {
-      return this.item.status === 'OK'
-    },
     statusFormatted() {
       if (this.item.status === 'OK') return '确认'
+      else if (this.item.status === 'ERROR') return '失败'
       return '确认中'
     },
     sent() {
