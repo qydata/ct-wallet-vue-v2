@@ -11,6 +11,7 @@ const ScoreToken = require('./ScoreToken.json')
 const JobContract = require('./JobContract.json')
 const XCT = require('./XCT.json')
 const ChainpayClient = require('./ChainpayClient.json')
+const AuthControllerV2 = require('./AuthControllerV2.json')
 const ABI_const = {
   AuthController,
   CtMultCall,
@@ -24,6 +25,7 @@ const ABI_const = {
   JobContract,
   XCT,
   ChainpayClient,
+  AuthControllerV2,
   ScoreToken
 }
 module.exports = ABI_const

@@ -23,11 +23,11 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       '/api': {
-        // target: 'https://wallet.ctblock.cn',
-        target: 'http://localhost:8080',
+        target: 'https://wallet.ctblock.cn',
+        // target: 'http://localhost:8080',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': '/ct-server-php'
+          // '^/api': '/ct-server-php'
         }
       },
       '/blockChain': {

@@ -169,6 +169,7 @@ import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
 
 import VueClicaptcha from 'vue-clicaptcha'
+import {mapState} from 'vuex'
 import Modal from '../Modal'
 
 const {contract_static_call, contract_gas_call_override, contract_call_override} = require('../../contract/ChainCall')
@@ -211,7 +212,6 @@ export default {
       // src: 'http://127.0.0.1:8000/clicaptcha.php',
       src: 'https://wallet.ctblock.cn/api/clicaptcha.php',
       show: false,
-      address: '',
       privateKey: '',
       publicKey: '',
       isVerifys: false,
@@ -302,6 +302,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['address']),
     canSubmit() {
       return !this.v$.$invalid
     }
@@ -346,28 +347,14 @@ export default {
       // 判断接入方用户名密码
 
       const c_wallet = new ethers.Wallet(this.privateKey, that.customHttpProvider)
-      const contractAddress = GlobalConfig.AUTH_CONTROLLER_ADDRESS
+      const contractAddress = GlobalConfig.AUTH_CONTROLLER_ADDRESS_V2
       // TODO 这里新建一张表来存储上链信息 , 这里需要使用到签名
       //等待其它程序处理上链
-      const sender = AUTH_CONTROLLER_SYSTEM_ADDRESS
-      const authTime = 1766841499 // 没有用的参数
-      const authExpiry = Date.now() + 1 * 60 * 60 * 24 * 180 // 六个月
-      const isAuth = true
-      const authLevel = 2 // 机构下面用户认证使用2, 机构实名使用1
-      const expandData = '{hash: \\"\\", version: \\"v0.0.0\\"}'
-      console.log(expandData)
-      const caddress = c_wallet.address
+      const authExpiry = Math.floor(Date.now() / 1000) + 1 * 60 * 60 * 24 * 3600 // 十年
       // 计算签名
-      const auth = {
-        caddress,
-        sender,
-        authTime,
-        authExpiry,
-        isAuth,
-        authLevel,
-        expandData
-      }
-
+      let idHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(this.idCard))
+      idHash = idHash.slice(0, 34);
+      let auth = {authExpiry, idHash}
       let privateKeyStr = c_wallet.privateKey
       const verifyingContract = contractAddress
       privateKeyStr = ethUtil.stripHexPrefix(privateKeyStr)
@@ -375,34 +362,31 @@ export default {
 
       const Types = {
         Authentication: [
+          {type: 'bytes16', name: 'idHash'},
           {type: 'uint256', name: 'orderId'},
-          {type: 'address', name: 'caddress'},
-          {type: 'address', name: 'sender'},
-          {type: 'bool', name: 'isAuth'}
+          {type: 'address', name: 'caddress'}
         ]
       }
 
       const data = EIP712.createTypeData(
         {
           name: 'Authentication',
-          version: '1',
+          version: '2',
           chainId: '27',
           verifyingContract
         },
         'Authentication',
         {
+          idHash: auth.idHash,
           orderId: orderIdEcc,
-          caddress: auth.caddress,
-          sender: auth.sender,
-          isAuth: auth.isAuth
+          caddress: this.address
         },
         Types
       )
 
       const signature = sigUtil.signTypedData_v4(privateKey, {data: data})
-      auth.signature = signature
 
-      const origin_data_json = [auth, orderIdEcc]
+      const origin_data_json = [auth, orderIdEcc, signature, this.address]
       const preparData = {
         from: AUTH_CONTROLLER_SYSTEM_ADDRESS,
         to: contractAddress,
@@ -417,7 +401,7 @@ export default {
         origin_data: origin_data_json,
         contract_address: contractAddress,
         method:
-          ABI_const['AuthController'].contractName +
+          ABI_const['AuthControllerV2'].contractName +
           '#' +
           'authentication'
       }
@@ -435,34 +419,56 @@ export default {
     },
     sendMsgCode() {
 
-      // 这里进行验证码验证
-      if (this.nextTime != 0) {
-        this.$message.error('当前验证码有效!')
-      }
-      else if (this.v$.mobile.$invalid) {
-        this.$message.error('手机号码输入有误,请重新输入!')
-      }
-      else if (this.hcaptchaResp == null) {
-        this.$message.error('请先通过验证')
-      }
-      else {
-        sendTelCode({tel: this.mobile, hcaptcha: this.hcaptchaResp}).then(res => {
-          console.log(res)
-          if (res.code !== 1) {
-            this.$message.error(res.msg)
+      // 调用后台实名
+      // 首先查询地址是否已经认证
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+        chainId: 27
+      })
+      const authContractAddress = GlobalConfig.AUTH_CONTROLLER_ADDRESS_V2
+      const address = this.address
+
+      contract_static_call(
+        ethers,
+        authContractAddress,
+        ABI_const['AuthControllerV2'].abi,
+        'authsSingle',
+        customHttpProvider,
+        [address]
+      ).then(isAuth => {
+        if (isAuth.data == true) {
+          this.$message.error('账户已经认证!')
+        }
+        else {
+          // 这里进行验证码验证
+          if (this.nextTime != 0) {
+            this.$message.error('当前验证码有效!')
+          }
+          else if (this.v$.mobile.$invalid) {
+            this.$message.error('手机号码输入有误,请重新输入!')
+          }
+          else if (this.hcaptchaResp == null) {
+            this.$message.error('请先通过验证')
           }
           else {
-            this.$message.success('发送成功!')
-            // 开始短信倒计时
-            this.nextTime = 60
-            this.countTime()
+            sendTelCode({tel: this.mobile, hcaptcha: this.hcaptchaResp}).then(res => {
+              console.log(res)
+              if (res.code !== 1) {
+                this.$message.error(res.msg)
+              }
+              else {
+                this.$message.success('发送成功!')
+                // 开始短信倒计时
+                this.nextTime = 60
+                this.countTime()
 
+              }
+            }).catch((e) => {
+              console.trace(e)
+              this.$message.error('网络请求失败')
+            })
           }
-        }).catch((e) => {
-          console.trace(e)
-          this.$message.error('网络请求失败')
-        })
-      }
+        }
+      })
     },
     countTime() {
       this.nextTime = this.nextTime - 1
@@ -482,85 +488,65 @@ export default {
 
       const privateKey = await storage.getPrivateKey(this.password)
 
-      // 调用后台实名
       // 首先查询地址是否已经认证
-      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
-        chainId: 27
-      })
-      const authContractAddress = GlobalConfig.AUTH_CONTROLLER_ADDRESS
       this.privateKey = ethUtil.stripHexPrefix(privateKey)
-      const publicKey = ethUtil.privateToPublic(
-        new Buffer(this.privateKey, 'hex')
-      )
-      const address = ethUtil.addHexPrefix(ethUtil.publicToAddress(publicKey).toString('hex'))
-      const isAuth = await contract_static_call(
-        ethers,
-        authContractAddress,
-        ABI_const['AuthController'].abi,
-        'authsSingle',
-        customHttpProvider,
-        [address]
-      )
-      if (isAuth.data == true) {
-        this.$message.error('账户已经认证!')
-      }
-      else {
-        // 以太币转账
-        // 先获取当前账号交易的nonce
-        console.log(address)
-        queryCert({address: address}).then((res) => {
-          console.log(res)
-          if (res.code !== 200) {
-            this.$message.error(res.msg)
+      const address = this.address
+
+      // 以太币转账
+      // 先获取当前账号交易的nonce
+      console.log(address)
+      queryCert({address: address}).then((res) => {
+        console.log(res)
+        if (res.code !== 200) {
+          this.$message.error(res.msg)
+        }
+        else {
+          if (res.is_cert) {
+            this.showCertModal = false
+            this.$message.success('账户已经认证!')
+            return
           }
-          else {
-            if (res.is_cert) {
-              this.showCertModal = false
-              this.$message.success('账户已经认证!')
-              return
+          this.sec_data = res.sec_data
+          const paramSha3 = Web3.utils.sha3(this.sec_data, {encoding: 'hex'})
+          const privateBuffer = Buffer.from(this.privateKey, 'hex')
+          // console.log("paramSha3:", paramSha3)
+          const ecsign = ethUtil.ecsign(Buffer.from(Web3.utils.hexToBytes(paramSha3)), privateBuffer)
+          console.log('R', ethUtil.bufferToHex(ecsign.r))
+          console.log('S', ethUtil.bufferToHex(ecsign.s))
+          console.log('V', ethUtil.bufferToHex(ecsign.v))
+          let sign = ethUtil.bufferToHex(ecsign.r) + ethUtil.bufferToHex(ecsign.s) + ethUtil.bufferToHex(ecsign.v)
+          sign = sign.replace(new RegExp('0x', 'gm'), '')
+          console.log(sign)
+
+          // 生成上链预实名数据
+          const preparData = this.preparAuth()
+          console.log('preparData:', preparData)
+          userCert({
+            cert_name: this.realName,
+            cert_id_number: this.idCard,
+            mobile: this.mobile,
+            sign: sign,
+            msg: this.sec_data,
+            msg_code: this.msgCode,
+            prepar_data: preparData
+          }).then((res) => {
+            console.log(res)
+            if (res.code !== 200) {
+              this.$message.error(res.msg)
             }
-            this.sec_data = res.sec_data
-            const paramSha3 = Web3.utils.sha3(this.sec_data, {encoding: 'hex'})
-            const privateBuffer = Buffer.from(this.privateKey, 'hex')
-            // console.log("paramSha3:", paramSha3)
-            const ecsign = ethUtil.ecsign(Buffer.from(Web3.utils.hexToBytes(paramSha3)), privateBuffer)
-            console.log('R', ethUtil.bufferToHex(ecsign.r))
-            console.log('S', ethUtil.bufferToHex(ecsign.s))
-            console.log('V', ethUtil.bufferToHex(ecsign.v))
-            let sign = ethUtil.bufferToHex(ecsign.r) + ethUtil.bufferToHex(ecsign.s) + ethUtil.bufferToHex(ecsign.v)
-            sign = sign.replace(new RegExp('0x', 'gm'), '')
-            console.log(sign)
+            else {
+              this.is_cert = res.is_cert
+              this.sec_data = res.sec_data
+              this.$message.success('认证成功!')
 
-            // 生成上链预实名数据
-            const preparData = this.preparAuth()
-            console.log('preparData:', preparData)
-            userCert({
-              cert_name: this.realName,
-              cert_id_number: this.idCard,
-              mobile: this.mobile,
-              sign: sign,
-              msg: this.sec_data,
-              msg_code: this.msgCode,
-              prepar_data: preparData
-            }).then((res) => {
-              console.log(res)
-              if (res.code !== 200) {
-                this.$message.error(res.msg)
-              }
-              else {
-                this.is_cert = res.is_cert
-                this.sec_data = res.sec_data
-                this.$message.success('认证成功!')
-
-                this.reset()
-                this.afterAuthBind()
-              }
-            }).catch(() => {
-              this.$message.error('网络请求失败')
-            })
-          }
-        })
-      }
+              this.reset()
+              this.afterAuthBind()
+            }
+          }).catch(() => {
+            this.$message.error('网络请求失败')
+          })
+        }
+      })
     },
     async checkPassword() {
       this.v$.password.$reset()
