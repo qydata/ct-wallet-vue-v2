@@ -34,6 +34,14 @@
         </div>
       </li>
       <li class="header-tools__item">
+        <div class="header-tools__link" @click="session">
+          <span class="header-tools__icon">
+            <SparklesIcon/>
+          </span>
+          dApp 会话
+        </div>
+      </li>
+      <li class="header-tools__item">
         <div class="header-tools__link" @click="newAccount">
           <span class="header-tools__icon">
             <PlusIcon/>
@@ -87,6 +95,7 @@ import {
   PlusIcon,
   SortAscendingIcon,
   SortDescendingIcon,
+  SparklesIcon,
   UserIcon
 } from '@heroicons/vue/outline'
 import {SupportIcon} from '@heroicons/vue/solid'
@@ -99,6 +108,7 @@ export default {
     CogIcon,
     SortAscendingIcon,
     SortDescendingIcon,
+    SparklesIcon,
     UserIcon,
     PlusIcon,
     LockOpenIcon,
@@ -141,6 +151,10 @@ export default {
       this.showTools = false
       this.openAuthBindModal()
     },
+    session() {
+      this.showTools = false
+      this.openSessionModal()
+    },
     importKey() {
       this.showTools = false
       this.openImportKeyModal()
@@ -155,6 +169,7 @@ export default {
     openExportKeyModal: Function,
     openCreateModal: Function,
     openAuthBindModal: Function,
+    openSessionModal: Function,
     openImportKeyModal: Function,
     openCardModal: Function
   }

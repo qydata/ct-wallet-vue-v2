@@ -109,9 +109,6 @@ export default {
 }
 
 @screen md {
-  .account-panel .container {
-    @apply flex flex-row justify-between items-end;
-  }
 
   .account-panel__address span {
     @apply inline;

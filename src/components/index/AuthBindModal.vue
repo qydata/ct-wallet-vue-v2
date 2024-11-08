@@ -353,7 +353,7 @@ export default {
       const authExpiry = Math.floor(Date.now() / 1000) + 1 * 60 * 60 * 24 * 3600 // 十年
       // 计算签名
       let idHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(this.idCard))
-      idHash = idHash.slice(0, 34);
+      idHash = idHash.slice(0, 34)
       let auth = {authExpiry, idHash}
       let privateKeyStr = c_wallet.privateKey
       const verifyingContract = contractAddress
@@ -579,7 +579,6 @@ export default {
     }
   },
   async mounted() {
-    this.address = await storage.getAddress(storage.getHighestWalletVersion())
   },
   setup() {
     return {

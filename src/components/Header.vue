@@ -6,6 +6,8 @@
     <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal === 'import'"/>
     <AuthBindModal :afterAuthBind="gotoCharge" :close="closeCreateModal"
                    :visible="createAndImportModal === 'authBind'"/>
+    <SessionsModal :afterAuthBind="closeCreateModal" :close="closeCreateModal"
+                   :visible="createAndImportModal === 'sessions'"/>
     <ChargeModal :afterCharge="gotoOverview" :visible="createAndImportModal === 'charge'" :label="'header'"/>
     <PayCardModal
       :afterCharge="closeCreateModal"
@@ -27,6 +29,7 @@
                        :openExportKeyModal="openExportKeyModal"
                        :openAuthBindModal="openAuthBindModal"
                        :openCreateModal="openCreateModal"
+                       :openSessionModal="openSessionModal"
                        :openImportKeyModal="openImportKeyModal"
                        :openCardModal="openCardModal"
 
@@ -43,6 +46,7 @@ import BurgerButton from '@/components/BurgerButton'
 import HeaderTools from '@/components/HeaderTools'
 import AddPayCardModal from '@/components/index/AddPayCardModal'
 import AuthBindModal from '@/components/index/AuthBindModal'
+import SessionsModal from '@/components/index/SessionsModal'
 import ChargeModal from '@/components/index/ChargeModal'
 import CreateModal from '@/components/index/CreateModal'
 import ExportKey from '@/components/index/ExportModal'
@@ -92,6 +96,10 @@ export default {
           link: '/publicity',
           text: '公示'
         },
+        {
+          link: '/dapp',
+          text: 'Dapp'
+        },
 
         // {
         //   link: process.env.VUE_APP_GOVERNANCE_URL,
@@ -130,7 +138,6 @@ export default {
     }
     else {
       let needAuth = sessionStorage.getItem('needAuth')
-      console.log('needAuth', needAuth)
       if (needAuth != null) {
         sessionStorage.removeItem('needAuth')
         await this.gotoAuthBind()
@@ -165,6 +172,10 @@ export default {
     openAuthBindModal() {
       this.showNav = false
       this.createAndImportModal = 'authBind'
+    },
+    openSessionModal() {
+      this.showNav = false
+      this.createAndImportModal = 'sessions'
     },
     openImportKeyModal() {
       this.showNav = false
@@ -265,6 +276,7 @@ export default {
     ImportKey,
     CreateModal,
     AuthBindModal,
+    SessionsModal,
     ChargeModal,
     PayCardModal,
     AddPayCardModal

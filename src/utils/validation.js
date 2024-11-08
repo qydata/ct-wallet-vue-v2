@@ -52,7 +52,7 @@ export const ethAddress = helpers.withMessage('无效的 草天链地址.', v =>
 /**
  * Password length validator.
  */
-export const passwordLength = helpers.withMessage('必须为 10 个字符或更多。', minLength(10))
+export const passwordLength = helpers.withMessage('必须为 8 个字符或更多。', minLength(8))
 
 /**
  * Required password validator.

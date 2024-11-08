@@ -15,6 +15,8 @@ import Nodes from '@/views/Nodes'
 import Publicity from '@/views/Publicity'
 import Overview from '@/views/Overview'
 import Staking from '@/views/Staking'
+import TestWallet from '@/views/TestWallet'
+import Dapp from '@/views/Dapp'
 import {createRouter, createWebHistory} from 'vue-router'
 import Index from '../views/Index.vue'
 
@@ -50,6 +52,16 @@ const routes = [
     component: () => {
     },
     disabled: true
+  },
+  {
+    path: '/dapp',
+    name: 'Dapp',
+    component: Dapp
+  },
+  {
+    path: '/testWallet',
+    name: 'TestWallet',
+    component: TestWallet
   },
   {
     path: '/staking',

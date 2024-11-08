@@ -19,5 +19,5 @@
     clearTimeout(timer)
     timer = setTimeout(removeClassHandler, resetDelay)
   }
-  window.addEventListener('resize', resizeHandler)
+  window.addEventListener('resize', (event) => resizeHandler(event))
 })(window)

@@ -1,6 +1,5 @@
-å
 <template>
-  <div v-if="visible" class="modal-backdrop" style="scrollbar-width:none;" >
+  <div v-if="visible" class="modal-backdrop" style="scrollbar-width:none;">
     <div class="modal-outer">
       <div class="inline-block w-full py-10 overflow-hidden align-bottom sm:py-30 sm:align-middle" :style="getStyle()">
         <div class="modal">
@@ -51,14 +50,11 @@ export default {
 
 <style scoped>
 .modal-backdrop {
-  @apply fixed inset-0 z-10 overflow-y-auto bg-black;
-  /*--tw-bg-opacity: 1;*/
-  /*background: radial-gradient(black 30%, rgba(29, 29, 29, var(--tw-bg-opacity)) 50%);*/
-  /*background: radial-gradient(black 30%, rgba(29, 29, 29, var(--tw-bg-opacity)) 50%);*/
+
 }
 
 .modal-outer {
-  @apply flex items-center justify-center min-h-screen px-10 sm:px-30 md:px-0;
+  @apply flex items-center justify-center px-10 sm:px-30 md:px-0;
 }
 
 .modal {

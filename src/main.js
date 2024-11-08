@@ -6,27 +6,37 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import './assets/css/css-vars.css'
 import './index.css'
+import {createPinia} from 'pinia'
 // main.ts
 // if you just want to import css
 // import 'element-plus/theme-chalk/dark/css-vars.css'
 /*global process*/
 import {createApp} from 'vue'
+import VueCookies from 'vue-cookies'
+// import VModal from 'vue-js-modal'
 // import 'element-plus/lib/theme-chalk/index.css'
 import App from './App.vue'
 
 import titleMixin from './mixins/titleMixin'
 import router from './router'
 import Store from './store'
+
 import './utils'
-import VueCookies from 'vue-cookies'
 // Vue.prototype.$message = ElementPlus.Message
 const WALLET_REFRESH_INTERVAL = 30 * 1000
 const init = async () => {
   const store = await Store.init()
-
+  const pinia = createPinia()
   const app = createApp(App, {store})
     .use(router)
+    .use(pinia)
     .use(store)
+    // .use(VModal, {
+    //   dialog: true,
+    //   dynamicDefaults: {
+    //     draggable: true
+    //   }
+    // })
     .use(VueCookies)
     .use(ElementPlus)
     .mixin(titleMixin)

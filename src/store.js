@@ -5,6 +5,7 @@
 /*global process*/
 
 import {createStore} from 'vuex'
+import web3ConnectionModule from './store/web3ConnectionModule'
 import {fetchTokenValue} from './utils/api'
 import {empty, expire, getAddress, getUnlockExpiry, getWalletVersion, setUnlockExpiry} from './utils/storage'
 
@@ -51,10 +52,12 @@ const init = async () => {
         index: {
           baseURL: process.env.VUE_APP_INDEX_API_URL
         },
-        MULT_CALL:GlobalConfig.MULT_CALL,
+        MULT_CALL: GlobalConfig.MULT_CALL,
         XCT: _address.XCT,
         env: process.env
-      }
+      },
+      wcConnectorSession: {}
+
     },
     mutations: {
       lock(state) {
@@ -136,6 +139,9 @@ const init = async () => {
         const tokenValue = await fetchTokenValue()
         commit('setCNYBalance', tokenValue.cnyPerCT * (state.balance))
       }
+    },
+    modules: {
+      web3Connections: web3ConnectionModule
     }
   })
 }

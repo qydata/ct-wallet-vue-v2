@@ -1,4 +1,3 @@
-å
 <template>
   <div v-if="visible" class="modal-backdrop">
     <div class="modal-outer">
@@ -76,13 +75,4 @@ export default {
 }
 
 
-.modal-fade-enter,
-.modal-fade-leave-to {
-  @apply opacity-0;
-}
-
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  @apply transition-opacity duration-500 ease-in-out;
-}
 </style>

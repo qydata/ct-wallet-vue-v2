@@ -3,6 +3,14 @@
 // that can be found in the LICENSE.md file. All rights reserved.
 
 module.exports = {
+  configureWebpack: {
+    module: {
+      rules: [{test: /node_modules[\\/]@walletconnect/, loader: 'babel-loader'}, {
+        test: /node_modules[\\/]@web3modal/,
+        loader: 'babel-loader'
+      }]
+    }
+  },
   productionSourceMap: process.env.NODE_ENV === 'production' ? false : true,
   assetsDir: 'assets/',
   chainWebpack: config => {
@@ -13,8 +21,8 @@ module.exports = {
         args[0].title = process.env.VUE_APP_IS_TESTNET === 'true' ? 'Testnet (CT) Wallet' : '数字钱包'
         return args
       })
-      // 移除 prefetch 插件
-      config.plugins.delete('prefetch')
+    // 移除 prefetch 插件
+    config.plugins.delete('prefetch')
   },
   devServer: {
     host: '0.0.0.0',
