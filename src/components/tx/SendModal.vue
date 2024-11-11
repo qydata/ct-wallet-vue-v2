@@ -452,7 +452,7 @@ export default {
     async easGasSend() {
       // 转账为固定手续费
       let gasLimit = 21000
-      let gasPrice = 4800
+      let gasPrice = 4500
       let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
@@ -544,7 +544,9 @@ export default {
 
       case 'ERC-20':
         override = {
-          from: this.address
+          from: this.address,
+          maxPriorityFeePerGas: 4500e9,
+          maxFeePerGas: 4800e9
         }
         tx = await contract_call_override(
           ethers,
@@ -703,6 +705,8 @@ export default {
           // We must pass in the amount as wei (1 ether = 1e18 wei), so we
           // use this convenience function to convert ether to wei.
           // gasPrice: ethers.utils.hexlify(0),
+          maxPriorityFeePerGas: 4500e9,
+          maxFeePerGas: 4800e9,
           value: ethers.utils.parseEther((this.amountParsedCalc).toString()),
           data: '0x' + memo,
           nonce: this.nextNonce
