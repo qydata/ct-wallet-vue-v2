@@ -41,7 +41,7 @@
                      class="bg-transparent border-none"
                      circle>
             <el-icon color="#ffffff" size="24">
-              <TopRight/>
+              <Position/>
             </el-icon>
           </el-button>
 
@@ -79,7 +79,7 @@ import Header from '@/components/Header'
 import {
   RefreshRight,
   HomeFilled,
-  TopRight
+  Position
 } from '@element-plus/icons-vue'
 
 export default {
@@ -98,9 +98,8 @@ export default {
     Header,
     RefreshRight,
     HomeFilled,
-    TopRight
-  }
-  ,
+    Position
+  },
   computed: {
     currentPage() {
       return Math.max(1, parseInt(this.$route.query.page) || 1)
