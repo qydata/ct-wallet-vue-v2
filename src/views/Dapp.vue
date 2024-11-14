@@ -22,7 +22,17 @@
           class="col-span-8 md:col-span-9"
           placeholder="请输入 dApp 地址"
         >
-          <template #prepend>{{ urlPrefix }}</template>
+          <template #prepend>
+            <el-avatar
+              v-if="faviconUrl"
+              :src="faviconUrl"
+              size="small"
+              class="mr-5 bg-transparent w-fit"
+            >
+              faviconUrl
+            </el-avatar>
+            {{ urlPrefix }}
+          </template>
         </el-input>
 
         <div class="col-span-3 md:col-span-2 content-center">
@@ -57,7 +67,7 @@
           height="100vh"
           frameborder="0"
           allowfullscreen
-        ></iframe>
+        />
       </div>
 
     </div>
@@ -79,6 +89,7 @@ export default {
       // 替换为你要嵌入的页面地址
       iframeSrc: 'https://test.ctblock.cn',
       inputAddr: 'test.ctblock.cn',
+      faviconUrl: '',
       urlPrefix: 'https://',
       isLoading: false
     }
@@ -106,6 +117,26 @@ export default {
 
   },
   methods: {
+    getFavicon() {
+      const iframe = this.$refs.myIframe
+      try {
+        // 尝试从 iframe 内部获取 favicon
+        const favicon = iframe.contentWindow.document.querySelector('link[rel*="icon"]')
+        if (favicon) {
+          this.faviconUrl = favicon.href
+        }
+        else {
+          // 如果没有找到 favicon，则使用默认路径
+          const iframeSrc = new URL(iframe.src)
+          this.faviconUrl = `${iframeSrc.origin}/favicon.ico`
+        }
+      } catch (error) {
+        // 如果遇到跨域问题，则使用默认 favicon 路径
+        console.error('Unable to access iframe content due to cross-origin restrictions.')
+        const iframeSrc = new URL(iframe.src)
+        this.faviconUrl = `${iframeSrc.origin}/favicon.ico`
+      }
+    },
     isEnterLoad() {
       this.iframeSrc = this.urlPrefix + this.inputAddr
     },
@@ -135,6 +166,8 @@ export default {
     onIframeLoad() {
       console.log('iframe 加载完成')
       this.isLoading = false
+      this.getFavicon()
+
     },
     onIframeError() {
       console.log('iframe 加载错误')
@@ -142,7 +175,11 @@ export default {
     }
   },
   watch: {
-    iframeSrc(oldVal, newVal) {
+    faviconUrl(newVal, oldVal) {
+      // 当 iframeSrc 改变时，执行一些操作
+      console.log(`faviconUrl changed from ${oldVal} to ${newVal}`)
+    },
+    iframeSrc(newVal, oldVal) {
       // 当 iframeSrc 改变时，执行一些操作
       this.isLoading = true
       console.log(`iframeSrc changed from ${oldVal} to ${newVal}`)
@@ -152,14 +189,6 @@ export default {
 </script>
 
 <style scoped>
-.checkbox-container {
-  @apply flex items-center mb-10 justify-end;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
 
 .checkbox-container label {
   @apply cursor-pointer mr-5 mb-0;
@@ -172,14 +201,6 @@ export default {
 }
 
 /* Create custom checkbox */
-.checkmark {
-  @apply cursor-pointer mr-5 mb-0;
-  position: relative;
-  height: 13px;
-  width: 13px;
-  border: solid 1px #787878;
-  border-radius: 3px;
-}
 
 /* On mouse-over, add grey background color */
 .checkbox-container:hover input ~ .checkmark {
@@ -192,12 +213,6 @@ export default {
   border: none;
 }
 
-/* Create checkmark (hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
 
 /* Show checkmark when checked */
 .checkbox-container input:checked ~ .checkmark:after {
