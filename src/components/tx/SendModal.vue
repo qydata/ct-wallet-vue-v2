@@ -19,7 +19,8 @@
         <div class="pb-14 min-h-310">
           <div class="form-group" :class="{'form-group__error': v$.recipient.$error}">
             <label for="send-send" class="label">发送到</label>
-            <input
+            <el-input
+              size="large"
               id="send-send"
               placeholder="CT 地址"
               ref="recipient"
@@ -33,7 +34,8 @@
           </div>
           <div class="form-group" :class="{'form-group__error': v$.memo.$error}" v-show="false">
             <label for="memo" class="label">备忘录 (可选)</label>
-            <input type="text" placeholder="输入一个备忘录" id="memo" v-model="v$.memo.$model"/>
+            <el-input
+              size="large" type="text" placeholder="输入一个备忘录" id="memo" v-model="v$.memo.$model"/>
             <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.memo.$errors" :key="error.$uid">
               {{ error.$message }}
@@ -45,7 +47,8 @@
           >
             <label for="amount-send">数量</label>
             <div class="relative input-wrap">
-              <input
+              <el-input
+                size="large"
                 type="number"
                 id="amount-send"
                 placeholder="0.00"
@@ -128,7 +131,8 @@
                 <span class="icon">
                   <LockOpenIcon/>
                 </span>
-                <input
+                <el-input
+                  size="large"
                   type="password"
                   autocomplete="off"
                   @keypress="sendOnEnter"

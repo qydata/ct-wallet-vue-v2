@@ -14,7 +14,9 @@
       <div class="container">
         <div class="checkbox-container" @click="updateHideFalsePublicitys">
           <label>只显示人工订单</label>
-          <input type="checkbox" :checked="hideFalsePublicitys"/>
+
+          <input
+            size="large" type="checkbox" :checked="hideFalsePublicitys"/>
           <span class="checkmark"></span>
         </div>
         <PublicityTable

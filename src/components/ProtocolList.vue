@@ -25,7 +25,6 @@
 
 <script>
 import {ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon, PlusIcon, UserIcon} from '@heroicons/vue/outline'
-import {SupportIcon} from '@heroicons/vue/solid'
 import vClickOutside from 'click-outside-vue3'
 import {Tickets} from '@element-plus/icons-vue'
 

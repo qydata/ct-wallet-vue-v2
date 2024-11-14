@@ -20,7 +20,8 @@
             <span class="icon">
               <LockOpenIcon/>
             </span>
-            <input
+            <el-input
+              size="large"
               type="password"
               @keypress="exportOnEnter"
               autocomplete="off"

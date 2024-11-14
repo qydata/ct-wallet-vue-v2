@@ -84,8 +84,8 @@
               <span class="icon">
                 <EditPen/>
               </span>
-              <input
-                type="text"
+              <el-input
+                size="large"
                 autocomplete="off"
                 placeholder="请输入NFT标题"
                 id="title"
@@ -103,8 +103,8 @@
               <span class="icon">
                 <EditPen/>
               </span>
-              <input
-                type="text"
+              <el-input
+                size="large"
                 autocomplete="off"
                 placeholder="请输入NFT持有者信息"
                 id="author_description"
@@ -123,7 +123,8 @@
               <span class="icon">
                 <EditPen/>
               </span>
-              <input
+              <el-input
+                size="large"
                 :rows="3"
                 type="textarea"
                 autocomplete="off"
@@ -143,7 +144,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="number"
                 autocomplete="off"
                 placeholder="请输入发行数量"
@@ -171,7 +173,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-                <input
+                <el-input
+                  size="large"
                   type="password"
                   @keypress="createOnEnter"
                   autocomplete="off"

@@ -2,22 +2,49 @@
   <div>
     <Header/>
     <!--    <AccountPanel view="dapp"/>-->
-    <div class="bg-gray-200 dapp-div1">
+    <div class="bg-gray-200 dapp-div1" style="background-color: #1d1d1d">
 
-      <div class="px-20">
-        <div class="grid grid-cols-12  checkbox-container gap-4">
-          <el-input
-            style="height: 32px; overflow: hidden"
-            v-model="inputAddr"
-            type="text"
-            placeholder="请输入 dApp 地址"
-          />
+      <div class="w-full grid grid-cols-12 gap-8 mb-10">
+        <div class="col-span-1 content-center text-right">
+          <el-button @click="toHomePage"
+                     type="default"
+                     class="bg-transparent border-none"
+                     circle>
+            <el-icon color="#ffffff" size="24">
+              <HomeFilled/>
+            </el-icon>
+          </el-button>
+        </div>
+        <el-input
+          v-model="inputAddr"
+          type="text"
+          size="default"
+          class="col-span-8 md:col-span-9"
+          placeholder="请输入 dApp 地址"
+        >
+          <template #prepend>{{ urlPrefix }}</template>
+        </el-input>
 
-          <el-button @click="isEnterLoad" type="primary">载入</el-button>
-          <el-button @click="isRefreshLoad" type="warning">刷新</el-button>
+        <div class="col-span-3 md:col-span-2 content-center">
+          <el-button @click="isEnterLoad"
+                     type="default"
+                     class="bg-transparent border-none"
+                     circle>
+            <el-icon color="#ffffff" size="24">
+              <TopRight/>
+            </el-icon>
+          </el-button>
+
+          <el-button @click="isRefreshLoad"
+                     type="default"
+                     class="bg-transparent border-none"
+                     circle>
+            <el-icon color="#ffffff" size="24">
+              <RefreshRight/>
+            </el-icon>
+          </el-button>
         </div>
       </div>
-
       <!-- 定义 iframe，指定 src 属性 -->
       <div v-loading="isLoading">
         <iframe
@@ -39,6 +66,11 @@
 
 <script>
 import Header from '@/components/Header'
+import {
+  RefreshRight,
+  HomeFilled,
+  TopRight
+} from '@element-plus/icons-vue'
 
 export default {
   name: 'ViewDapp',
@@ -46,13 +78,18 @@ export default {
     return {
       // 替换为你要嵌入的页面地址
       iframeSrc: 'https://test.ctblock.cn',
-      inputAddr: 'https://test.ctblock.cn',
+      inputAddr: 'test.ctblock.cn',
+      urlPrefix: 'https://',
       isLoading: false
     }
   },
   components: {
-    Header
-  },
+    Header,
+    RefreshRight,
+    HomeFilled,
+    TopRight
+  }
+  ,
   computed: {
     currentPage() {
       return Math.max(1, parseInt(this.$route.query.page) || 1)
@@ -61,7 +98,7 @@ export default {
   mounted() {
     this.isLoading = true
     // 绑定事件监听器，使用箭头函数捕获最新的 this
-    window.addEventListener('keypress', (event) => this.isKeyPress(event));
+    window.addEventListener('keypress', (event) => this.isKeyPress(event))
   },
   // 返回清理函数
   unmounted: function () {
@@ -70,15 +107,17 @@ export default {
   },
   methods: {
     isEnterLoad() {
-      this.isLoading = true
-      this.iframeSrc = this.inputAddr
+      this.iframeSrc = this.urlPrefix + this.inputAddr
+    },
+    toHomePage() {
+      this.iframeSrc = 'https://test.ctblock.cn'
+      this.inputAddr = 'test.ctblock.cn'
     },
     isKeyPress(event) {
 
       if (event.charCode !== 13) return
-      this.isLoading = true
-      console.log( this.iframeSrc, this.inputAddr)
-      this.iframeSrc = this.inputAddr
+      console.log(this.iframeSrc, this.inputAddr)
+      this.iframeSrc = this.urlPrefix + this.inputAddr
     },
     isRefreshLoad() {
       console.log('isRefreshLoad')
@@ -104,6 +143,8 @@ export default {
   },
   watch: {
     iframeSrc(oldVal, newVal) {
+      // 当 iframeSrc 改变时，执行一些操作
+      this.isLoading = true
       console.log(`iframeSrc changed from ${oldVal} to ${newVal}`)
     }
   }
@@ -182,6 +223,7 @@ export default {
   padding: 0;
   height: 90vh;
   width: 100vw;
+  overflow: hidden;
 }
 
 .dapp-div1 {

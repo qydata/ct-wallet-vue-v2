@@ -46,7 +46,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="password"
                 autocomplete="off"
                 placeholder="你的密码"

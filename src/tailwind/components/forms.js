@@ -79,10 +79,10 @@ const formStyles = ({theme}) => ({
   }
 })
 
-const forms = ({ theme }) => {
-  const {base, formGroup, whiteFormGroup, label} = formStyles({ theme })
+const forms = ({theme}) => {
+  const {base, formGroup, whiteFormGroup, label} = formStyles({theme})
   return {
-    'input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])': base,
+    '.el-input--large .el-input__inner:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])': base,
     '.form-group': formGroup,
     '.lg-input-group': whiteFormGroup,
     '.label, label': label

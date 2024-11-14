@@ -11,7 +11,8 @@
             <div class="form-group" style="flex: 2" :class="{'form-group__error': v$.name.$error}">
               <label for="name">名称</label>
               <div style="display: flex">
-                <input
+                <el-input
+                  size="large"
                   type="text"
                   autocomplete="off"
                   placeholder="请输入初始化合约名称"
@@ -31,7 +32,8 @@
             <div class="form-group" style="flex: 1" :class="{'form-group__error': v$.symbol.$error}">
               <label for="symbol">符号(简称)</label>
               <div style="display: flex">
-                <input
+                <el-input
+                  size="large"
                   type="text"
                   autocomplete="off"
                   placeholder="请输入合约简称"
@@ -56,7 +58,8 @@
               <span class="icon">
                 <EditPen/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="text"
                 autocomplete="off"
                 placeholder="请输入元数据访问前缀"
@@ -75,8 +78,8 @@
               <span class="icon">
                 <EditPen/>
               </span>
-              <input
-                type="text"
+              <el-input
+                size="large"
                 autocomplete="off"
                 placeholder="情输入合约元数据"
                 id="contractUrl"
@@ -107,7 +110,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-                <input
+                <el-input
+                  size="large"
                   type="password"
                   @keypress="createOnEnter"
                   autocomplete="off"

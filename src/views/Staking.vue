@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Header />
-    <AccountPanel view="staking" />
+    <Header/>
+    <AccountPanel view="staking"/>
 
     <ReleaseStakeModal
       :close="closeReleaseStakeModal"
@@ -16,9 +16,10 @@
 
     <div class="bg-gray-200 py-35">
       <div class="container">
-        <div class="checkbox-container" @click="updateHideReleasedStakes" >
+        <div class="checkbox-container" @click="updateHideReleasedStakes">
           <label>Hide Released Stakes</label>
-          <input type="checkbox" :checked="hideReleasedStakes" />
+          <input
+            size="large" type="checkbox" :checked="hideReleasedStakes"/>
           <span class="checkmark"></span>
         </div>
         <StakesTable
@@ -58,7 +59,7 @@ export default {
       showUnlockStakeModal: false,
       stake: null,
 
-      metadata: { totalCount: 0 },
+      metadata: {totalCount: 0},
       limit: 20
     }
   },
@@ -103,8 +104,8 @@ export default {
     },
     updateHideReleasedStakes() {
       const hideReleased = !this.hideReleasedStakes ? 1 : undefined
-      const query = { ...this.$route.query, hideReleased }
-      this.$router.replace({ query })
+      const query = {...this.$route.query, hideReleased}
+      this.$router.replace({query})
     }
   },
   watch: {
@@ -112,11 +113,11 @@ export default {
       const numRegEx = /^[-+]?\d*$/
       if (this.$route.query.page) {
         if (this.$route.query.page < 1 || !numRegEx.test(this.$route.query.page)) {
-          this.$router.replace({ query: { ...this.$route.query, page: 1 } })
+          this.$router.replace({query: {...this.$route.query, page: 1}})
         }
       }
       // eslint-disable-next-line max-len
-      if (this.currentPage > this.lastPage) this.$router.replace({ query: { ...this.$route.query, page: this.lastPage } })
+      if (this.currentPage > this.lastPage) this.$router.replace({query: {...this.$route.query, page: this.lastPage}})
     }
   }
 }
@@ -159,7 +160,7 @@ export default {
 
 /* When checkbox is checked, add green background */
 .checkbox-container input:checked ~ .checkmark {
-  background-color: rgb(14,204,95);
+  background-color: rgb(14, 204, 95);
   border: none;
 }
 

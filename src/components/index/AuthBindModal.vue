@@ -75,7 +75,8 @@
             </div>
             <div class="form-group col-span-9" :class="{'form-group__error': v$.msgCode.$error}">
               <label for="very-code">你的验证码</label>
-              <input
+              <el-input
+                size="large"
                 type="text"
                 autocomplete="off"
                 placeholder="请输入你的验证码"
@@ -92,7 +93,8 @@
 
           <div class="form-group" :class="{'form-group__error': v$.realName.$error}">
             <label for="real-name">你的姓名</label>
-            <input
+            <el-input
+              size="large"
               type="text"
               autocomplete="off"
               placeholder="请输入你的姓名"
@@ -107,7 +109,8 @@
           </div>
           <div class="form-group" :class="{'form-group__error': v$.idCard.$error}">
             <label for="id-card">你的证件号码</label>
-            <input
+            <el-input
+              size="large"
               type="text"
               autocomplete="off"
               placeholder="请输入你的证件号码"
@@ -126,7 +129,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="password"
                 @keypress="createOnEnter"
                 autocomplete="off"

@@ -13,7 +13,8 @@
               <span class="icon">
                 <KeyIcon/>
               </span>
-              <input type="password" placeholder="你的私钥" id="key" v-model="v$.privateKey.$model"/>
+              <el-input
+                size="large" type="password" placeholder="你的私钥" id="key" v-model="v$.privateKey.$model"/>
             </div>
             <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.privateKey.$errors" :key="error.$uid">
@@ -27,7 +28,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="password"
                 autocomplete="off"
                 placeholder="输入你的密码"
@@ -45,7 +47,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="password"
                 @keypress="restoreOnEnter"
                 autocomplete="off"

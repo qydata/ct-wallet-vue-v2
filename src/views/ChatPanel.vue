@@ -178,7 +178,8 @@
             <div class="chat-input" v-if="messages.length != 0">
 
               <div style="flex: 1;">
-                <input
+                <el-input
+                  size="large"
                   v-model="newMessage"
                   :rows="4"
                   type="textarea"

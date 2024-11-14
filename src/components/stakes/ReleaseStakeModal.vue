@@ -44,7 +44,8 @@
                 <span class="icon">
                   <LockOpenIcon/>
                 </span>
-                <input
+                <el-input
+                  size="large"
                   type="password"
                   autocomplete="off"
                   @keypress="releaseOnEnter"
@@ -121,7 +122,8 @@
                 <span class="icon">
                   <LockOpenIcon/>
                 </span>
-                <input
+                <el-input
+                  size="large"
                   type="password"
                   autocomplete="off"
                   @keypress="releaseOnEnter"
@@ -137,8 +139,8 @@
             </div>
             <div class="form-group" :class="{'form-group__error': v$.confirmPhrase.$error}">
               <label for="confirm-phrase">Please type '<span style="text-transform: none">{{phrase}}</span>'</label>
-              <input
-                type="text"
+              <el-input
+                size="large"
                 @keypress="createOnEnter"
                 autocomplete="off"
                 id="confirm-phrase"

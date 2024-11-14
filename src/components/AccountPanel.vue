@@ -175,7 +175,8 @@
         :show-close="false"
         width="500"
       >
-        <input type="text" autocomplete="off" placeholder="输入一个钱包名称"
+        <el-input
+          size="large" type="text" autocomplete="off" placeholder="输入一个钱包名称"
                v-model="walletName"
                class="pl-1"/>
         <template #footer>

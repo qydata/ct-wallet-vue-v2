@@ -13,7 +13,8 @@
               <span class="icon">
                 <EditPen/>
               </span>
-            <input
+            <el-input
+              size="large"
               type="text"
               autocomplete="off"
               placeholder="请输入一个钱包名称"
@@ -82,7 +83,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="password"
                 @keypress="createOnEnter"
                 autocomplete="off"
@@ -103,7 +105,8 @@
             <label for="confirm-phrase">请输入 '<span style="text-transform: none">{{
                 phrase
               }}</span>'来确认我已经备份了我的私钥</label>
-            <input
+            <el-input
+              size="large"
               type="text"
               @keypress="createOnEnter"
               autocomplete="off"

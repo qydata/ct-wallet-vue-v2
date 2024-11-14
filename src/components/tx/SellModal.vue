@@ -28,7 +28,8 @@
             :class="{'form-group__error': v$.amount.$error}">
             <label for="amount">数量</label>
             <div class="relative input-wrap">
-              <input
+              <el-input
+                size="large"
                 type="number"
                 id="amount"
                 placeholder="0.00"
@@ -170,7 +171,8 @@
                 <span class="icon">
                   <LockOpenIcon/>
                 </span>
-                <input
+                <el-input
+                  size="large"
                   autocomplete="off"
                   type="password"
                   placeholder="你的密码"

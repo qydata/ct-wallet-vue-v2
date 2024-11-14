@@ -65,7 +65,8 @@
           <div class="lg-input-group" :class="{'form-group__error': v$.amount.$error}">
             <label for="key">数量</label>
             <div class="relative input-wrap">
-              <input
+              <el-input
+                size="large"
                 type="number"
                 id="amount-send"
                 placeholder="0.000000"

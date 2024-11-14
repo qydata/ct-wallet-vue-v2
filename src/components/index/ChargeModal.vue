@@ -17,7 +17,8 @@
           </div>
           <div class="form-group" :class="{'form-group__error': v$.toaddress.$error}">
             <label for="charge-address">充值至地址:</label>
-            <input
+            <el-input
+              size="large"
               type="text"
               readonly
               autocomplete="off"
@@ -32,7 +33,8 @@
           </div>
           <div class="form-group" :class="{'form-group__error': v$.tovalue.$error}">
             <label for="charge-amount">充值金额:</label>
-            <input
+            <el-input
+              size="large"
               type="number"
               autocomplete="off"
               id="charge-amount"

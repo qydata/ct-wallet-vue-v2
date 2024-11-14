@@ -14,7 +14,8 @@
         <div class="pb-14 min-h-310">
           <div v-if="item.type == 1">
             <label for="send-send" class="label">发送到</label>
-            <input
+            <el-input
+              size="large"
               id="send-send"
               placeholder="CT 地址"
               ref="item.to"
@@ -26,7 +27,8 @@
           </div>
           <div v-if="item.type == 2">
             <label for="send-send" class="label">交互地址</label>
-            <input
+            <el-input
+              size="large"
               id="send-send"
               placeholder="合约地址"
               ref="item.contractAddress"
@@ -39,7 +41,8 @@
 
           <label for="amount-send">数量</label>
           <div class="relative input-wrap">
-            <input
+            <el-input
+              size="large"
               type="number"
               id="amount-send"
               placeholder="0.00"
@@ -122,7 +125,8 @@
                 <span class="icon">
                   <LockOpenIcon/>
                 </span>
-                <input
+                <el-input
+                  size="large"
                   type="password"
                   autocomplete="off"
                   @keypress="sendOnEnter"

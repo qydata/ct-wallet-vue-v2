@@ -10,7 +10,8 @@
         <div class="form-group" :class="{'form-group__error': v$.toAddress.$error}">
           <label for="toAddress">接收人</label>
           <div class="relative">
-            <input
+            <el-input
+              size="large"
               type="text"
               autocomplete="off"
               placeholder="请输入一个钱包地址"
@@ -29,15 +30,14 @@
         <div class="form-group" :class="{'form-group__error': v$.firstMessage.$error}">
           <label for="firstMessage">消息内容</label>
           <div class="relative">
-            <input
+            <el-input
+              size="large"
               v-model="v$.firstMessage.$model"
               :rows="3"
               type="textarea"
               id="firstMessage"
               placeholder="请输入消息内容"
-            >
-
-            </input>
+            />
 
 <!--            <input-->
 <!--              type="text"-->
@@ -73,7 +73,8 @@
               <span class="icon">
                 <LockOpenIcon/>
               </span>
-              <input
+              <el-input
+                size="large"
                 type="password"
                 @keypress="createOnEnter"
                 autocomplete="off"

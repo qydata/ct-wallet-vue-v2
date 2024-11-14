@@ -8,11 +8,14 @@
       </h1>
       <p class="flex-1 my-0">
         <!-- eslint-disable-next-line max-len -->
-        To request funds, please make a <a :href="`${twitterUrl}${twitterMsg}`" target="_about" class="tweet">tweet</a> including your CT wallet address, then paste the URL of the tweet into the text box below.
+        To request funds, please make a <a :href="`${twitterUrl}${twitterMsg}`" target="_about" class="tweet">tweet</a>
+        including your CT wallet address, then paste the URL of the tweet into the text box below.
       </p>
       <p class="flex-1">
         <!-- eslint-disable-next-line max-len -->
-        <input :disabled="submitting" v-model="url" type="text" placeholder="URL of tweet including your CT address..." class="faucet-input">
+        <el-input
+          size="large" :disabled="submitting" v-model="url" type="text"
+          placeholder="URL of tweet including your CT address..." class="faucet-input"/>
       </p>
       <div v-if="displayMessage" class="w-full text-left">
         <p class="request-message py-8 my-0">
@@ -37,7 +40,7 @@ import superagent from 'superagent'
 
 export default {
   name: 'TestnetFaucet',
-  data: function() {
+  data: function () {
     return {
       url: null,
       error: null,
@@ -53,25 +56,25 @@ export default {
     }
   },
   computed: {
-    urlIsValid: function() {
+    urlIsValid: function () {
       return this.url && this.isValidTweetUrl(this.url)
     }
   },
   watch: {
-    url: function() {
+    url: function () {
       this.error = null
       this.success = false
       this.displayMessage = false
     }
   },
   methods: {
-    requestCT: function() {
+    requestCT: function () {
       this.submitting = true
 
       // POST request to faucet using superagent
       superagent
         .post(this.faucetUrl)
-        .send({ url: this.url })
+        .send({url: this.url})
         .end((err, res) => {
           this.submitting = false
           this.displayMessage = true
@@ -96,6 +99,7 @@ export default {
   text-align: center;
   padding: 1rem 0;
 }
+
 .faucet-header img {
   width: 24px;
   height: 24px;
@@ -104,6 +108,7 @@ export default {
 .faucet a.tweet {
   @apply leading-none border-b border-green border-opacity-25 hover:border-black hover:border-opacity-25 text-green;
 }
+
 .faucet a.tweet:hover {
   @apply text-black;
 }
@@ -115,9 +120,11 @@ export default {
 .request-message {
   height: 34px;
 }
+
 .request-message .success {
   @apply text-green;
 }
+
 .request-message .error {
   @apply text-red;
 }

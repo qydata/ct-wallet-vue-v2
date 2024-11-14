@@ -63,7 +63,8 @@
                 <span class="icon">
                   <LockOpenIcon/>
                 </span>
-                  <input
+                  <el-input
+                    size="large"
                     autocomplete="off"
                     type="password"
                     placeholder='请输入你的密码'
@@ -122,13 +123,14 @@
               :class="{'form-group__error': v$.amount.$error}">
               <label for="key">数量</label>
               <div class="relative input-wrap">
-                <input
+                <el-input
+                  size="large"
                   type="number"
                   id="amount-send"
                   placeholder="0.00"
                   v-model="v$.amount.$model"
                   class="placeholder-white placeholder-opacity-100"
-                >
+                />
                 <span class="absolute right-0 text-xl curren top-23">rmb</span>
                 <!-- eslint-disable-next-line max-len -->
                 <div class="mt-5 form-group__error input-error" style="color: #CD5F4E"
