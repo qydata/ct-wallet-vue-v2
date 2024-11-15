@@ -60,9 +60,6 @@
               <form>
                 <label for="pass-buy">输入密码</label>
                 <div class="relative input-wrap">
-                <span class="icon">
-                  <LockOpenIcon/>
-                </span>
                   <el-input
                     size="large"
                     autocomplete="off"
@@ -71,6 +68,7 @@
                     id="pass-buy"
                     v-model="password"
                     @keypress="withdrawOnEnter"
+                    :prefix-icon="LockOpenIcon"
                   />
                 </div>
                 <!-- eslint-disable-next-line max-len -->
@@ -331,7 +329,7 @@
                   v-model="mobile"
                 >
                   <template #append>
-                    <el-button type="success" @click.prevent="sendMsgCode">
+                    <el-button type="success" size="large" class="font-bold" @click.prevent="sendMsgCode">
                       {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
                     </el-button>
                   </template>
@@ -801,7 +799,8 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon
     }
   }
 }

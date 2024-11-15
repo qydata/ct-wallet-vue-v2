@@ -51,7 +51,6 @@ export default {
     }
   },
   components: {
-    TableHeader,
     ContractTableItem
   },
   props: {

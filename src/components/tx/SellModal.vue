@@ -168,9 +168,6 @@
             <form>
               <label for="password">输入密码</label>
               <div class="relative input-wrap">
-                <span class="icon">
-                  <LockOpenIcon/>
-                </span>
                 <el-input
                   size="large"
                   autocomplete="off"
@@ -179,6 +176,7 @@
                   id="password"
                   v-model="v$.password.$model"
                   @keypress="sellOnEnter"
+                  :prefix-icon="LockOpenIcon"
                 />
               </div>
               <!-- eslint-disable-next-line max-len -->
@@ -542,7 +540,8 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon
     }
   }
 }

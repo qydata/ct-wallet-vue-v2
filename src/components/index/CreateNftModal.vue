@@ -81,15 +81,13 @@
           <div class="form-group" :class="{'form-group__error': v$.title.$error}">
             <label for="title">标题</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <EditPen/>
-              </span>
               <el-input
                 size="large"
                 autocomplete="off"
                 placeholder="请输入NFT标题"
                 id="title"
                 v-model="v$.title.$model"
+                :prefix-icon="EditPen"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -100,15 +98,13 @@
           <div class="form-group" :class="{'form-group__error': v$.author_description.$error}">
             <label for="author_description">持有者</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <EditPen/>
-              </span>
               <el-input
                 size="large"
                 autocomplete="off"
                 placeholder="请输入NFT持有者信息"
                 id="author_description"
                 v-model="v$.author_description.$model"
+                :prefix-icon="EditPen"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -120,9 +116,6 @@
           <div class="form-group" :class="{'form-group__error': v$.description.$error}">
             <label for="description">描述</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <EditPen/>
-              </span>
               <el-input
                 size="large"
                 :rows="3"
@@ -131,6 +124,7 @@
                 placeholder="请输入NFT描述"
                 id="description"
                 v-model="v$.description.$model"
+                :prefix-icon="EditPen"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -141,9 +135,6 @@
           <div class="form-group" v-show="showSupplyInput">
             <label for="supply">发行数量</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <LockOpenIcon/>
-              </span>
               <el-input
                 size="large"
                 type="number"
@@ -151,6 +142,7 @@
                 placeholder="请输入发行数量"
                 id="supply"
                 v-model="supply"
+                :prefix-icon="LockOpenIcon"
               />
             </div>
           </div>
@@ -165,14 +157,13 @@
           <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
             <ShieldExclamationIcon/>
           </span>
-              <p>确保您安全地复制和存储您的钱包地址和密钥。如果您丢失了详细信息，您将无法访问您的钱包。请输入您的密码以确认您已备份您的详细信息。</p>
+              <p>
+                确保您安全地复制和存储您的钱包地址和密钥。如果您丢失了详细信息，您将无法访问您的钱包。请输入您的密码以确认您已备份您的详细信息。</p>
             </div>
             <div class="form-group" :class="{'form-group__error': v$.password.$error}">
               <label for="password">输入密码以加密此会话</label>
               <div class="relative input-wrap">
-              <span class="icon">
-                <LockOpenIcon/>
-              </span>
+
                 <el-input
                   size="large"
                   type="password"
@@ -181,6 +172,7 @@
                   placeholder="输入你的密码"
                   id="password"
                   v-model="v$.password.$model"
+                  :prefix-icon="LockOpenIcon"
                 />
               </div>
               <!-- eslint-disable-next-line max-len -->
@@ -236,13 +228,9 @@ export default {
   name: 'CreateModal',
   components: {
     LoadingModal,
-    ContractList,
-    LockOpenIcon,
     EditPen,
     Modal,
-    PencilIcon,
-
-    ShieldExclamationIcon, Delete, Download, Plus, ZoomIn
+    ShieldExclamationIcon, Delete, Plus
   },
   props: {
     afterCreate: Function,
@@ -720,7 +708,9 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon,
+      EditPen
     }
   }
 }

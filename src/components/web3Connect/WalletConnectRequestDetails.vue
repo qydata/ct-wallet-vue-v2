@@ -9,13 +9,14 @@
         :key="'param-list-item-' + param.label"
         class="py-5"
       >
-        <div class="grid grid-cols-1 gap-4">
+        <div class="grid grid-cols-12 gap-4">
 
-          <el-text tag="b" size="large">{{ param.label }}</el-text>
-          <el-text line-clamp="5">
+          <el-text class="col-span-2 self-start" tag="b" size="large">{{ param.label }}</el-text>
+          <el-text class="col-span-10" line-clamp="5" size="small">
             {{ param.value }}
           </el-text>
         </div>
+        <el-divider class="py-6"/>
       </div>
     </div>
 
@@ -191,8 +192,8 @@ export default {
         const [address, message] =
           method === 'personal_sign' ? [params[1], decode(params[0])] : params
         return [
-          this.format('Address', address),
-          this.format('Message', message)
+          this.format('地址', address),
+          this.format('消息', message)
         ]
       }
       else if (otherRequests.includes(method)) {

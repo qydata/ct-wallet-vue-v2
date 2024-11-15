@@ -12,19 +12,20 @@
     <ModalInter :close="cancel" :visible="success">
       <template v-slot:header>
         <h2 class="mb-8">{{ requestName }} </h2>
-
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-310">
-          <div v-if="this.connector && this.request" class=" grid grid-cols-1">
-            <div v-if="peerMeta.icons.length" class="col-4">
+        <div class="pb-14 w-full">
+          <div v-if="this.connector && this.request" class=" grid grid-cols-12 gap-2">
+            <div v-if="peerMeta.icons.length" class="col-span-2">
               <el-image
                 :src="peerMeta.icons[0]"
-                class="img-fluid rounded-start w-80"
+                class="img-fluid rounded-start w-full"
+                :lazy="true"
+                loading="lazy"
                 :alt="peerMeta.name + '-icon'"
               />
             </div>
-            <div class="col-8">
+            <div class="col-span-10">
               <div class="card-body">
                 <div>
                   <wallet-connect-request-details
@@ -43,9 +44,7 @@
                :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
             <label for="password">输入密码</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <LockOpenIcon/>
-              </span>
+
               <el-input
                 size="large"
                 type="password"
@@ -53,6 +52,7 @@
                 placeholder="你的密码"
                 id="password"
                 v-model="v$.password.$model"
+                :prefix-icon="LockOpenIcon"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -114,13 +114,12 @@ const walletConnectRequests = {
 }
 import {helpers, required as _required} from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
-import {LockOpenIcon, PencilIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
+import {LockOpenIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'DappCallRequestModal',
   components: {
     ModalInter,
-    LockOpenIcon,
     WalletConnectRequestDetails
   },
   props: {
@@ -192,7 +191,8 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon
     }
   },
   methods: {

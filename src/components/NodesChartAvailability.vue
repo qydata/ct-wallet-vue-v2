@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto'
 import { Line } from 'vue-chartjs'
 
 export default {

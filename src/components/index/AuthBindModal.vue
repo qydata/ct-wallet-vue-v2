@@ -45,9 +45,9 @@
               v-model="v$.mobile.$model"
             >
               <template #suffix>
-                <button class="mx-auto button button--success" type="button" @click.prevent="sendMsgCode">
+                <el-button size="large" class="font-bold" type="success" @click.prevent="sendMsgCode">
                   {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
-                </button>
+                </el-button>
               </template>
             </el-input>
             <!-- eslint-disable-next-line max-len -->
@@ -126,9 +126,6 @@
           <div class="form-group" :class="{'form-group__error': v$.password.$error}">
             <label for="password">输入密码以加密此会话</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <LockOpenIcon/>
-              </span>
               <el-input
                 size="large"
                 type="password"
@@ -137,6 +134,7 @@
                 placeholder="输入你的密码"
                 id="password"
                 v-model="v$.password.$model"
+                :prefix-icon="LockOpenIcon"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -200,10 +198,8 @@ export default {
   name: 'AuthBindModal',
   components: {
     ClipboardCopyIcon,
-    LockOpenIcon,
     Modal,
     ShieldExclamationIcon,
-    VueHcaptcha,
     VueClicaptcha
   },
   props: {
@@ -586,7 +582,8 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="account-panel">
     <InterSignModal
-      :visible="modal== 'interSend'"
+      :visible="true" v-if="modal== 'interSend'"
       :transaction="transaction"
       :afterSignFun="afterSignFun"/>
   </div>

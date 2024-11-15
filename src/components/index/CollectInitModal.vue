@@ -55,9 +55,6 @@
           <div class="form-group" :class="{'form-group__error': v$.tokenUrlPrefix.$error}">
             <label for="tokenUrlPrefix">NFT元数据访问前缀</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <EditPen/>
-              </span>
               <el-input
                 size="large"
                 type="text"
@@ -65,6 +62,7 @@
                 placeholder="请输入元数据访问前缀"
                 id="tokenUrlPrefix"
                 v-model="v$.tokenUrlPrefix.$model"
+                :prefix-icon="EditPen"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -75,15 +73,13 @@
           <div class="form-group" :class="{'form-group__error': v$.contractUrl.$error}">
             <label for="contractUrl">合约元数据URL</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <EditPen/>
-              </span>
               <el-input
                 size="large"
                 autocomplete="off"
                 placeholder="情输入合约元数据"
                 id="contractUrl"
                 v-model="v$.contractUrl.$model"
+                :prefix-icon="EditPen"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -107,9 +103,7 @@
             <div class="form-group" :class="{'form-group__error': v$.password.$error}">
               <label for="password">输入密码以加密此会话</label>
               <div class="relative input-wrap">
-              <span class="icon">
-                <LockOpenIcon/>
-              </span>
+
                 <el-input
                   size="large"
                   type="password"
@@ -118,6 +112,7 @@
                   placeholder="输入你的密码"
                   id="password"
                   v-model="v$.password.$model"
+                  :prefix-icon="LockOpenIcon"
                 />
               </div>
               <!-- eslint-disable-next-line max-len -->
@@ -163,7 +158,6 @@ export default {
   name: 'CreateModal',
   components: {
     LoadingModal,
-    LockOpenIcon,
     Modal,
     EditPen,
     ShieldExclamationIcon
@@ -623,7 +617,9 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon,
+      EditPen
     }
   }
 }

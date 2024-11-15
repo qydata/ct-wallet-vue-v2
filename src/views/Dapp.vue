@@ -65,11 +65,10 @@
           width="100vw"
           class="full-screen-iframe"
           height="100vh"
-          frameborder="0"
+          loading="lazy"
           allowfullscreen
         />
       </div>
-
     </div>
   </div>
 </template>

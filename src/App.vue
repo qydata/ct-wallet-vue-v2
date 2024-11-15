@@ -2,7 +2,7 @@
   <div id="app" class="app">
 
     <el-drawer
-      title="Tool Wallet"
+      title="ToolWallet"
       v-model="drawer"
       size="60%"
       :close-on-click-modal="false"
@@ -29,7 +29,6 @@
 </template>
 
 <script>
-const ethers = require('ethers')
 import {useDark, useToggle} from '@vueuse/core'
 import WCRequestAccountModal from './components/modal/WCRequestAccountModal.vue'
 import {mapState} from 'vuex'
@@ -88,7 +87,6 @@ export default {
     window.addEventListener('resize', () => {
       this.setViewHeight()
     })
-    this.blockEvemt()
 
     // 交易
     WalletConnect.on(WCEvent.RequestAccount, this.handleRequestAccount)
@@ -112,15 +110,19 @@ export default {
   unmounted: function () {
     WalletConnect.removeListener(WCEvent.RequestAccount, this.handleRequestAccount)
     window.removeEventListener('message', this.handleEvent)
-
   },
   methods: {
-    handleEvent(event) {
+    async handleEvent(event) {
       if (event.data && event.data.type === 'display_uri') {
         console.log('Event triggered', event.data)
         let display_uri = event.data.data
+        console.log(display_uri)
         this.displayUri = display_uri
-        this.handleRequestAccount()
+        // this.handleRequestAccount()
+        this.drawer = true
+        await this.$store.dispatch('web3Connections/walletConnectPair', {
+          uri: display_uri
+        })
       }
     },
     showModal(name, {
@@ -170,14 +172,6 @@ export default {
     },
     toggleTheme() {
       document.body.classList.toggle('dark-mode')
-    },
-    blockEvemt() {
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
-        chainId: 27
-      })
-      customHttpProvider.on('block', (blockNumber) => {
-        window.localStorage.setItem('blockNumber', blockNumber)
-      })
     },
     setViewHeight: function () {
       const vh = window.innerHeight * 0.01

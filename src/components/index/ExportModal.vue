@@ -10,16 +10,15 @@
         <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
           <ShieldExclamationIcon/>
         </span>
-        <!-- eslint-disable-next-line max-len -->
-        <p>在下面输入您的密码以解密并显示您的私钥。 这将使您能够备份您的私钥并在其他浏览器和设备上恢复您的钱包。 不要与其他任何人共享您的私钥，并在您的周围可见时注意您的周围环境。</p>
+          <!-- eslint-disable-next-line max-len -->
+          <p>在下面输入您的密码以解密并显示您的私钥。 这将使您能够备份您的私钥并在其他浏览器和设备上恢复您的钱包。
+            不要与其他任何人共享您的私钥，并在您的周围可见时注意您的周围环境。</p>
         </div>
         <!-- eslint-disable-next-line max-len -->
-        <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
+        <div class="form-group"
+             :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
           <label for="password">输入密码以导出您的私钥</label>
           <div class="relative input-wrap">
-            <span class="icon">
-              <LockOpenIcon/>
-            </span>
             <el-input
               size="large"
               type="password"
@@ -28,11 +27,15 @@
               placeholder="你的密码"
               id="password"
               v-model="v$.password.$model"
+              :prefix-icon="LockOpenIcon"
             />
           </div>
           <!-- eslint-disable-next-line max-len -->
-          <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
-          <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
+          <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
+            {{ error.$message }}
+          </div>
+          <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{ passwordError }}
+          </div>
         </div>
       </form>
       <div v-else class="pt-15">
@@ -69,17 +72,20 @@
 
     <template v-slot:footer>
       <!-- eslint-disable-next-line max-len -->
-      <div v-if="!privateKey" class="grid grid-cols-1 gap-24 px-24 pt-24 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-24">
+      <div v-if="!privateKey"
+           class="grid grid-cols-1 gap-24 px-24 pt-24 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-24">
         <button class="w-full button button--outline-success" @click="cancel">返回</button>
         <button class="w-full button button--success" :disabled="!canSubmit" @click="exportKey">导出</button>
       </div>
       <!-- eslint-disable-next-line max-len -->
-      <div v-else class="grid grid-cols-1 gap-24 px-24 pt-20 border-gray-700 border-solid border-t-default border-opacity-30 pb-20">
+      <div v-else
+           class="grid grid-cols-1 gap-24 px-24 pt-20 border-gray-700 border-solid border-t-default border-opacity-30 pb-20">
         <button
           :disabled="!canSubmit"
           @click="cancel"
           class="block w-full mx-auto text-center button button--success md:w-1/2"
-        >完成</button>
+        >完成
+        </button>
       </div>
     </template>
   </Modal>
@@ -89,15 +95,14 @@
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
 import Modal from '../Modal.vue'
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
 import useVuelidate from '@vuelidate/core'
-import { ClipboardCopyIcon, LockOpenIcon, ShieldExclamationIcon } from '@heroicons/vue/outline'
+import {ClipboardCopyIcon, LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'ExportKey',
   components: {
     ClipboardCopyIcon,
-    LockOpenIcon,
     Modal,
     ShieldExclamationIcon
   },
@@ -166,7 +171,8 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon
     }
   }
 }

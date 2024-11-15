@@ -57,7 +57,7 @@
 
       </div>
     </div>
-    <SendModal :close="closeSendModal" :visible="model === 'send'" :item="item"/>
+    <SendModal :close="closeSendModal" :visible="true" v-if="model === 'send'" :item="item"/>
   </div>
 </template>
 

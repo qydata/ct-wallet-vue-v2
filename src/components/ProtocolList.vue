@@ -34,12 +34,6 @@ export default {
   name: 'HeaderTools',
   components: {
     ChevronDownIcon,
-    CogIcon,
-    KeyIcon,
-    UserIcon,
-    PlusIcon,
-    LockOpenIcon,
-    LogoutIcon,
     Tickets
   },
   data: function () {

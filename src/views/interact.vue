@@ -1,6 +1,6 @@
 <template>
   <div class="account-panel">
-    <InterSendModal :close="closeSendModal" :visible="modal== 'interSend'" :item="transaction"
+    <InterSendModal :close="closeSendModal" :visible="true" v-if="modal== 'interSend'" :item="transaction"
                     :afterSendFun="afterSendFun"/>
 <!--    <p>{{transaction}}</p>-->
   </div>

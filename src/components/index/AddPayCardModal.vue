@@ -135,6 +135,7 @@
                 id="very-code"
                 size="large"
                 v-model="v$.password.$model"
+                :prefix-icon="LockOpenIcon"
               />
               <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
@@ -158,7 +159,6 @@
 <script>
 import Radio from '@/components/Radio.vue'
 import * as storage from '@/utils/storage'
-import {ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, required as _required} from '@vuelidate/validators'
 import moment from 'moment'
@@ -169,6 +169,7 @@ import {getPrivateKey, setCardList} from '../../utils/storage'
 import Modal from '../Modal'
 
 const ethers = require('ethers')
+import {LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'AuthBindModal',
@@ -445,7 +446,8 @@ export default {
 
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon
     }
   }
 }

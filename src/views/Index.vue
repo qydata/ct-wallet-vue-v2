@@ -31,14 +31,14 @@
               <button class="w-full button button--success" @click="openCreateModal">
                 创建钱包
               </button>
-              <CreateModal :afterCreate="gotoOverview" :close="reset" :visible="modal === 'create'"/>
+              <CreateModal :afterCreate="gotoOverview" :close="reset" :visible="true" v-if="modal === 'create'"/>
             </div>
             <div>
               <h3 class="mb-18 text-gray">导入一个已存在的钱包</h3>
               <button class="w-full button button--outline-success" @click="openRestoreModal">
                 导入钱包
               </button>
-              <RestoreModal :afterRestore="gotoOverview" :close="reset" :visible="modal === 'restore'"/>
+              <RestoreModal :afterRestore="gotoOverview" :close="reset" :visible="true" v-if="modal === 'restore'"/>
             </div>
           </div>
 
@@ -47,9 +47,9 @@
               :afterUnlock="gotoOverview"
               :close="resetAuto"
               :switchToForgetModal="openForgetModal"
-              :visible="modal === 'unlock'"
+              :visible="true" v-if="modal === 'unlock'"
             />
-            <ForgetModal :afterForget="reset" :close="resetAuto" :visible="modal === 'forget'"/>
+            <ForgetModal :afterForget="reset" :close="resetAuto" :visible="true" v-if="modal === 'forget'"/>
           </div>
         </div>
       </div>

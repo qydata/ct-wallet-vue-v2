@@ -29,10 +29,6 @@ const formStyles = ({theme}) => ({
     marginBottom: rem(42),
     width: '100%',
 
-    '.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])': {
-      paddingLeft: rem(52)
-    },
-
     '.icon': {
       position: 'absolute',
       left: rem(14),

@@ -5,19 +5,21 @@
 
     <TrueAndFalsePublicityModal
       :close="closeTruePublicityModal"
-      :visible="showTrueAndFalsePublicityModal"
+      :visible="true" v-if="showTrueAndFalsePublicityModal"
       :p_type="p_type"
       :publicity="publicity"
     />
 
     <div class="bg-gray-200 py-35">
       <div class="container">
-        <div class="checkbox-container" @click="updateHideFalsePublicitys">
-          <label>只显示人工订单</label>
+        <div class="checkbox-container">
 
-          <input
-            size="large" type="checkbox" :checked="hideFalsePublicitys"/>
-          <span class="checkmark"></span>
+          <el-checkbox
+            v-model="hideFalsePublicitys"
+            size="large"
+            style="color: black;"
+            label="只显示人工订单"
+            @change="updateHideFalsePublicitys"/>
         </div>
         <PublicityTable
           :hideFalsePublicitys="hideFalsePublicitys"

@@ -142,20 +142,20 @@
     </div>
 
     <div class="account-panel__modals">
-      <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
-      <DepositModal :close="openExchange" :visible="modal === 'deposit'"/>
-      <WithdrawModal :close="openExchange" :visible="modal === 'withdraw'"/>
-      <SellModal :close="openExchange" :visible="modal === 'sell'"/>
-      <BuyModal :close="openExchange" :visible="modal === 'buy'"/>
-      <ReceiveModal :close="reset" :visible="modal === 'receive'"/>
-      <AuthBindModal :afterAuthBind="reset" :close="reset" :visible="modal == 'authBind'"/>
-      <SendModal :close="reset" :item="item" :visible="modal === 'send'"/>
+      <CreateStakeModal :close="reset" v-if="modal === 'createStake'" :visible="true"/>
+      <DepositModal :close="openExchange" v-if="modal === 'deposit'" :visible="true"/>
+      <WithdrawModal :close="openExchange" v-if="modal === 'withdraw'" :visible="true"/>
+      <SellModal :close="openExchange" v-if="modal == 'sell'" :visible="true"/>
+      <BuyModal :close="openExchange" v-if="modal === 'buy'" :visible="true"/>
+      <ReceiveModal :close="reset" v-if="modal === 'receive'" :visible="true"/>
+      <AuthBindModal :afterAuthBind="reset" :close="reset" v-if="modal == 'authBind'" :visible="true"/>
+      <SendModal :close="reset" :item="item" v-if="modal === 'send'" :visible="true"/>
       <SwapModal
         :close="reset"
         :openDeposit="openDeposit"
         :openWithdraw="openWithdraw"
         :openSell="openSell"
-        :visible="modal === 'swap'"
+        v-if="modal === 'swap'" :visible="true"
       />
       <ExchangeModal
         :close="reset"
@@ -164,10 +164,11 @@
         :openBuy="openBuy"
         :openCharge="openCharge"
         :openSell="openSell"
-        :visible="modal === 'exchange'"
+        v-if="modal === 'exchange'" :visible="true"
       />
-      <ChargeModal :close="openExchange" :afterCharge="openPay" :visible="modal === 'charge'" :label="'accountPanel'"/>
-      <PayModal :close="closePay" :order="order" :visible="modal === 'pay'"/>
+      <ChargeModal :close="openExchange" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
+                   :label="'accountPanel'"/>
+      <PayModal :close="closePay" :order="order" v-if="modal === 'pay'" :visible="true"/>
 
       <el-dialog
         v-model="dialogVisible"
@@ -177,8 +178,8 @@
       >
         <el-input
           size="large" type="text" autocomplete="off" placeholder="输入一个钱包名称"
-               v-model="walletName"
-               class="pl-1"/>
+          v-model="walletName"
+          class="pl-1"/>
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="dialogVisible = false">关闭</el-button>
@@ -226,7 +227,6 @@ export default {
     ArrowUpIcon,
     CreateStakeModal,
     DepositModal,
-    PlusIcon,
     ReceiveModal,
     SellModal,
     BuyModal,

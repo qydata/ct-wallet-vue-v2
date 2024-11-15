@@ -3,11 +3,11 @@
     <InterUnlockModal
       :afterUnlock="openGetWalletModal"
       :close="close"
-      :visible="modal === 'unlock'"
+      :visible="true" v-if="modal === 'unlock'"
     />
     <InterGetWalletModal :close="closeGetWalletModal"
                          :afterGetWallet="afterGetWallet"
-                         :visible="modal== 'getWallet'"
+                         :visible="true" v-if="modal== 'getWallet'"
                          :item="item"/>
 
   </div>

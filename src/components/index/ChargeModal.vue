@@ -125,7 +125,7 @@ import {mapState} from 'vuex'
 import Modal from '../Modal'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
 import moment from 'moment'
-import {ArrowDownIcon, ArrowRightIcon, LockOpenIcon} from '@heroicons/vue/outline'
+import {ArrowDownIcon, ArrowRightIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'AuthBindModal',

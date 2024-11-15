@@ -1,20 +1,24 @@
 <template>
   <div>
-    <ForgetWallet :close="closeForgetWalletModal" :afterForget="afterForgetWallet" :visible="showForgetWalletModal"/>
-    <ExportKey :close="closeExportKeyModal" :visible="showExportKeyModal"/>
-    <CreateModal :afterCreate="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal === 'create'"/>
-    <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="createAndImportModal === 'import'"/>
+    <ForgetWallet :close="closeForgetWalletModal" :afterForget="afterForgetWallet" :visible="true"
+                  v-if="showForgetWalletModal"/>
+    <ExportKey :close="closeExportKeyModal" :visible="true" v-if="showExportKeyModal"/>
+    <CreateModal :afterCreate="gotoAuthBind" :close="closeCreateModal" :visible="true"
+                 v-if="createAndImportModal === 'create'"/>
+    <ImportKey :afterRestore="gotoAuthBind" :close="closeCreateModal" :visible="true"
+               v-if="createAndImportModal === 'import'"/>
     <AuthBindModal :afterAuthBind="gotoCharge" :close="closeCreateModal"
-                   :visible="createAndImportModal === 'authBind'"/>
+                   :visible="true" v-if="createAndImportModal === 'authBind'"/>
     <SessionsModal :afterAuthBind="closeCreateModal" :close="closeCreateModal"
-                   :visible="createAndImportModal === 'sessions'"/>
-    <ChargeModal :afterCharge="gotoOverview" :visible="createAndImportModal === 'charge'" :label="'header'"/>
+                   :visible="true" v-if="createAndImportModal === 'sessions'"/>
+    <ChargeModal :afterCharge="gotoOverview" :visible="true" v-if="createAndImportModal === 'charge'"
+                 :label="'header'"/>
     <PayCardModal
       :afterCharge="closeCreateModal"
       :showAddPay="showAddPay"
-      :visible="createAndImportModal === 'card'"/>
-    <AddPayCardModal :afterCharge="openCardModal" :visible="createAndImportModal === 'addcard'"/>
-    <header class="relative z-10 py-10 header md:pb-10" :class="{'menu-open':showNav}">
+      :visible="true" v-if="createAndImportModal === 'card'"/>
+    <AddPayCardModal :afterCharge="openCardModal" :visible="true" v-if="createAndImportModal === 'addcard'"/>
+    <header class="relative z-10 py-5 header md:pb-10" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">
         <Logo/>
         <BurgerButton @click="showNav = !showNav"/>

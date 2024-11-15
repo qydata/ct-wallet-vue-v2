@@ -2,11 +2,11 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
+// 统一导入el-icon图标
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import './assets/css/css-vars.css'
 import './index.css'
-import {createPinia} from 'pinia'
 // main.ts
 // if you just want to import css
 // import 'element-plus/theme-chalk/dark/css-vars.css'
@@ -24,12 +24,11 @@ import Store from './store'
 import './utils'
 // Vue.prototype.$message = ElementPlus.Message
 const WALLET_REFRESH_INTERVAL = 30 * 1000
+
+
 const init = async () => {
   const store = await Store.init()
-  const pinia = createPinia()
-  const app = createApp(App, {store})
-    .use(router)
-    .use(pinia)
+  const app = createApp(App, {store}).use(router)
     .use(store)
     // .use(VModal, {
     //   dialog: true,
@@ -48,6 +47,7 @@ const init = async () => {
       }
     })
     .mount('#app')
+
 
   app.$router.beforeResolve((to) => {
     // 如果钱包是锁定状态，直接重定向到首页

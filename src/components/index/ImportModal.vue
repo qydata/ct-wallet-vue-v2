@@ -10,11 +10,10 @@
           <div class="form-group" :class="{'form-group__error': v$.privateKey.$error}">
             <label for="walletName">钱包名称</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <EditPen/>
-              </span>
               <el-input
-                size="large" type="text" placeholder="请输入一个钱包名称" id="walletName" v-model="v$.walletName.$model"/>
+                size="large" type="text" placeholder="请输入一个钱包名称" id="walletName"
+                v-model="v$.walletName.$model"
+                :prefix-icon="EditPen"/>
             </div>
             <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.walletName.$errors" :key="error.$uid">
@@ -25,11 +24,9 @@
           <div class="form-group" :class="{'form-group__error': v$.privateKey.$error}">
             <label for="key">输入私钥</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <KeyIcon/>
-              </span>
               <el-input
-                size="large" type="password" placeholder="你的私钥" id="key" v-model="v$.privateKey.$model"/>
+                size="large" type="password" placeholder="你的私钥" id="key" v-model="v$.privateKey.$model"
+                :prefix-icon="KeyIcon"/>
             </div>
             <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.privateKey.$errors" :key="error.$uid">
@@ -40,9 +37,6 @@
           <div class="form-group" :class="{'form-group__error': v$.password.$error}">
             <label for="password">输入密码</label>
             <div class="relative input-wrap">
-              <span class="icon">
-                <LockOpenIcon/>
-              </span>
               <el-input
                 size="large"
                 type="password"
@@ -50,6 +44,7 @@
                 placeholder="输入你的密码"
                 id="password"
                 v-model="v$.password.$model"
+                :prefix-icon="LockOpenIcon"
               />
             </div>
             <!-- eslint-disable-next-line max-len -->
@@ -94,7 +89,6 @@ export default {
   name: 'CreateModal',
   components: {
     KeyIcon,
-    LockOpenIcon,
     EditPen,
     Modal
   },
@@ -210,7 +204,10 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      LockOpenIcon,
+      KeyIcon,
+      EditPen
     }
   }
 }

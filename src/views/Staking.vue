@@ -5,22 +5,24 @@
 
     <ReleaseStakeModal
       :close="closeReleaseStakeModal"
-      :visible="showReleaseStakeModal"
+      :visible="true" v-if="showReleaseStakeModal"
       :stake="stake"
     />
     <UnlockStakeModal
       :close="closeUnlockStakeModal"
-      :visible="showUnlockStakeModal"
+      :visible="true" v-if="showUnlockStakeModal"
       :stake="stake"
     />
 
     <div class="bg-gray-200 py-35">
       <div class="container">
-        <div class="checkbox-container" @click="updateHideReleasedStakes">
-          <label>Hide Released Stakes</label>
-          <input
-            size="large" type="checkbox" :checked="hideReleasedStakes"/>
-          <span class="checkmark"></span>
+        <div class="checkbox-container">
+          <el-checkbox
+            v-model="hideReleasedStakes"
+            size="large"
+            style="color: black;"
+            label="Hide Released Stakes"
+            @change="updateHideReleasedStakes"/>
         </div>
         <StakesTable
           :hideReleasedStakes="hideReleasedStakes"

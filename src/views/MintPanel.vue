@@ -34,12 +34,12 @@
         />
       </div>
     </div>
-    <CreateCollectModal :close="close" :afterCreate="openCollectInit" :visible="tabModel === 'createCollect'"/>
+    <CreateCollectModal :close="close" :afterCreate="openCollectInit" :visible="true" v-if="tabModel === 'createCollect'"/>
     <CreateNftModal :close="close" :createCollect="openCreateCollect" :afterCreate="afterNftCreate"
-                    :visible="tabModel === 'createNfts'"/>
-    <CollectInitModal :close="close" :afterInit="afterInit" :visible="tabModel === 'collectInit'"
+                    :visible="true" v-if="tabModel === 'createNfts'"/>
+    <CollectInitModal :close="close" :afterInit="afterInit" :visible="true" v-if="tabModel === 'collectInit'"
                       :itemContract="itemContract"/>
-    <SendModal :close="closeSendModal" :visible="model === 'send'" :item="item"/>
+    <SendModal :close="closeSendModal" :visible="true" v-if="model === 'send'" :item="item"/>
   </div>
 </template>
 

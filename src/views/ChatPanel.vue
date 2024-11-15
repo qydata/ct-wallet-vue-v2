@@ -214,17 +214,17 @@
       <NewChatModal
         :afterCreate="chatAfter"
         :close="closeModal"
-        :visible="modal == 'newChat'"
+        :visible="true" v-if="modal == 'newChat'"
       />
       <InPasswordModal
         :afterCreate="dencMsg"
         :close="closeModal"
-        :visible="modal == 'inPasswordModalDenc'"
+        :visible="true" v-if="modal == 'inPasswordModalDenc'"
       />
       <InPasswordModal
         :afterCreate="sendMessagePassCall"
         :close="closeModal"
-        :visible="modal == 'inPasswordModalSend'"
+        :visible="true" v-if="modal == 'inPasswordModalSend'"
       />
       <LoadingModal
         :afterCreate="sendMessagePassCall"

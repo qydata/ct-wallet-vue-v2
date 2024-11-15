@@ -136,10 +136,6 @@ export default {
   name: 'PublicitysTableItem',
   props: ['item', 'openTrueAndFalsePublicityModal'],
   components: {
-    ArrowCircleDownIcon,
-    CheckCircleIcon,
-    ClockIcon,
-    DotsCircleHorizontalIcon
   },
   computed: {
     address() {

@@ -31,7 +31,9 @@
           <div class="form-group">
             <label>钱包连接地址</label>
             <span class="flex items-center">
-            <el-input class="font-mono break-all text-sm2" v-model="wcCopyPasteLink"
+            <el-input size="large"
+                      class="font-mono break-all text-sm2"
+                      v-model="wcCopyPasteLink"
                       placeholder="输入 dApp URI"></el-input>
           </span>
           </div>
