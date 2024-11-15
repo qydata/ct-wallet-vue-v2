@@ -113,18 +113,19 @@ export default {
         await this.$store.dispatch('web3Connections/walletConnectPair', {
           uri: this.wcCopyPasteLink
         })
-      } catch (err) {
+      }
+      catch (err) {
         this.$message.error(err.message, 'Error Pairing')
-      } finally {
+      }
+      finally {
         this.resetWeb3ConnectionPage()
       }
     },
     beginHandshake() {
-      if (!this.wcCopyPasteLink)
-        return this.$message.error(
-          'No uri provided to connect with dApp.',
-          'Cannot connect'
-        )
+      if (!this.wcCopyPasteLink) return this.$message.error(
+        'No uri provided to connect with dApp.',
+        'Cannot connect'
+      )
       this.initPairing()
     },
     rejectFun() {

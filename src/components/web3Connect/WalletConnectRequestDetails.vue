@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {utils, providers} from 'ethers'
+import {providers, utils} from 'ethers'
 import walletConnect from '../../store/walletConnect'
 import {ctchain} from '../../utils/cryptos/blockchainApi/infura'
 
@@ -163,11 +163,9 @@ export default {
 
         formatted.push(this.format('From', tx.from))
         if (tx.to) formatted.push(this.format('To', tx.to))
-        if (tx.gasLimit)
-          formatted.push(this.format('Gas Limit', parseInt(tx.gasLimit)))
+        if (tx.gasLimit) formatted.push(this.format('Gas Limit', parseInt(tx.gasLimit)))
         if (tx.gas) formatted.push(this.format('Gas', parseInt(tx.gas)))
-        if (tx.gasPrice)
-          formatted.push(this.format('Gas Price', parseInt(tx.gasPrice)))
+        if (tx.gasPrice) formatted.push(this.format('Gas Price', parseInt(tx.gasPrice)))
         if (tx.nonce) formatted.push(this.format('Nonce', parseInt(tx.nonce)))
         if (tx.value) formatted.push(this.format('Value', parseInt(tx.value)))
         formatted.push(this.format('Data', tx.data))

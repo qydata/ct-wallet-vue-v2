@@ -57,7 +57,7 @@ import {mapState} from 'vuex'
 import Modal from '../Modal'
 import Tooltip from '../Tooltip'
 
-let ElementPlus = {
+const ElementPlus = {
   Message: {
     error: (info) => {
       console.log(info)

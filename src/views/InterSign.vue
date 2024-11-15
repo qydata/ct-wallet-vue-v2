@@ -32,9 +32,9 @@ export default {
   mounted() {
     this.sessionId = this.$route.query.sessionId
     this.callBack = this.$route.query.callBack
-    let that = this
+    const that = this
     window.addEventListener('message', () => {
-      let origin = event.origin
+      const origin = event.origin
       // 通常，onmessage()事件处理程序应当首先检测其中的origin属性，忽略来自未知源的消息
       if (origin !== this.callBack) return
       // ...

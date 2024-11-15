@@ -91,7 +91,7 @@ export default {
       // )
       this.transactions = []
       for (const transactionsKey in transactions) {
-        let temperc20 = transactions[transactionsKey]
+        const temperc20 = transactions[transactionsKey]
         if (temperc20 && temperc20.token.type && temperc20.token.type == 'ERC-1155') {
           this.transactions.push(temperc20)
         }

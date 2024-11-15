@@ -38,7 +38,8 @@ export default {
       const fixedGasPrice = FixedNumber.from(gasPrice.toString())
       const fee = gasLimit.mul(fixedGasPrice)
       return {gasLimit, fee}
-    } catch (err) {
+    }
+    catch (err) {
       console.error({err})
       return {err}
     }

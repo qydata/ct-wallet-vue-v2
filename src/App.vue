@@ -68,7 +68,7 @@ export default {
   watch: {
     address(oldVal, newVal) {
       if (newVal) {
-        let that = this
+        const that = this
         const dispatch = this.$store.dispatch
         dispatch('web3Connections/walletConnectInit', {
           modal: {
@@ -94,7 +94,7 @@ export default {
     // 父窗口接收来自子 iframe 的信息
     window.addEventListener('message', (event) => this.handleEvent(event))
 
-    let that = this
+    const that = this
     if (this.address) {
       // this.initializeWallet(this.address)
       const dispatch = this.$store.dispatch
@@ -115,7 +115,7 @@ export default {
     async handleEvent(event) {
       if (event.data && event.data.type === 'display_uri') {
         console.log('Event triggered', event.data)
-        let display_uri = event.data.data
+        const display_uri = event.data.data
         console.log(display_uri)
         this.displayUri = display_uri
         // this.handleRequestAccount()

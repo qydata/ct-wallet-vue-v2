@@ -168,7 +168,7 @@ import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
 
 import {ClipboardCopyIcon, LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 
 import VueClicaptcha from 'vue-clicaptcha'
 import {mapState} from 'vuex'
@@ -354,7 +354,7 @@ export default {
       // 计算签名
       let idHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(this.idCard))
       idHash = idHash.slice(0, 34)
-      let auth = {authExpiry, idHash}
+      const auth = {authExpiry, idHash}
       let privateKeyStr = c_wallet.privateKey
       const verifyingContract = contractAddress
       privateKeyStr = ethUtil.stripHexPrefix(privateKeyStr)

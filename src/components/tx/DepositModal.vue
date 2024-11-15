@@ -404,7 +404,8 @@ export default {
         window.ethereum.on('accountsChanged', this.setAccounts)
 
         this.goto(2)
-      } catch (err) {
+      }
+      catch (err) {
         console.error(err)
         this.connectError = err.message
         this.connectStatus = ''
@@ -426,7 +427,8 @@ export default {
         this.completedTx = tx
         this.depositInProgress = false
         this.goto(3)
-      } catch (err) {
+      }
+      catch (err) {
         console.error(err)
         this.depositInProgress = false
         if (err.code === 4001) {

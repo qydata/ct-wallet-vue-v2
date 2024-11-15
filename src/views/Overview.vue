@@ -71,8 +71,8 @@ export default {
   computed: mapState(['address']),
   mounted() {
     this.pollData()
-    let RE_HREF = sessionStorage.getItem('RE_HREF')
-    let RE_HREF_S = sessionStorage.getItem('RE_HREF_S')
+    const RE_HREF = sessionStorage.getItem('RE_HREF')
+    const RE_HREF_S = sessionStorage.getItem('RE_HREF_S')
 
     if (RE_HREF != null) {
       sessionStorage.removeItem('RE_HREF')
@@ -88,7 +88,7 @@ export default {
       window.open(url)
     },
     pollData() {
-      let that = this
+      const that = this
       this.polling = setInterval(async () => {
         const transactions = await transactionsByAddress(7, this.address)
         this.transactions = transactions.address.transactions.edges

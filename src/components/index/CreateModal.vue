@@ -131,7 +131,7 @@ import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
 import {ClipboardCopyIcon, LockOpenIcon, RefreshIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import Modal from '../Modal'
 
 const ethers = require('ethers')
@@ -249,7 +249,7 @@ export default {
   },
   async mounted() {
     this.generateWallet()
-    let walletList = await storage.getWalletList(storage.getHighestWalletVersion())
+    const walletList = await storage.getWalletList(storage.getHighestWalletVersion())
 
     this.walletName = '账户 ' + (walletList.length + 1)
   },

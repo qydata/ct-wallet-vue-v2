@@ -454,8 +454,8 @@ export default {
     async easGasSend() {
       // 转账为固定手续费
       let gasLimit = 21000
-      let gasPrice = 4500
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const gasPrice = 4500
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
       let override = {}
@@ -533,10 +533,10 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
       // create tx
 
       let tx
@@ -569,11 +569,9 @@ export default {
           return
         }
         try {
-          let recept = await customHttpProvider
+          const recept = await customHttpProvider
             .waitForTransaction(tx.data.hash)
-            .then((ret) => {
-              return ret
-            })
+            .then((ret) => ret)
             .catch((err) => {
               console.log('err:', err)
             })
@@ -591,7 +589,8 @@ export default {
             this.submitError = recept.err
           }
 
-        } catch (e) {
+        }
+        catch (e) {
           console.error(e)
           this.loading = false
           this.submitError = e.message
@@ -621,11 +620,9 @@ export default {
           return
         }
         try {
-          let recept = await customHttpProvider
+          const recept = await customHttpProvider
             .waitForTransaction(tx.data.hash)
-            .then((ret) => {
-              return ret
-            })
+            .then((ret) => ret)
             .catch((err) => {
               console.log('err:', err)
             })
@@ -642,7 +639,8 @@ export default {
             this.submitError = recept.err
           }
 
-        } catch (e) {
+        }
+        catch (e) {
           console.error(e)
           this.submitError = e.message
         }
@@ -670,11 +668,9 @@ export default {
           return
         }
         try {
-          let recept = await customHttpProvider
+          const recept = await customHttpProvider
             .waitForTransaction(tx.data.hash)
-            .then((ret) => {
-              return ret
-            })
+            .then((ret) => ret)
             .catch((err) => {
               console.log('err:', err)
             })
@@ -691,7 +687,8 @@ export default {
             this.submitError = recept.err
           }
 
-        } catch (e) {
+        }
+        catch (e) {
           console.error(e)
           this.submitError = e.message
         }
@@ -717,13 +714,11 @@ export default {
         // submit tx to blockchain
         try {
 
-          let results = await wallet.sendTransaction(tx)
+          const results = await wallet.sendTransaction(tx)
 
-          let recept = await customHttpProvider
+          const recept = await customHttpProvider
             .waitForTransaction(results.hash)
-            .then((ret) => {
-              return ret
-            })
+            .then((ret) => ret)
             .catch((err) => {
               console.log('err:', err)
             })
@@ -738,7 +733,8 @@ export default {
           else {
             this.submitError = results[0].reason
           }
-        } catch (err) {
+        }
+        catch (err) {
           console.error(err)
           this.loading = false
           this.submitError = err.message

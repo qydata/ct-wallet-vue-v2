@@ -210,10 +210,10 @@ export default {
     cancel() {
       this.reset()
       this.afterSignFun(0, {
-          message: '用户拒绝了请求',
-          result: {}
-        },
-        this.transaction.type)
+        message: '用户拒绝了请求',
+        result: {}
+      },
+      this.transaction.type)
     },
     async checkPassword() {
       this.v$.password.$reset()
@@ -229,7 +229,7 @@ export default {
     async readySend() {
       // validate only step 1
       // 这里计算gas
-      let that = this
+      const that = this
       this.loading = true
       // let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
       //   chainId: 27
@@ -259,7 +259,7 @@ export default {
       const privateKeyA = await storage.getPrivateKey(this.password)
 
       if (this.transaction.type == 1) {
-        let rawTx = {
+        const rawTx = {
           // nonce: ct3.utils.toHex(ct3.utils.hexToNumber(("0x" + nonce))),
           from: Web3.utils.toHex(this.transaction.from),
           to: Web3.utils.toHex(this.transaction.to),
@@ -270,7 +270,7 @@ export default {
           value: Web3.utils.toHex(Web3.utils.toWei(parseInt(this.transaction.value).toString())),
           data: Web3.utils.toHex(this.transaction.data)
         }
-        let privateKey = Buffer.from(privateKeyA, 'hex')
+        const privateKey = Buffer.from(privateKeyA, 'hex')
         const customCommon = Common.default.forCustomChain(
           'mainnet',
           {
@@ -280,17 +280,17 @@ export default {
           },
           'petersburg'
         )
-        let tx = new EthereumTx(rawTx, {common: customCommon})
+        const tx = new EthereumTx(rawTx, {common: customCommon})
         tx.sign(privateKey)
-        let serializedTx = tx.serialize()
-        let serializedTxStr = '0x' + serializedTx.toString('hex')
+        const serializedTx = tx.serialize()
+        const serializedTxStr = '0x' + serializedTx.toString('hex')
 
         this.afterSignFun(1, {message: '签名成功', result: serializedTxStr}, this.transaction.type)
 
       }
       else if (this.transaction.type == 2) {
-        let privateKey = Buffer.from(privateKeyA, 'hex')
-        let signature = sigUtil.signTypedData_v4(privateKey, {data: this.transaction.stractSignMsg})
+        const privateKey = Buffer.from(privateKeyA, 'hex')
+        const signature = sigUtil.signTypedData_v4(privateKey, {data: this.transaction.stractSignMsg})
         this.afterSignFun(1, {message: '签名成功', result: signature}, this.transaction.type)
       }
       else {

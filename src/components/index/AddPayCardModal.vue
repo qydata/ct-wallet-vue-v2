@@ -160,7 +160,7 @@
 import Radio from '@/components/Radio.vue'
 import * as storage from '@/utils/storage'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import moment from 'moment'
 import VueClicaptcha from 'vue-clicaptcha'
 import {mapState} from 'vuex'

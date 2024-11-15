@@ -267,7 +267,7 @@ const {encryptWithPublicKey, decryptWithPrivateKey} = require('eth-crypto')
 const ethers = require('ethers')
 const GlobalConfig = require('@/config/GlobalConfig.json')
 const Web3 = require('web3')
-let web3 = new Web3('http://ctblock.cn/blockChain')
+const web3 = new Web3('http://ctblock.cn/blockChain')
 const ipfsNode = ipfsAPI(GlobalConfig.IPFS[0])
 const {
   contract_static_call,
@@ -276,7 +276,7 @@ const {
 } = require('../contract/ChainCall')
 const blockies = require('ethereum-blockies') // 引入库
 
-let ElementPlus = {
+const ElementPlus = {
   Message: {
     error: info => {
       // console.log(info)
@@ -372,7 +372,7 @@ export default {
   },
   methods: {
     isEncText(val) {
-      let text = JSON.stringify(val)
+      const text = JSON.stringify(val)
       if (text.indexOf('ephemPublicKey') != -1) {
         return true
       }
@@ -434,7 +434,7 @@ export default {
       console.log(toAddress, firstMessage, password)
       // 加密信息(我的公钥)
       this.sendMessage(toAddress, firstMessage, password, true)
-      let that = this
+      const that = this
       window.setTimeout(() => {
         that.getJobchats()
       }, 10000)
@@ -450,19 +450,19 @@ export default {
     },
     async dencMsg(password) {
       this.modal = ''
-      let msg = this.denc.msg
-      let text = this.denc.text
+      const msg = this.denc.msg
+      const text = this.denc.text
       console.log('msg', msg)
       console.log('text', JSON.parse(JSON.stringify(text)))
       if (msg.denText == '') {
         const privateKey = await storage.getPrivateKey(password)
-        let customHttpProvider = new ethers.providers.JsonRpcProvider(
+        const customHttpProvider = new ethers.providers.JsonRpcProvider(
           this.$store.state.config.blockchain.baseURL,
           {
             chainId: 27
           }
         )
-        let wallet = new ethers.Wallet(privateKey, customHttpProvider)
+        const wallet = new ethers.Wallet(privateKey, customHttpProvider)
 
         console.log(wallet.privateKey)
         msg.denText = await decryptWithPrivateKey(privateKey, text)
@@ -486,7 +486,7 @@ export default {
     },
     async sendMessage(toAddress, firstMessage, password, isFirst) {
       console.log('sendMessage')
-      let that = this
+      const that = this
 
       this.loading = true
 
@@ -520,7 +520,7 @@ export default {
       // }
       // 这里为了方便自己查阅消息, 也要使用
       // 自己的公钥加密一份数据, 这样自己使用私钥就可以查看自己发送的消息
-      let message = {
+      const message = {
         messageRQ: encMsgRQ,
         pubKeyRQ: publicKey,
         messageRP: encMsgRP,
@@ -528,11 +528,9 @@ export default {
         datetime: new Date().getTime()
       }
 
-      let responseRet = await ipfsNode
+      const responseRet = await ipfsNode
         .add(Buffer.from(JSON.stringify(message), 'utf-8'))
-        .then(resp => {
-          return {err: null, data: resp}
-        })
+        .then(resp => ({err: null, data: resp}))
         .catch(err => {
           console.trace(err)
           return {err: err, data: null}
@@ -541,8 +539,8 @@ export default {
       console.log(responseRet.data[0].path)
 
       // 上传链
-      let jobContract = GlobalConfig.JOBCONTRACT_ADDRESS
-      let overrride = {
+      const jobContract = GlobalConfig.JOBCONTRACT_ADDRESS
+      const overrride = {
         from: this.address
       }
 
@@ -550,15 +548,15 @@ export default {
       // 对比两个地址的大小
       const privateKey = await storage.getPrivateKey(password)
 
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(
         this.$store.state.config.blockchain.baseURL,
         {
           chainId: 27
         }
       )
-      let param = [toAddress, responseRet.data[0].path]
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
-      let tx = await contract_call_override(
+      const param = [toAddress, responseRet.data[0].path]
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const tx = await contract_call_override(
         // let resp = await contract_estimateGas_call(
         ethers,
         wallet,
@@ -596,8 +594,8 @@ export default {
       console.log(msg.topics[0])
       // 这里不用区分谁是谁, 会自动排序计算房间号
       // 复制 publisher
-      let addr1 = this.hexStripZeros(msg.topics[1])
-      let addr2 = this.hexStripZeros(msg.topics[2])
+      const addr1 = this.hexStripZeros(msg.topics[1])
+      const addr2 = this.hexStripZeros(msg.topics[2])
       if (this.isMeFun(addr1)) {
         this.publisher = addr2
       }
@@ -626,19 +624,19 @@ export default {
       }
     },
     async getJobChat() {
-      let that = this
+      const that = this
 
-      let topic = ethers.utils.id(
+      const topic = ethers.utils.id(
         // "jobChatItem(address,address)"
         'jobChat(bytes32,address,address,string)'
       )
 
       // console.log('===', that.address)
       // console.log('===', ethers.utils.hexZeroPad(that.address, 32))
-      let toBlock = window.localStorage.getItem('blockNumber')
-      let fromBlock = Number(toBlock) - 300000
-      let _from = this.address
-      let _to = this.publisher
+      const toBlock = window.localStorage.getItem('blockNumber')
+      const fromBlock = Number(toBlock) - 300000
+      const _from = this.address
+      const _to = this.publisher
       // 计算房间号码
       // 对比两个地址的大小
 
@@ -655,16 +653,16 @@ export default {
       })
 
       console.log(addresses)
-      let abiCode =
+      const abiCode =
         '0x' +
         web3.utils.stripHexPrefix(addresses[0]) +
         web3.utils.stripHexPrefix(addresses[1])
-      let hash = web3.utils.keccak256(abiCode)
+      const hash = web3.utils.keccak256(abiCode)
       console.log(hash)
       this.id = hash
       // hash = "0x0e11fc7ad4191b6de8b9a13638fd17c99e0cb510c03c7ca71c05adac61b5f106";
       //计算起始区块
-      let filter = {
+      const filter = {
         address: GlobalConfig.JOBCONTRACT_ADDRESS,
         fromBlock: Number(fromBlock), // 1天的数据
         toBlock: Number(toBlock),
@@ -674,24 +672,22 @@ export default {
         // topics: [topic],
       }
       // that.loading = true;
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(
         this.$store.state.config.blockchain.baseURL,
         {
           chainId: 27
         }
       )
-      let resp_ret = await customHttpProvider.getLogs(filter).then(result => {
-        return result
-      })
+      const resp_ret = await customHttpProvider.getLogs(filter).then(result => result)
 
       console.log(resp_ret)
-      let allMessages = resp_ret
+      const allMessages = resp_ret
 
       // {id: 2, text: 'Hello!', isMe: true},
-      let messages = []
+      const messages = []
       let noMe = true
       for (const allMessagesKey in allMessages) {
-        let obj = allMessages[allMessagesKey]
+        const obj = allMessages[allMessagesKey]
         // console.log('obj', obj)
 
         let isMe
@@ -717,23 +713,21 @@ export default {
         }
         let tempObj
 
-        let content = ethers.utils.defaultAbiCoder.decode(
+        const content = ethers.utils.defaultAbiCoder.decode(
           ['string'],
           obj.data
         )[0]
         let isRead = false
-        let isReadTemp = window.localStorage.getItem(obj.transactionHash)
+        const isReadTemp = window.localStorage.getItem(obj.transactionHash)
         if (isReadTemp && isReadTemp == 'true') {
           isRead = true
         }
         // ipfs资源获取
         if (content.substring(0, 2) == 'Qm') {
           // 查询ipfs元数据
-          let responseRet = await ipfsNode
+          const responseRet = await ipfsNode
             .cat(content)
-            .then(resp => {
-              return {err: null, data: resp}
-            })
+            .then(resp => ({err: null, data: resp}))
             .catch(err => {
               console.trace(err)
               return {err: err, data: null}
@@ -789,28 +783,28 @@ export default {
       this.loading = false
     },
     async getJobchats() {
-      let that = this
+      const that = this
 
-      let topic = ethers.utils.id(
+      const topic = ethers.utils.id(
         'jobChatItem(address,address)'
         // "jobChat(address,address,string)"
       )
 
       // console.log('===', that.address)
       // console.log('===', ethers.utils.hexZeroPad(that.address, 32))
-      let toBlock = window.localStorage.getItem('blockNumber')
-      let fromBlock = Number(toBlock) - 300000
+      const toBlock = window.localStorage.getItem('blockNumber')
+      const fromBlock = Number(toBlock) - 300000
       //计算起始区块
 
       that.loading = true
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(
         this.$store.state.config.blockchain.baseURL,
         {
           chainId: 27
         }
       )
       // 我发出的
-      let filter = {
+      const filter = {
         address: GlobalConfig.JOBCONTRACT_ADDRESS,
         fromBlock: Number(fromBlock), // 1天的数据
         toBlock: Number(toBlock),
@@ -818,12 +812,10 @@ export default {
         topics: [topic, ethers.utils.hexZeroPad(that.address, 32), null]
         // topics: [topic],
       }
-      let resp_ret = await customHttpProvider.getLogs(filter).then(result => {
-        return result
-      })
+      const resp_ret = await customHttpProvider.getLogs(filter).then(result => result)
 
       //  我接受的
-      let filterR = {
+      const filterR = {
         address: GlobalConfig.JOBCONTRACT_ADDRESS,
         fromBlock: Number(fromBlock), // 1天的数据
         toBlock: Number(toBlock),
@@ -831,11 +823,9 @@ export default {
         topics: [topic, null, ethers.utils.hexZeroPad(that.address, 32)]
         // topics: [topic],
       }
-      let resp_retR = await customHttpProvider
+      const resp_retR = await customHttpProvider
         .getLogs(filterR)
-        .then(resultR => {
-          return resultR
-        })
+        .then(resultR => resultR)
       that.messageList = resp_ret.concat(resp_retR)
       //
       // that.messageList.unshift({
@@ -845,10 +835,10 @@ export default {
 
       that.total = this.messageList.length
 
-      for (let msg of this.messageList) {
+      for (const msg of this.messageList) {
         let publisher
-        let addr1 = this.hexStripZeros(msg.topics[1])
-        let addr2 = this.hexStripZeros(msg.topics[2])
+        const addr1 = this.hexStripZeros(msg.topics[1])
+        const addr2 = this.hexStripZeros(msg.topics[2])
         if (this.isMeFun(addr1)) {
           publisher = addr2
           msg.reced = publisher
@@ -898,14 +888,14 @@ export default {
     },
     async authJudge(oriName) {
       // 查询实名状态
-      let address = await storage.getAddress(storage.getHighestWalletVersion())
+      const address = await storage.getAddress(storage.getHighestWalletVersion())
       queryCert({address: address})
         .then(res => {
           if (res.code !== 200) {
             console.log(res.msg)
           }
           else if (!res.is_cert) {
-            let r = confirm(
+            const r = confirm(
               '当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!'
             )
             if (r == true) {

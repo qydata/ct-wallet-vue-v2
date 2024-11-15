@@ -98,18 +98,18 @@ export default {
   },
   methods: {
     async getTokenList() {
-      let _this = this
+      const _this = this
 
-      let address = await storage.getAddress(storage.getHighestWalletVersion())
+      const address = await storage.getAddress(storage.getHighestWalletVersion())
 
       fetchDisplay(address, {}).then((result) => {
         // console.log(result)
-        let myNftsList = result.transactions
+        const myNftsList = result.transactions
         // 这里只筛选721和1155的合约地址
-        let contractList = []
+        const contractList = []
         for (const iterator of myNftsList) {
           if (iterator.type == 'ERC-1155' || iterator.type == 'ERC-721') {
-            let isExit = contractList.some(
+            const isExit = contractList.some(
               (value) => value.contractAddress == iterator.contractAddress
             )
             if (isExit == false) {
@@ -119,7 +119,7 @@ export default {
           continue
         }
         if (this.$route.query.newContractAddress) {
-          let newMap = {}
+          const newMap = {}
           if (this.$route.query.defaultV.indexOf('721') == -1) {
             newMap.type = 'ERC-1155'
           }

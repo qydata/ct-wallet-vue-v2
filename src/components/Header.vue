@@ -128,7 +128,7 @@ export default {
   },
   async mounted() {
 
-    let intent = this.$route.query.intent
+    const intent = this.$route.query.intent
     if (intent !== null && intent !== undefined && intent.length > 1) {
       console.log('intent', intent)
       this.createAndImportModal = intent
@@ -141,7 +141,7 @@ export default {
       }, 4000)
     }
     else {
-      let needAuth = sessionStorage.getItem('needAuth')
+      const needAuth = sessionStorage.getItem('needAuth')
       if (needAuth != null) {
         sessionStorage.removeItem('needAuth')
         await this.gotoAuthBind()
@@ -196,7 +196,7 @@ export default {
     async gotoAuthBind() {
 
       // 判断是否实名
-      let address = await storage.getAddress(storage.getHighestWalletVersion())
+      const address = await storage.getAddress(storage.getHighestWalletVersion())
       queryCert({address: address}).then((res) => {
         if (res.code !== 200) {
           console.log(res.msg)
@@ -225,7 +225,7 @@ export default {
     async authJudge(oriName) {
 
       // 查询实名状态
-      let address = await storage.getAddress(storage.getHighestWalletVersion())
+      const address = await storage.getAddress(storage.getHighestWalletVersion())
       queryCert({address: address}).then((res) => {
         if (res.code !== 200) {
           console.log(res.msg)
@@ -248,9 +248,9 @@ export default {
       this.authJudge('charge')
     },
     async gotoOverview() {
-      let callbackURL = sessionStorage.getItem('callbackURL')
-      let callBack = sessionStorage.getItem('callBack')
-      let sessionId = sessionStorage.getItem('sessionId')
+      const callbackURL = sessionStorage.getItem('callbackURL')
+      const callBack = sessionStorage.getItem('callBack')
+      const sessionId = sessionStorage.getItem('sessionId')
       if (callbackURL != null) {
         sessionStorage.removeItem('callbackURL')
         sessionStorage.removeItem('callBack')

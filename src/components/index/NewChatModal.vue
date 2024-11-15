@@ -103,7 +103,7 @@
 <script>
 import {ClipboardCopyIcon, LockOpenIcon, RefreshIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
 import Modal from '../Modal'

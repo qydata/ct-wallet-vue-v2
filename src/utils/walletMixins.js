@@ -14,7 +14,7 @@ export default {
     },
     tickerWithAddress(wallet) {
       // returns string with coinTicker prepended to the wallet address
-      let walletAddr = this.publicKeyToAddress(wallet.p1)
+      const walletAddr = this.publicKeyToAddress(wallet.p1)
       return `${walletAddr}`
     },
     traverseWallets(wallets, callback) {

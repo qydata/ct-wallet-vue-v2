@@ -248,7 +248,7 @@ const TRANSACTION_RECEIPT_STATUS = {
   SUCCESS: 1,
   REVERTED: 0
 }
-let gasPrice = 4800
+const gasPrice = 4800
 const {contract_static_call, contract_gas_call_override, contract_call_override} = require('../../contract/ChainCall')
 export default {
   name: 'InterSendModal',
@@ -394,7 +394,7 @@ export default {
     async readySend() {
       // validate only step 1
       // 这里计算gas
-      let that = this
+      const that = this
       this.loading = true
       window.setTimeout(() => {
         that.gasCalc()
@@ -419,7 +419,7 @@ export default {
       // 转账为固定手续费
       let gasLimit
 
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
       let override = {}
@@ -467,10 +467,10 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
       // create tx
 
       let tx
@@ -522,7 +522,8 @@ export default {
             this.submitError = recept.err
           }
 
-        } catch (e) {
+        }
+        catch (e) {
           console.error(e)
           this.loading = false
           this.submitError = e.message
@@ -546,7 +547,7 @@ export default {
         // submit tx to blockchain
         try {
 
-          let results = await wallet.sendTransaction(tx)
+          const results = await wallet.sendTransaction(tx)
 
           recept = await customHttpProvider
             .waitForTransaction(results.hash)
@@ -565,7 +566,8 @@ export default {
           else {
             this.submitError = results[0].reason
           }
-        } catch (err) {
+        }
+        catch (err) {
           console.error(err)
           this.loading = false
           this.submitError = err.message

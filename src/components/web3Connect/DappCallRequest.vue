@@ -112,7 +112,7 @@ const walletConnectRequests = {
   personal_sign: 'Personal Sign',
   wallet_switchEthereumChain: 'Switch Ethereum Chain'
 }
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import {LockOpenIcon} from '@heroicons/vue/outline'
 
@@ -163,8 +163,7 @@ export default {
 
     requestName() {
       // Format Wallet Connect V2 Request Name
-      if (this.request.method === 'session_proposal')
-        return walletConnectRequests[this.request.method]
+      if (this.request.method === 'session_proposal') return walletConnectRequests[this.request.method]
       const method = this.request.params.request.method
       return walletConnectRequests[method]
     },
@@ -283,17 +282,17 @@ export default {
         }
 
         // Display toast confirming user approval/rejection
-        if (userApproved)
-          this.$message.success(`${this.requestName} 请求已获得批准。`)
-        else
-          this.$message.error(
-            `${this.requestName} 请求已被用户拒绝。`,
-            'Rejected'
-          )
-      } catch (err) {
+        if (userApproved) this.$message.success(`${this.requestName} 请求已获得批准。`)
+        else this.$message.error(
+          `${this.requestName} 请求已被用户拒绝。`,
+          'Rejected'
+        )
+      }
+      catch (err) {
         this.isLoading = false
         this.displayError(err)
-      } finally {
+      }
+      finally {
         this.closeModal()
       }
     },
@@ -310,8 +309,7 @@ export default {
         })
       }
       else {
-        if (!this.address)
-          throw new Error('You must select a wallet to start a session.')
+        if (!this.address) throw new Error('You must select a wallet to start a session.')
         this.$store.dispatch('web3Connections/handleWCSessionProposal', {
           approved: userApproved,
           wallet: this.address,
@@ -320,7 +318,7 @@ export default {
       }
     },
     rejectWCRequest(message) {
-      let response = {
+      const response = {
         id: this.request.id,
         reason: {
           // 错误代码，4001 通常表示用户拒绝
@@ -344,16 +342,15 @@ export default {
         reqName = reqName[0].toUpperCase() + reqName.slice(1)
 
         // Display toast confirming user approval/rejection
-        if (userApproved)
-          this.$message.success(`${reqName} request has been approved.`)
-        else
-          this.$message.error(
-            `${reqName} request has been rejected by user.`,
-            'Rejected'
-          )
+        if (userApproved) this.$message.success(`${reqName} request has been approved.`)
+        else this.$message.error(
+          `${reqName} request has been rejected by user.`,
+          'Rejected'
+        )
 
         this.closeModal()
-      } catch (err) {
+      }
+      catch (err) {
         this.displayError(err)
       }
     }

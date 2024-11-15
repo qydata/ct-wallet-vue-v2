@@ -418,7 +418,7 @@ import * as validation from '@/utils/validation'
 import {ArrowDownIcon, ArrowRightIcon, LockOpenIcon} from '@heroicons/vue/outline'
 import {InformationCircleIcon} from '@heroicons/vue/solid'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import VueClicaptcha from 'vue-clicaptcha'
 import {mapState} from 'vuex'
 import {getCardList, getPrivateKey} from '../../utils/storage'
@@ -545,7 +545,7 @@ export default {
         this.iGasRates = setInterval(this.updateGasRates, gasRatesUpdateInterval)
 
         this.recipient = this.address
-        let cardList = await getCardList(this.address)
+        const cardList = await getCardList(this.address)
         console.log(cardList)
         if (cardList) {
           this.payTypeArr = cardList['card_lists']
@@ -725,18 +725,18 @@ export default {
         if (!await this.checkPassword()) return
         const privateKey = await getPrivateKey(this.password)
 
-        let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+        const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
           chainId: 27
         })
-        let wallet = new ethers.Wallet(privateKey, customHttpProvider)
-        let contract = new ethers.Contract(
+        const wallet = new ethers.Wallet(privateKey, customHttpProvider)
+        const contract = new ethers.Contract(
           _addressC['ChainpayClient'],
           ABI_const['ChainpayClient'].abi,
           customHttpProvider
         )
-        let contractWithSigner = contract.connect(wallet)
+        const contractWithSigner = contract.connect(wallet)
 
-        let orderId = `0x${ethUtil
+        const orderId = `0x${ethUtil
           .keccak256(Buffer.from(new Date().getTime().toString()))
           .toString('hex')}`
 
@@ -759,9 +759,9 @@ export default {
         this.loadingText = '声明上链中'
 
         // submit tx to blockchain
-        let txGasLimit = await contractWithSigner.callStatic.requestDataFromChainpay(orderId, this.amount)
+        const txGasLimit = await contractWithSigner.callStatic.requestDataFromChainpay(orderId, this.amount)
         console.log('gasLimit', txGasLimit)
-        let tx = await contractWithSigner.requestDataFromChainpay(orderId, this.amount)
+        const tx = await contractWithSigner.requestDataFromChainpay(orderId, this.amount)
         await tx.wait()
         console.log(tx.hash)
 
@@ -777,7 +777,8 @@ export default {
         }
         this.goto(3)
         this.cleanLoad()
-      } catch (err) {
+      }
+      catch (err) {
         console.error(err)
         this.proErrMessage(err.errorArgs[0])
         this.cleanLoad()

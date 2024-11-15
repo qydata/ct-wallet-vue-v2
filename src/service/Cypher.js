@@ -40,13 +40,11 @@ class Cypher {
 
     // Set new encryption key, and update rows from database
     this.setEncryptionKey(key)
-    const dbUpdateQuery = results.map((result, i) => {
-      return idbCon.insert({
-        into: tableNames[i],
-        values: result.value,
-        upsert: true
-      })
-    })
+    const dbUpdateQuery = results.map((result, i) => idbCon.insert({
+      into: tableNames[i],
+      values: result.value,
+      upsert: true
+    }))
 
     return await Promise.allSettled(dbUpdateQuery)
   }

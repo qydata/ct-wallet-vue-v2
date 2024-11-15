@@ -106,9 +106,11 @@ export default {
       // Handle v1 sessions
       try {
         await WalletConnect.sessionDisconnect(topic)
-      } catch (err) {
+      }
+      catch (err) {
         console.error(err)
-      } finally {
+      }
+      finally {
         commit('removeWalletConnectSession', topic)
       }
     },

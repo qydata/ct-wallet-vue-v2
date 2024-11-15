@@ -9,9 +9,17 @@ module.exports = {
         test: /node_modules[\\/]@web3modal/,
         loader: 'babel-loader'
       }]
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all', // 自动分割所有引入的模块
+        minSize: 20000, // 最小大小 20KB
+        maxSize: 500000 // 最大大小 500KB
+      },
+      minimize: true
     }
   },
-  productionSourceMap: process.env.NODE_ENV === 'production' ? false : true,
+  productionSourceMap: false,
   assetsDir: 'assets/',
   chainWebpack: config => {
     config

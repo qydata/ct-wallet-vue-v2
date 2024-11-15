@@ -120,7 +120,7 @@ import {putChangeReq, queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
 import {ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import {mapState} from 'vuex'
 import Modal from '../Modal'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
@@ -215,32 +215,29 @@ export default {
         if (res.code !== 200) {
           this.$message.error(res.msg)
         }
-        else {
-          if (res.is_cert) {
-            // this.$message.success('账户已经认证!')
+        else if (res.is_cert) {
+          // this.$message.success('账户已经认证!')
 
-            let data = {
-              charge_amount: this.tovalue,
-              address: this.toaddress
+          const data = {
+            charge_amount: this.tovalue,
+            address: this.toaddress
+          }
+          putChangeReq(data).then((res) => {
+            if (res.code !== 200) {
+              this.$message.error(res.msg)
             }
-            putChangeReq(data).then((res) => {
-              if (res.code !== 200) {
-                this.$message.error(res.msg)
-              }
-              else {
-                console.log(res)
-                this.payCodeDialog = true
-                this.order_id = res.order_id
-                this.reset()
-                this.afterCharge(res)
-              }
-            })
+            else {
+              console.log(res)
+              this.payCodeDialog = true
+              this.order_id = res.order_id
+              this.reset()
+              this.afterCharge(res)
+            }
+          })
 
-          }
-          else {
-            this.$message.success('账户未认证!')
-          }
-
+        }
+        else {
+          this.$message.success('账户未认证!')
         }
       })
         .catch(() => {

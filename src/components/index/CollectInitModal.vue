@@ -142,7 +142,7 @@ import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
 import {LockOpenIcon, RefreshIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import Modal from '../Modal'
 
 const TRANSACTION_RECEIPT_STATUS = {
@@ -229,22 +229,20 @@ export default {
       collectAddress,
       wallet
     ) {
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
 
       if (type == 'ERC1155Ctnft') {
-        let contract = new ethers.Contract(
+        const contract = new ethers.Contract(
           collectAddress,
           ABI_const['ERC1155Ctnft'].abi,
           customHttpProvider
         )
-        let contractWithSigner = contract.connect(wallet)
-        let {err, gaslimit} = await contractWithSigner.estimateGas
+        const contractWithSigner = contract.connect(wallet)
+        const {err, gaslimit} = await contractWithSigner.estimateGas
           .__ERC1155Ctnft_init(name, symbol, tokenUrlPrefix, contractUrl)
-          .then((ret) => {
-            return {err: null, gaslimit: ret}
-          })
+          .then((ret) => ({err: null, gaslimit: ret}))
           .catch((err) => {
             console.log('err:', err)
             return {err: err, gaslimit: null}
@@ -252,17 +250,15 @@ export default {
         return {err, gaslimit}
       }
       else if (type == 'ERC1155CtnftOwner') {
-        let contract = new ethers.Contract(
+        const contract = new ethers.Contract(
           collectAddress,
           ABI_const['ERC1155CtnftOwner'].abi,
           customHttpProvider
         )
-        let contractWithSigner = contract.connect(wallet)
-        let {err, gaslimit} = await contractWithSigner.estimateGas
+        const contractWithSigner = contract.connect(wallet)
+        const {err, gaslimit} = await contractWithSigner.estimateGas
           .__ERC1155Ctnft_init(name, symbol, tokenUrlPrefix, contractUrl)
-          .then((ret) => {
-            return {err: null, gaslimit: ret}
-          })
+          .then((ret) => ({err: null, gaslimit: ret}))
           .catch((err) => {
             console.log('err:', err)
             return {err: err, gaslimit: null}
@@ -271,17 +267,15 @@ export default {
       }
       else if (type == 'ERC721Ctnft') {
         // 721
-        let contract = new ethers.Contract(
+        const contract = new ethers.Contract(
           collectAddress,
           ABI_const['ERC721Ctnft'].abi,
           customHttpProvider
         )
-        let contractWithSigner = contract.connect(wallet)
-        let {err, gaslimit} = await contractWithSigner.estimateGas
+        const contractWithSigner = contract.connect(wallet)
+        const {err, gaslimit} = await contractWithSigner.estimateGas
           .__ERC721Ctnft_init(name, symbol, tokenUrlPrefix, contractUrl)
-          .then((ret) => {
-            return {err: null, gaslimit: ret}
-          })
+          .then((ret) => ({err: null, gaslimit: ret}))
           .catch((err) => {
             console.log('err:', err)
             return {err: err, gaslimit: null}
@@ -293,7 +287,7 @@ export default {
       }
     },
     async sendCreateInit() {
-      let that = this
+      const that = this
       if (!await this.v$.$validate()) return
       // 判断 如果已经存在第一个钱包, 就进行密码验证
       if (((await storage.getWalletList(storage.getHighestWalletVersion()))).length > 0) {
@@ -301,16 +295,16 @@ export default {
       }
 
       const privateKey = await storage.getPrivateKey(this.password)
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
 
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
       this.loading = true
       // 以太币转账
       // 先获取当前账号交易的nonce
       //    初始化  送手续费  {err, gaslimit}
-      let resultGas = await this.collectInitCall(
+      const resultGas = await this.collectInitCall(
         this.name,
         this.symbol,
         this.tokenUrlPrefix,
@@ -330,7 +324,7 @@ export default {
       }
 
       //    初始化{err, hash}
-      let result1 = await this.collectInit(
+      const result1 = await this.collectInit(
         this.name,
         this.symbol,
         this.tokenUrlPrefix,
@@ -363,18 +357,18 @@ export default {
       collectAddress,
       wallet
     ) {
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
       if (type == 'ERC1155Ctnft') {
         try {
-          let contract = new ethers.Contract(
+          const contract = new ethers.Contract(
             collectAddress,
             ABI_const ['ERC1155Ctnft'].abi,
             customHttpProvider
           )
-          let contractWithSigner = contract.connect(wallet)
-          let tx = await contractWithSigner
+          const contractWithSigner = contract.connect(wallet)
+          const tx = await contractWithSigner
             .__ERC1155Ctnft_init(name, symbol, tokenUrlPrefix, contractUrl)
             .then((ret) => ret)
             .catch((err) => {
@@ -382,7 +376,7 @@ export default {
               this.$message.error('铸造错误, ' + err.reason)
               return err
             })
-          let recept = await customHttpProvider
+          const recept = await customHttpProvider
             .waitForTransaction(tx.hash)
             .then((ret) => ret)
             .catch((err) => {
@@ -395,33 +389,30 @@ export default {
           }
 
           return {err: null, hash: tx.hash}
-        } catch (err) {
+        }
+        catch (err) {
           return {err: err, hash: null}
         }
       }
       else if (type == 'ERC1155CtnftOwner') {
         try {
-          let contract = new ethers.Contract(
+          const contract = new ethers.Contract(
             collectAddress,
             ABI_const ['ERC1155CtnftOwner'].abi,
             customHttpProvider
           )
-          let contractWithSigner = contract.connect(wallet)
-          let tx = await contractWithSigner
+          const contractWithSigner = contract.connect(wallet)
+          const tx = await contractWithSigner
             .__ERC1155Ctnft_init(name, symbol, tokenUrlPrefix, contractUrl)
-            .then((ret) => {
-              return ret
-            })
+            .then((ret) => ret)
             .catch((err) => {
               console.log('err:', err)
               this.$message.error('铸造错误, ' + err.reason)
               return err
             })
-          let recept = await customHttpProvider
+          const recept = await customHttpProvider
             .waitForTransaction(tx.hash)
-            .then((ret) => {
-              return ret
-            })
+            .then((ret) => ret)
             .catch((err) => {
               this.$message.error('铸造错误, ' + err.reason)
               return err
@@ -432,29 +423,28 @@ export default {
           }
 
           return {err: null, hash: tx.hash}
-        } catch (err) {
+        }
+        catch (err) {
           return {err: err, hash: null}
         }
       }
       else if (type == 'ERC721Ctnft') {
         // 721
         try {
-          let contract = new ethers.Contract(
+          const contract = new ethers.Contract(
             collectAddress,
             ABI_const ['ERC721Ctnft'].abi,
             customHttpProvider
           )
-          let contractWithSigner = contract.connect(wallet)
-          let tx = await contractWithSigner
+          const contractWithSigner = contract.connect(wallet)
+          const tx = await contractWithSigner
             .__ERC721Ctnft_init(name, symbol, tokenUrlPrefix, contractUrl)
-            .then((ret) => {
-              return ret
-            })
+            .then((ret) => ret)
             .catch((err) => {
               this.$message.error('铸造错误, ' + err.reason)
               return err
             })
-          let recept = await customHttpProvider
+          const recept = await customHttpProvider
             .waitForTransaction(tx.hash)
             .then((ret) => ret)
             .catch((err) => {
@@ -466,7 +456,8 @@ export default {
           }
 
           return {err: null, hash: tx.hash}
-        } catch (err) {
+        }
+        catch (err) {
           return {err: err, hash: null}
         }
       }
@@ -508,8 +499,8 @@ export default {
       }
 
       // 请注意，我们将 "Hello World" 作为参数传递给合约构造函数constructor
-      let data = await factory.getDeployTransaction()
-      let {err, gaslimit} = await new Promise((resolve, reject) => {
+      const data = await factory.getDeployTransaction()
+      const {err, gaslimit} = await new Promise((resolve, reject) => {
         web3.eth.estimateGas(
           {
             data: data.data,
@@ -522,9 +513,7 @@ export default {
             resolve({err, gaslimit})
           }
         )
-      }).then((ret) => {
-        return ret
-      })
+      }).then((ret) => ret)
       console.log({err, gaslimit})
       return {err, gaslimit}
     },
@@ -532,7 +521,7 @@ export default {
     // 创建收藏夹 ERC1155 支持懒铸造
     async createCollectV2(wallet, gasPrice, gasLimit, type, wait) {
       const web3 = new Web3(this.$store.state.config.blockchain.baseURL)
-      let overrides = {
+      const overrides = {
         // The maximum units of gas for the transaction to use
         gasLimit: web3.utils.numberToHex(gasLimit),
         // The price (in wei) per unit of gas
@@ -565,7 +554,7 @@ export default {
         return null
       }
       // 请注意，我们将 "Hello World" 作为参数传递给合约构造函数constructor
-      let contract = await factory.deploy(overrides)
+      const contract = await factory.deploy(overrides)
       // 部署交易有一旦挖出，合约地址就可用
       // 参考: https://ropsten.etherscan.io/address/0x2bd9aaa2953f988153c8629926d22a6a5f69b14e
       console.log(contract.address)
@@ -576,7 +565,7 @@ export default {
       // "0x159b76843662a15bd67e482dcfbee55e8e44efad26c5a614245e12a00d4b1a51"
       //合约还没有部署;我们必须等到它被挖出
       if (wait == true) {
-        let recept = await contract.deployed()
+        const recept = await contract.deployed()
       }
       // 好了 合约已部署。
       return contract.address

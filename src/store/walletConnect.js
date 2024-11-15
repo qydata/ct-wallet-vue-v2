@@ -5,7 +5,7 @@ import {Web3Wallet} from '@walletconnect/web3wallet'
 import {BigNumber, providers, utils} from 'ethers'
 import {EventEmitter} from 'events'
 import {EthEvent, WC_CONFIG as walletConnectConfig} from '../services/config/common'
-import {EIP155_CHAINS, EIP155Method} from '../services/config/EIP155'
+import {EIP155Method, EIP155_CHAINS} from '../services/config/EIP155'
 import infura, {ctchain} from '../utils/cryptos/blockchainApi/infura'
 import eth from '../utils/cryptos/eth'
 
@@ -213,7 +213,7 @@ class WalletConnect extends EventEmitter {
     const result = await ethMethods[method]({
       dispatch: this.dispatch, network, params, wallet
     })
-    let response = {
+    const response = {
       jsonrpc: '2.0', id, result
     }
     const topic = request.topic

@@ -31,7 +31,8 @@ export const initJsStore = async () => {
     else {
       console.log('IdbService.js: db opened')
     }
-  } catch (ex) {
+  }
+  catch (ex) {
     console.log(ex)
   }
 }

@@ -65,7 +65,7 @@ import * as storage from '@/utils/storage'
 import {InfoFilled} from '@element-plus/icons-vue'
 import {ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import moment from 'moment'
 import {mapState} from 'vuex'
 import {getCardList} from '../../utils/storage'
@@ -146,7 +146,7 @@ export default {
         this.toaddress = this.address
         this.payType = this.payTypeArr[0]
         // console.log(this.toaddress)
-        let cardList = await getCardList(this.toaddress)
+        const cardList = await getCardList(this.toaddress)
         console.log(cardList)
         if (cardList) {
           this.cardTypeArr = cardList['card_lists']

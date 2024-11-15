@@ -210,7 +210,7 @@ import {Delete, Download, EditPen, Plus, ZoomIn} from '@element-plus/icons-vue'
 import {LockOpenIcon, PencilIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 
-import {helpers, required as _required} from '@vuelidate/validators'
+import {required as _required, helpers} from '@vuelidate/validators'
 import Modal from '../Modal'
 
 const ipfsAPI = require('ipfs-api')
@@ -303,18 +303,16 @@ export default {
   },
   methods: {
     async fileUpload(data) {
-      let imgResponse = await ipfsNode
+      const imgResponse = await ipfsNode
         .add(Buffer.from(data))
         // .add(Buffer.from(data))
-        .then((imgResponse) => {
-          return imgResponse
-        })
+        .then((imgResponse) => imgResponse)
         .catch((err) => {
           console.error(err)
           return err
         })
       ipfsNode.pin.add(imgResponse[0].path)
-      let imgIpfsAddress = imgResponse[0].path
+      const imgIpfsAddress = imgResponse[0].path
       this.image =
         'https://dream.chaonft.cn/ipfs/api/v0/cat/' + imgIpfsAddress
       console.log('this.image', this.image)
@@ -345,7 +343,7 @@ export default {
       this.hideUpload = fileList.length >= this.limitCount
       this.fileList = fileList
       const that = this
-      let binaryData = []
+      const binaryData = []
       binaryData.push(file.raw)
       // this.fileName = file.name.substring(this.fileName.lastIndexOf("/") + 1);
       this.fileName = file.name
@@ -366,7 +364,7 @@ export default {
       }
     },
     async sedMintTx() {
-      var that = this
+      const that = this
       const web3 = new Web3(this.$store.state.config.blockchain.baseURL)
       if (!await this.v$.$validate()) return
       // 判断 如果已经存在第一个钱包, 就进行密码验证
@@ -374,7 +372,7 @@ export default {
         if (!await this.checkPassword()) return
       }
       const privateKey = await storage.getPrivateKey(this.password)
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
       let type = 0
@@ -395,40 +393,38 @@ export default {
       }
       that.loading = true
       that.fasongButton = 'clickfasongjiaoyi'
-      let collectAddress = this.radioVal.contractAddress
-      let tokenId = this.address + 'd1234567890' + Date.now()
+      const collectAddress = this.radioVal.contractAddress
+      const tokenId = this.address + 'd1234567890' + Date.now()
       // let tokenId = this.address + "d1234567890" + "1234567890123";
-      let transferTo = this.address
-      let signatures = []
-      let minter = this.address
-      var creators = this.Part(minter, 10000)
+      const transferTo = this.address
+      const signatures = []
+      const minter = this.address
+      const creators = this.Part(minter, 10000)
       // 以太币转账
       // 先获取当前账号交易的nonce
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
       const reqdata = {}
       reqdata.fileName = this.fileName
       reqdata.image = this.image
       reqdata.title = this.title
       reqdata.authorDescription = this.author_description
       reqdata.description = this.description
-      let response = await ipfsNode
+      const response = await ipfsNode
         .add(Buffer.from(JSON.stringify(reqdata), 'utf-8'))
-        .then((response) => {
-          return response
-        })
+        .then((response) => response)
         .catch((err) => {
           console.error(err)
         })
       ipfsNode.pin.add(response[0].path)
       let tokenURI = response[0].path
-      let gasPrice = (await customHttpProvider.getGasPrice()).toString()
+      const gasPrice = (await customHttpProvider.getGasPrice()).toString()
       console.log('gasPrice:', gasPrice.toString())
 
       let tx
 
       if (type == 10 || type == 12) {
-        let supply = this.supply
-        let contract = new ethers.Contract(
+        const supply = this.supply
+        const contract = new ethers.Contract(
           collectAddress,
           ABI_const['ERC1155Ctnft'].abi,
           customHttpProvider
@@ -441,8 +437,8 @@ export default {
           tokenURI = '/' + tokenURI
         }
         // 使用签名器创建一个新的合约实例，它允许使用可更新状态的方法
-        let contractWithSigner = contract.connect(wallet)
-        let gasLimit = await contractWithSigner.estimateGas
+        const contractWithSigner = contract.connect(wallet)
+        const gasLimit = await contractWithSigner.estimateGas
           .mintAndTransfer(
             this.Mint1155Data(
               tokenId,
@@ -455,9 +451,7 @@ export default {
             transferTo,
             supply
           )
-          .then((ret) => {
-            return ret
-          })
+          .then((ret) => ret)
           .catch((err) => {
             this.$message.error('铸造错误, ' + err.reason)
             that.loading = false
@@ -468,7 +462,7 @@ export default {
           that.loading = false
           return
         }
-        let overrides = {
+        const overrides = {
           // The maximum units of gas for the transaction to use
           gasLimit: web3.utils.numberToHex(gasLimit),
           // The price (in wei) per unit of gas
@@ -496,9 +490,7 @@ export default {
             supply,
             overrides
           )
-          .then((ret) => {
-            return ret
-          })
+          .then((ret) => ret)
           .catch((err) => {
             console.log('err:', err)
             that.loading = false
@@ -510,13 +502,13 @@ export default {
         console.log('hash:', tx.hash)
       }
       else if (type == 9) {
-        let contract = new ethers.Contract(
+        const contract = new ethers.Contract(
           collectAddress,
           ABI_const['ERC721Ctnft'].abi,
           customHttpProvider
         )
-        let contractWithSigner = contract.connect(wallet)
-        let gasLimit = await contractWithSigner.estimateGas
+        const contractWithSigner = contract.connect(wallet)
+        const gasLimit = await contractWithSigner.estimateGas
           .mintAndTransfer(
             this.Mint721Data(
               tokenId,
@@ -527,9 +519,7 @@ export default {
             ),
             transferTo
           )
-          .then((ret) => {
-            return ret
-          })
+          .then((ret) => ret)
           .catch((err) => {
             console.log('err:', err)
             this.$message.error('铸造错误, ' + err.reason)
@@ -542,7 +532,7 @@ export default {
         }
         console.log('gasLimit:', gasLimit.toString())
 
-        let overrides = {
+        const overrides = {
           // The maximum units of gas for the transaction to use
           gasLimit: web3.utils.numberToHex(gasLimit),
           // The price (in wei) per unit of gas
@@ -567,9 +557,7 @@ export default {
             transferTo,
             overrides
           )
-          .then((ret) => {
-            return ret
-          })
+          .then((ret) => ret)
           .catch((err) => {
             console.log('err:', err)
             that.loading = false
@@ -586,11 +574,9 @@ export default {
         console.log('error submit!!')
         return
       }
-      let recept = await customHttpProvider
+      const recept = await customHttpProvider
         .waitForTransaction(tx.hash)
-        .then((ret) => {
-          return ret
-        })
+        .then((ret) => ret)
         .catch((err) => {
           that.loading = false
           console.log('err:', err)
@@ -601,7 +587,7 @@ export default {
         throw {message: 'Transaction Reverted'}
       }
 
-      let recept1 = await tx.wait()
+      const recept1 = await tx.wait()
       // setTimeout(that.gotrading(), 5000);
       that.loading = false
       this.$message.success('铸造成功!')
@@ -617,16 +603,16 @@ export default {
       return value
     },
     getTokenList() {
-      let _this = this
+      const _this = this
 
       fetchDisplay(this.address, {}).then((result) => {
         // console.log(result)
-        let myNftsList = result.transactions
+        const myNftsList = result.transactions
         // 这里只筛选721和1155的合约地址
-        let contractList = []
+        const contractList = []
         for (const iterator of myNftsList) {
           if (iterator.type == 'ERC-1155' || iterator.type == 'ERC-721') {
-            let isExit = contractList.some(
+            const isExit = contractList.some(
               (value) => value.contractAddress == iterator.contractAddress
             )
             if (isExit == false) {
@@ -636,7 +622,7 @@ export default {
           continue
         }
         if (this.$route.query.contractAddress) {
-          let newMap = {}
+          const newMap = {}
           if (this.$route.query.defaultV.indexOf('721') == -1) {
             newMap.type = 'ERC-1155'
           }

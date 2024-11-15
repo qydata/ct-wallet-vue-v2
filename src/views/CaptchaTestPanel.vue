@@ -42,7 +42,7 @@ export default {
   },
   watch: {},
   mounted() {
-    let that = this
+    const that = this
     window.setTimeout(() => {
       that.tabindex = '1'
     }, 5000)

@@ -242,8 +242,8 @@ export default {
       const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
-      let CtXCTAddress = _addressC['ChainpayClient']
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const CtXCTAddress = _addressC['ChainpayClient']
 
       const contract = new ethers.Contract(
         CtXCTAddress,
@@ -251,7 +251,7 @@ export default {
         customHttpProvider
       )
 
-      let contractWithSigner = contract.connect(wallet)
+      const contractWithSigner = contract.connect(wallet)
 
       // submit tx to blockchain
       try {
@@ -270,7 +270,8 @@ export default {
           this.cleanLoad()
           this.goto(2)
         }, 1000)
-      } catch (err) {
+      }
+      catch (err) {
         this.loading = false
         console.error(err)
         this.submitError = this.proErrMessage(err.errorArgs[0])
@@ -278,10 +279,10 @@ export default {
     },
     proErrMessage(err) {
       switch (err) {
-      case "Source must be the oracle of the request":
-        return "当前账户非验证者账户"
+      case 'Source must be the oracle of the request':
+        return '当前账户非验证者账户'
       default:
-        return err;
+        return err
       }
     },
     cleanLoad() {

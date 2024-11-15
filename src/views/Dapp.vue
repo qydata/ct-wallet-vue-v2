@@ -76,9 +76,9 @@
 <script>
 import Header from '@/components/Header'
 import {
-  RefreshRight,
   HomeFilled,
-  Position
+  Position,
+  RefreshRight
 } from '@element-plus/icons-vue'
 
 export default {
@@ -128,7 +128,8 @@ export default {
           const iframeSrc = new URL(iframe.src)
           this.faviconUrl = `${iframeSrc.origin}/favicon.ico`
         }
-      } catch (error) {
+      }
+      catch (error) {
         // 如果遇到跨域问题，则使用默认 favicon 路径
         console.error('Unable to access iframe content due to cross-origin restrictions.')
         const iframeSrc = new URL(iframe.src)

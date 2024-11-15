@@ -83,11 +83,11 @@ const setWalletName = async (walletName, address) => {
     //修改列表数据
     let walletList = await get('wallet-list', store)
     walletList = JSON.parse(JSON.stringify(walletList))
-    for (let walletListKey in walletList) {
-      let walletItem = walletList[walletListKey]
+    for (const walletListKey in walletList) {
+      const walletItem = walletList[walletListKey]
 
-      let publicKey = walletItem.p1
-      let inAddress = ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
+      const publicKey = walletItem.p1
+      const inAddress = ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
 
       if (inAddress.toLowerCase() == address.toLowerCase()) {
         walletItem.walletName = walletName
@@ -104,15 +104,15 @@ const setWalletList = async () => {
   }
 
   let isHas = false
-  let privateKeyP2, publicKeyP1, walletName
+  let privateKeyP2; let publicKeyP1; let walletName
   privateKeyP2 = await get('p2', store)
   publicKeyP1 = await get('p1', store)
   walletName = await get('walletName', store)
 
-  for (let walletListKey in wallet_list) {
-    let walletItem = wallet_list[walletListKey]
+  for (const walletListKey in wallet_list) {
+    const walletItem = wallet_list[walletListKey]
 
-    let publicKey = walletItem.p1
+    const publicKey = walletItem.p1
 
     if (publicKey.toLowerCase() == publicKeyP1.toLowerCase()) {
       isHas = true

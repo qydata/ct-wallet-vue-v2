@@ -127,7 +127,7 @@ export default {
     }
   },
   async mounted() {
-    let walletList = await storage.getWalletList(storage.getHighestWalletVersion())
+    const walletList = await storage.getWalletList(storage.getHighestWalletVersion())
 
     this.walletName = '账户 ' + (walletList.length + 1)
   },
@@ -173,13 +173,13 @@ export default {
     async checkHasWallet(inAddress) {
       this.v$.password.$reset()
 
-      let walletList = await storage.getWalletList(this.walletVersion)
+      const walletList = await storage.getWalletList(this.walletVersion)
       let isHas = false
-      for (let walletListKey in walletList) {
-        let walletItem = walletList[walletListKey]
+      for (const walletListKey in walletList) {
+        const walletItem = walletList[walletListKey]
 
-        let publicKey = walletItem.p1
-        let address = ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
+        const publicKey = walletItem.p1
+        const address = ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
 
         if (inAddress.toLowerCase() == address.toLowerCase()) {
           isHas = true

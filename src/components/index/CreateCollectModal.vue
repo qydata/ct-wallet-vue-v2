@@ -127,30 +127,30 @@ export default {
       }
 
       // 开始去创建合约
-      let that = this
-      let type = this.defaultV
+      const that = this
+      const type = this.defaultV
       // console.log(this.defaultV)
       this.loading = true
       // 以太币转账
       // 先获取当前账号交易的nonce
       const privateKey = await storage.getPrivateKey(this.password)
-      let customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
+      const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
-      let gasPrice = (await customHttpProvider.getGasPrice()).toString()
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const gasPrice = (await customHttpProvider.getGasPrice()).toString()
       // console.log('gasPrice:', gasPrice.toString())
 
       // 创建收藏夹
       //    查询创建合约的手续费
-      let {err, gaslimit} = await this.createCollectV2Call(type, wallet)
+      const {err, gaslimit} = await this.createCollectV2Call(type, wallet)
 
       if (gaslimit == 0) {
         this.$message.error(err)
         return
       }
 
-      let collectAddress = await this.createCollectV2(
+      const collectAddress = await this.createCollectV2(
         wallet,
         gasPrice,
         gaslimit,
@@ -203,8 +203,8 @@ export default {
       }
 
       // 请注意，我们将 "Hello World" 作为参数传递给合约构造函数constructor
-      let data = await factory.getDeployTransaction()
-      let {err, gaslimit} = await new Promise((resolve, reject) => {
+      const data = await factory.getDeployTransaction()
+      const {err, gaslimit} = await new Promise((resolve, reject) => {
         const web3 = new Web3(this.$store.state.config.blockchain.baseURL)
         web3.eth.estimateGas(
           {
@@ -218,9 +218,7 @@ export default {
             resolve({err, gaslimit})
           }
         )
-      }).then((ret) => {
-        return ret
-      })
+      }).then((ret) => ret)
       // console.log({err, gaslimit})
       return {err, gaslimit}
     },
@@ -228,7 +226,7 @@ export default {
     // 创建收藏夹 ERC1155 支持懒铸造
     async createCollectV2(wallet, gasPrice, gasLimit, type, wait) {
       const web3 = new Web3(this.$store.state.config.blockchain.baseURL)
-      let overrides = {
+      const overrides = {
         // The maximum units of gas for the transaction to use
         gasLimit: web3.utils.numberToHex(gasLimit),
         // The price (in wei) per unit of gas
@@ -262,7 +260,7 @@ export default {
       }
       // 请注意，我们将 "Hello World" 作为参数传递给合约构造函数constructor
       try {
-        let contract = await factory.deploy(overrides)
+        const contract = await factory.deploy(overrides)
         // 部署交易有一旦挖出，合约地址就可用
         // 参考: https://ropsten.etherscan.io/address/0x2bd9aaa2953f988153c8629926d22a6a5f69b14e
         // console.log(contract.address)
@@ -273,11 +271,12 @@ export default {
         // "0x159b76843662a15bd67e482dcfbee55e8e44efad26c5a614245e12a00d4b1a51"
         //合约还没有部署;我们必须等到它被挖出
         if (wait == true) {
-          let recept = await contract.deployed()
+          const recept = await contract.deployed()
         }
         // 好了 合约已部署。
         return contract.address
-      } catch (error) {
+      }
+      catch (error) {
         this.$message.error('创建错误, ' + error.reason)
         return null
       }

@@ -30,9 +30,9 @@ function handleEncryption(request, columns) {
   // Encrypt defined columns and assign value to query.values/query.set
   for (const column of columns) {
     if (isUpdate) {
-      if (query.set[column])
-        query.set[column] = cypher.encrypt(query.set[column])
-    } else {
+      if (query.set[column]) query.set[column] = cypher.encrypt(query.set[column])
+    }
+    else {
       for (const entry of query.values) {
         if (entry[column]) entry[column] = cypher.encrypt(entry[column])
       }
@@ -49,7 +49,8 @@ function handleEncryption(request, columns) {
         }
         return entry
       })
-    } else {
+    }
+    else {
       return results
     }
   })
@@ -57,9 +58,9 @@ function handleEncryption(request, columns) {
 
 function handleDecryption(request, columns) {
   // Decrypt data prior to returning to client
-  request.onResult((results) => {
+  request.onResult((results) =>
     // NOTE: UI saves the unecrypted version of this data, make sure everything stays in sync
-    return results.map((entry) => {
+    results.map((entry) => {
       for (const column of columns) {
         if (entry[column]) {
           const decrypted = cypher.decrypt(entry[column])
@@ -68,7 +69,7 @@ function handleDecryption(request, columns) {
       }
       return entry
     })
-  })
+  )
 }
 
 export const cypherMiddleware = function (request) {
@@ -78,29 +79,29 @@ export const cypherMiddleware = function (request) {
   if (query.bypassCypherMiddleware) return request
 
   switch (request.name) {
-    case 'insert':
-    case 'upsert':
-      if (query.into in cypherParams) {
-        handleEncryption(request, cypherParams[query.into])
-      }
-      break
-    case 'update':
-      if (query.in in cypherParams) {
-        handleEncryption(request, cypherParams[query.in])
-      }
-      break
-    case 'select':
-      if (query.from in cypherParams) {
-        handleDecryption(request, cypherParams[query.from])
-      }
-      break
-    case 'count':
-    case 'remove':
-      return request
-    default:
-      console.warn(
-        `Unhandled database query(${request.name}) invoked cypherMiddleware.`,
-        request
-      )
+  case 'insert':
+  case 'upsert':
+    if (query.into in cypherParams) {
+      handleEncryption(request, cypherParams[query.into])
+    }
+    break
+  case 'update':
+    if (query.in in cypherParams) {
+      handleEncryption(request, cypherParams[query.in])
+    }
+    break
+  case 'select':
+    if (query.from in cypherParams) {
+      handleDecryption(request, cypherParams[query.from])
+    }
+    break
+  case 'count':
+  case 'remove':
+    return request
+  default:
+    console.warn(
+      `Unhandled database query(${request.name}) invoked cypherMiddleware.`,
+      request
+    )
   }
 }

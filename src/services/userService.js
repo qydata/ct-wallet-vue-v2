@@ -63,7 +63,7 @@ export function chainpayOrderEvents(skip, first, hideReleased) {
 
 export function transactionsByAddress(first, hash) {
 
-  let query = `
+  const query = `
     query ($hash:AddressHash!, $first:Int) {
       address(hash: $hash) {
         transactions(first: $first) {
@@ -86,7 +86,7 @@ export function transactionsByAddress(first, hash) {
       }
     }
   `
-  let variables = {first: first, hash: hash}
+  const variables = {first: first, hash: hash}
 
   return fetchGraphQLExploder(query, variables)
 }

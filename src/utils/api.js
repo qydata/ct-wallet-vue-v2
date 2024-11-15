@@ -21,9 +21,7 @@ const fetchData = (url, options = {}, payload) => {
   }
 
   return fetch(url, fetchOptions)
-    .then(res => {
-      return res.json()
-    })
+    .then(res => res.json())
     .catch(() => ({
       code: 500,
       results: []

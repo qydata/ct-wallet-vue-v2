@@ -415,7 +415,7 @@ export default {
     }
   },
   async mounted() {
-    let cardList = await getCardList(this.address)
+    const cardList = await getCardList(this.address)
     console.log(cardList)
     if (cardList) {
       this.payTypeArr = cardList['card_lists']
@@ -475,8 +475,8 @@ export default {
       const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
         chainId: 27
       })
-      let wallet = new ethers.Wallet(privateKey, customHttpProvider)
-      let CtXCTAddress = _addressC['XCT']
+      const wallet = new ethers.Wallet(privateKey, customHttpProvider)
+      const CtXCTAddress = _addressC['XCT']
 
       const contract = new ethers.Contract(
         CtXCTAddress,
@@ -484,9 +484,9 @@ export default {
         customHttpProvider
       )
 
-      let contractWithSigner = contract.connect(wallet)
+      const contractWithSigner = contract.connect(wallet)
 
-      let value = this.amountParsed * 100
+      const value = this.amountParsed * 100
 
       // submit tx to blockchain
       try {
@@ -516,7 +516,8 @@ export default {
           this.cleanLoad()
           this.goto(3)
         }, 1000)
-      } catch (err) {
+      }
+      catch (err) {
         this.loading = false
         console.error(err)
         this.submitError = err.message

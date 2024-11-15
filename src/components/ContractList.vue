@@ -74,7 +74,7 @@ export default {
       this.showTools = !this.showTools
     },
     selectOne() {
-      let ObList = this.contractList
+      const ObList = this.contractList
       for (const obListElement of ObList) {
         if (obListElement.contractName == this.defaultV) {
           return obListElement

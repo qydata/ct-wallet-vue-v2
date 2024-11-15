@@ -368,13 +368,13 @@ export default {
     async authJudge(oriName) {
 
       // 查询实名状态
-      let address = await storage.getAddress(storage.getHighestWalletVersion())
+      const address = await storage.getAddress(storage.getHighestWalletVersion())
       queryCert({address: address}).then((res) => {
         if (res.code !== 200) {
           console.log(res.msg)
         }
         else if (!res.is_cert) {
-          let r = confirm('当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!')
+          const r = confirm('当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!')
           if (r == true) {
             console.log('You pressed OK!')
             this.modal = 'authBind'
