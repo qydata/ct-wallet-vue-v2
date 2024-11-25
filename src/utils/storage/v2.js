@@ -104,7 +104,9 @@ const setWalletList = async () => {
   }
 
   let isHas = false
-  let privateKeyP2; let publicKeyP1; let walletName
+  let privateKeyP2
+  let publicKeyP1
+  let walletName
   privateKeyP2 = await get('p2', store)
   publicKeyP1 = await get('p1', store)
   walletName = await get('walletName', store)

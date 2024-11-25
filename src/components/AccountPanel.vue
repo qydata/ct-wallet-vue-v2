@@ -294,7 +294,7 @@ export default {
       this.walletName = await getWalletName()
       this.getTokenBalance()
     },
-    balance(oldVal, newVal) {
+    balance(newVal, oldVal) {
       // console.log('balance newVal', newVal)
       this.item.balance = newVal
     }

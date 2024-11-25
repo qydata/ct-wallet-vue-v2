@@ -5,19 +5,19 @@
 /*global process*/
 
 import CaptchaTestPanel from '@/views/CaptchaTestPanel'
-import ChatPanel from '@/views/ChatPanel'
+import ConnectWallet from '@/views/ConnectWallet'
+import Dapp from '@/views/Dapp'
 import Display from '@/views/Display'
 import Interact from '@/views/interact'
-import ConnectWallet from '@/views/ConnectWallet'
 import InterSign from '@/views/InterSign'
 import MintPanel from '@/views/MintPanel'
 import Nodes from '@/views/Nodes'
-import Publicity from '@/views/Publicity'
 import Overview from '@/views/Overview'
+import Publicity from '@/views/Publicity'
 import Staking from '@/views/Staking'
 import TestWallet from '@/views/TestWallet'
-import Dapp from '@/views/Dapp'
 import {createRouter, createWebHistory} from 'vue-router'
+import ChatPanel from '../views/ChatPanel.vue'
 import Index from '../views/Index.vue'
 
 const routes = [

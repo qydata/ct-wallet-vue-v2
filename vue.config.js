@@ -1,14 +1,28 @@
 // Copyright (C) 2021 CTChain Network Technologies Limited
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
-
+const webpack = require('webpack')
+const path = require('path'); // 引入 path 模块
 module.exports = {
   configureWebpack: {
     module: {
-      rules: [{test: /node_modules[\\/]@walletconnect/, loader: 'babel-loader'}, {
-        test: /node_modules[\\/]@web3modal/,
-        loader: 'babel-loader'
-      }]
+      rules: [
+        {
+          test: /node_modules[\\/]@web3modal/,
+          loader: 'babel-loader'
+        },
+        {
+          test: /\.js$/,  // 或者 .jsx, .ts, .tsx
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-transform-runtime']
+            }
+          }
+        }
+      ]
     },
     optimization: {
       splitChunks: {
@@ -17,7 +31,29 @@ module.exports = {
         maxSize: 500000 // 最大大小 500KB
       },
       minimize: true
-    }
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'), // 如果没有设置这个别名，可能会找不到文件
+      },
+      fallback: {
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        os: require.resolve('os-browserify'),
+        url: require.resolve('url'),
+        assert: require.resolve('assert'),
+        https: require.resolve('https-browserify'),
+        http: require.resolve('http-browserify'),
+        constants: require.resolve('constants-browserify')  // 提供常量的浏览器版本
+      }
+
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser'
+      })
+    ]
   },
   productionSourceMap: false,
   assetsDir: 'assets/',

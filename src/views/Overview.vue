@@ -91,7 +91,13 @@ export default {
       const that = this
       this.polling = setInterval(async () => {
         const transactions = await transactionsByAddress(7, this.address)
-        this.transactions = transactions.address.transactions.edges
+        // eslint-disable-next-line no-empty
+        if (typeof transactions == 'string') {
+
+        }
+        else {
+          this.transactions = transactions.address.transactions.edges
+        }
         that.loading = false
       }, this.transactionRefreshInterval)
     }

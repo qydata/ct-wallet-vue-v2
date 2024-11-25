@@ -97,11 +97,17 @@ export default {
       console.log(options)
       const publicitys = await chainpayOrderEvents(options.page - 1, options.limit, options.hideFalse)
       console.log(publicitys)
-      this.publicitys = publicitys.chainpayOrderEvents
+      if (typeof publicitys === 'string') {
+        // 请求出错
+      }
+      else {
+        this.publicitys = publicitys.chainpayOrderEvents
 
-      this.receiveMetadata(publicitys)
-      this.loaded = true
-      this.loading = false
+        this.receiveMetadata(publicitys)
+        this.loaded = true
+        this.loading = false
+      }
+
     },
     updateSorting(newSortQuery) {
       const query = {...this.$route.query, sort: newSortQuery}

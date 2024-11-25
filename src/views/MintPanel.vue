@@ -72,7 +72,7 @@ export default {
     }
   },
   watch: {
-    tabModel(oldVal, newVal) {
+    tabModel(newVal, oldVal) {
 
     }
   },

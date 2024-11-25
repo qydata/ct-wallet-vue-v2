@@ -1,5 +1,5 @@
 <template>
-  <ul class="md:flex-1 main-nav">
+  <ul class="hidden md:flex-1 main-nav">
     <li
       v-for="(item, index) in mainNav"
       :key="index"

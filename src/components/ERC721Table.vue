@@ -39,7 +39,6 @@
 <script>
 
 import ERC721TableItem from '@/components/ERC721TableItem'
-import {fetchDisplay} from '@/utils/api'
 import {mapState} from 'vuex'
 
 const txsRefreshInterval = 5 * 1000
@@ -71,45 +70,12 @@ export default {
     }
   },
   mounted() {
-    this.updateTransactions()
-    // initiate polling
-    this.iTransactions = setInterval(() => {
-      this.updateTransactions()
-    }, txsRefreshInterval)
   },
   unmounted() {
-    clearInterval(this.iTransactions)
   },
   methods: {
     sendNft(nftItem) {
       this.send(nftItem)
-    },
-    async updateTransactions() {
-      this.loading = true
-      // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
-
-      const {transactions} = await fetchDisplay(this.address,
-        {limit: this.limit, page: this.page})
-      // const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-timestamp` : '-timestamp'
-      // const transactions = await index.tx.transactions(
-      //   process.env.VUE_APP_INDEX_API_URL,
-      //   this.address,
-      //   {
-      //     limit: this.limit,
-      //     page: this.page,
-      //     sort: sortQuery
-      //   }
-      // )
-      this.transactions = []
-      for (const transactionsKey in transactions) {
-        const temperc20 = transactions[transactionsKey]
-        if (temperc20 && temperc20.token.type && temperc20.token.type == 'ERC-721') {
-          this.transactions.push(temperc20)
-        }
-      }
-      // if (this.receiveMetadata) this.receiveMetadata(transactions.metadata)
-      this.loaded = true
-      this.loading = false
     },
     updateSorting(newSortQuery) {
       const query = {...this.$route.query, sort: newSortQuery}
@@ -118,12 +84,6 @@ export default {
     }
   },
   watch: {
-    page() {
-      this.updateTransactions()
-    },
-    sortQuery() {
-      this.updateTransactions()
-    }
   }
 }
 </script>

@@ -1,5 +1,6 @@
 <template>
   <tr>
+
     <td data-title="名称:">
       <span class="monospace lg:font-sans lg:inline-block text-black">
         {{ item.token.name }}
@@ -48,7 +49,7 @@
 
 
     <td data-title="操作:">
-      <el-button type="success" @click="sendNft(item)">发送</el-button>
+      <el-button type="success" size="small" @click="sendNft(item)">发送</el-button>
     </td>
   </tr>
 </template>

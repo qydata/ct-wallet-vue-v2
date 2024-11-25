@@ -262,7 +262,6 @@ import {getWalletName} from '../utils/storage'
 const ABI_const = require('@/contract/ABI_const.js')
 const ethUtil = require('ethereumjs-util')
 const EC = require('elliptic').ec
-const ec = new EC('secp256k1')
 const {encryptWithPublicKey, decryptWithPrivateKey} = require('eth-crypto')
 const ethers = require('ethers')
 const GlobalConfig = require('@/config/GlobalConfig.json')
@@ -270,25 +269,10 @@ const Web3 = require('web3')
 const web3 = new Web3('http://ctblock.cn/blockChain')
 const ipfsNode = ipfsAPI(GlobalConfig.IPFS[0])
 const {
-  contract_static_call,
-  contract_gas_call_override,
   contract_call_override
 } = require('../contract/ChainCall')
 const blockies = require('ethereum-blockies') // 引入库
 
-const ElementPlus = {
-  Message: {
-    error: info => {
-      // console.log(info)
-      alert(info)
-      // this.passwordError = info
-    },
-    success: info => {
-      // console.log(info)
-      alert(info)
-    }
-  }
-}
 export default {
   title: '区块链邮件',
   name: 'ChatPanel',
@@ -296,24 +280,10 @@ export default {
   components: {
     Plus,
     Promotion,
-    ArrowUpIcon,
-    CreateStakeModal,
-    DepositModal,
-    PlusIcon,
-    ReceiveModal,
     Header,
-    SellModal,
-    SendModal,
-    SwapModal,
-    ChargeModal,
-    PayModal,
     NewChatModal,
-    SwitchHorizontalIcon,
     InPasswordModal,
-    AuthBindModal,
-    LoadingModal,
-    WithdrawModal,
-    ClipboardCopyIcon
+    LoadingModal
   },
   computed: mapState(['address', 'balance', 'cnyBalance']),
   data() {
@@ -353,7 +323,7 @@ export default {
     async address() {
       this.walletName = await getWalletName()
     },
-    balance(oldVal, newVal) {
+    balance(newVal, oldVal) {
       // console.log('balance newVal', newVal)
       this.item.balance = newVal
     }

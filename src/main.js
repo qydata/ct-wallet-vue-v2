@@ -24,7 +24,9 @@ import Store from './store'
 import './utils'
 // Vue.prototype.$message = ElementPlus.Message
 const WALLET_REFRESH_INTERVAL = 30 * 1000
-
+import bottomNavigationVue from 'bottom-navigation-vue'
+import 'bottom-navigation-vue/dist/style.css'
+import 'font-awesome/css/font-awesome.css'
 
 const init = async () => {
   const store = await Store.init()
@@ -37,6 +39,7 @@ const init = async () => {
     //   }
     // })
     .use(VueCookies)
+    .use(bottomNavigationVue)
     .use(ElementPlus)
     .mixin(titleMixin)
     .mixin({

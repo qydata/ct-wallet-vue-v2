@@ -101,8 +101,14 @@ export default {
     async fetchBlocks() {
       const limit = this.isTestnet ? 5 : 6
       const tempBlocks = await fetchBlocks({limit})
+      let tempBlocks1
+      if (tempBlocks) {
+        tempBlocks1 = [...tempBlocks, ...this.blocks]
 
-      const tempBlocks1 = [...tempBlocks, ...this.blocks]
+      }
+      else {
+        tempBlocks1 = [...this.blocks]
+      }
 
       const newObj = {}
       const repeatData = tempBlocks1.reduce((preVal, curVal) => {

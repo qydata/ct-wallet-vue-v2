@@ -52,7 +52,7 @@ export default {
     clickOutside: vClickOutside.directive
   },
   watch: {
-    async showTools(oldVal, newVal) {
+    async showTools(newVal, oldVal) {
       if (newVal == true) {
         this.walletList = await storage.getWalletList(storage.getHighestWalletVersion())
       }

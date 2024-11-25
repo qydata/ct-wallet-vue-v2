@@ -128,6 +128,7 @@ export default {
       const publicKey = await getPublicKey(this.walletVersion)
       const walletName = await getWalletName(this.walletVersion)
 
+
       // do not specify wallet version here - this forces migration to highest version
       await storage.setWallet({privateKey, publicKey}, walletName, this.password)
       await storage.setWalletVersion(storage.getHighestWalletVersion())
@@ -142,20 +143,26 @@ export default {
 
       // 验证签名
       const recoveredAddress = ethers.utils.verifyMessage(currentTime, signature)
-
       // TODO 获取支付信息
-      const cardList = await fetchCardlist({
-        signature: signature,
-        timestamp: currentTime
+      const requests = [
+        {signature: signature, timestamp: currentTime}
+      ]
+      this.fetchAllData(requests).then(cardList => {
+        // console.log('cardList:', cardList)
+        setCardList(wallet.address, cardList).then(() => {
+          console.log('Object stored successfully!')
+
+        }).catch(err => {
+          console.error('Failed to store object:', err)
+        })
       })
-      // console.log('cardList:', cardList)
-      setCardList(wallet.address, cardList).then(() => {
-        console.log('Object stored successfully!')
-        this.afterUnlock()
-      }).catch(err => {
-        console.error('Failed to store object:', err)
-      })
+      this.afterUnlock()
     },
+    async fetchAllData(requests) {
+      const results = await Promise.all(requests.map(req => fetchCardlist(req)))
+      return results
+    },
+
     unlockOnEnter(event) {
       if (event.charCode !== 13) return
       event.preventDefault()

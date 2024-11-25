@@ -27,11 +27,10 @@
               v-if="faviconUrl"
               :src="faviconUrl"
               size="small"
-              class="mr-5 bg-transparent w-fit"
+              class="bg-transparent w-fit"
             >
               faviconUrl
             </el-avatar>
-            {{ urlPrefix }}
           </template>
         </el-input>
 
@@ -58,8 +57,10 @@
       <!-- 定义 iframe，指定 src 属性 -->
       <div v-loading="isLoading">
         <iframe
+          v-if="isIframeLoaded"
           ref="myIframe"
           @load="onIframeLoad"
+          sandbox="allow-scripts allow-same-origin"
           @error="onIframeError"
           :src="iframeSrc"
           width="100vw"
@@ -87,9 +88,10 @@ export default {
     return {
       // 替换为你要嵌入的页面地址
       iframeSrc: 'https://test.ctblock.cn',
-      inputAddr: 'test.ctblock.cn',
+      inputAddr: 'https://test.ctblock.cn',
       faviconUrl: '',
       urlPrefix: 'https://',
+      isIframeLoaded: false,
       isLoading: false
     }
   },
@@ -108,6 +110,10 @@ export default {
     this.isLoading = true
     // 绑定事件监听器，使用箭头函数捕获最新的 this
     window.addEventListener('keypress', (event) => this.isKeyPress(event))
+    setTimeout(() => {
+      this.isIframeLoaded = true
+      // 延迟 1 秒加载
+    }, 1000)
   },
   // 返回清理函数
   unmounted: function () {
@@ -128,8 +134,7 @@ export default {
           const iframeSrc = new URL(iframe.src)
           this.faviconUrl = `${iframeSrc.origin}/favicon.ico`
         }
-      }
-      catch (error) {
+      } catch (error) {
         // 如果遇到跨域问题，则使用默认 favicon 路径
         console.error('Unable to access iframe content due to cross-origin restrictions.')
         const iframeSrc = new URL(iframe.src)
@@ -137,17 +142,17 @@ export default {
       }
     },
     isEnterLoad() {
-      this.iframeSrc = this.urlPrefix + this.inputAddr
+      this.iframeSrc = this.inputAddr
     },
     toHomePage() {
       this.iframeSrc = 'https://test.ctblock.cn'
-      this.inputAddr = 'test.ctblock.cn'
+      this.inputAddr = 'https://test.ctblock.cn'
     },
     isKeyPress(event) {
 
       if (event.charCode !== 13) return
       console.log(this.iframeSrc, this.inputAddr)
-      this.iframeSrc = this.urlPrefix + this.inputAddr
+      this.iframeSrc = this.inputAddr
     },
     isRefreshLoad() {
       console.log('isRefreshLoad')
@@ -242,6 +247,7 @@ export default {
 
 .dapp-div1 {
   padding-top: 1vh;
+  overflow-x: hidden;
 }
 </style>
 

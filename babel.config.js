@@ -4,6 +4,9 @@
 
 module.exports = {
   presets: [
-    '@vue/cli-plugin-babel/preset'
+    '@babel/preset-env'
+  ],
+  plugins: [
+    '@babel/plugin-transform-runtime'  // 优化异步功能
   ]
 }

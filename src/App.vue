@@ -23,6 +23,14 @@
         :connector="dappConnector"
       />
     </el-drawer>
+
+    <div v-show="showBN" class="block md:hidden">
+      <WindowsBottomNavigation :options="options" v-model="selected"
+                               background-color='#FFFFFF'
+                               border-color='#000000'
+                               badge-color='#828282'
+      ></WindowsBottomNavigation>
+    </div>
     <router-view :key="$route.fullPath"/>
 
   </div>
@@ -35,17 +43,69 @@ import {mapState} from 'vuex'
 import DappCallRequestModal from './components/web3Connect/DappCallRequest.vue'
 
 import WalletConnect, {WCEvent} from './store/walletConnect'
+// import {CurvedBottomNavigation} from 'bottom-navigation-vue'
 
 export default {
   components: {
     DappCallRequestModal,
     WCRequestAccountModal
+    // CurvedBottomNavigation
   },
   title() {
     return '草田链'
   },
   data() {
     return {
+      selected: 1,
+      showBN: false,
+      options: [
+        {
+          id: 1,
+          icon: 'fa fa-home',
+          title: '总览',
+          modelValue: 'overview',
+          path: 'overview',
+          replaceRoute: true
+        },
+        {
+          id: 2,
+          icon: 'fa fa-life-ring',
+          title: '通证',
+          modelValue: 'display',
+          path: 'display',
+          replaceRoute: true
+        },
+        {
+          id: 3,
+          icon: 'fa fa-television',
+          title: '公示',
+          modelValue: 'publicity',
+          path: 'publicity',
+          replaceRoute: true
+        },
+        {
+          id: 4,
+          icon: 'fa fa-bandcamp',
+          title: 'Dapp',
+          modelValue: 'dapp',
+          path: 'dapp',
+          replaceRoute: true
+        }
+        // {
+        //   id: 5,
+        //   icon: 'fa fa-cog',
+        //   title: '其它',
+        //   childs: [
+        //     {id: 501, icon: 'fa fa-cog', title: '导出私钥'},
+        //     {id: 502, icon: 'fa fa-cog', title: '实名'},
+        //     {id: 503, icon: 'fa fa-cog', title: 'dApp 会话'},
+        //     {id: 504, icon: 'fa fa-cog', title: '新建账户'},
+        //     {id: 505, icon: 'fa fa-cog', title: '导入账户'},
+        //     {id: 506, icon: 'fa fa-cog', title: '我的支付'},
+        //     {id: 507, icon: 'fa fa-cog', title: '锁定钱包'}
+        //   ]
+        // }
+      ],
       modal: '',
       displayUri: '',
       event: {},
@@ -66,7 +126,7 @@ export default {
     ...mapState(['address'])
   },
   watch: {
-    address(oldVal, newVal) {
+    address(newVal, oldVal) {
       if (newVal) {
         const that = this
         const dispatch = this.$store.dispatch
@@ -77,16 +137,44 @@ export default {
           }
         })
       }
+    },
+    selected(newVal, oldVal) {
+      console.log('selected:', oldVal, newVal)
+    },
+    '$route.fullPath': {
+      handler: function (newVal, oldVal) {
+        console.log(`fullPath changed from ${oldVal} to ${newVal}`)
+        // 当 iframeSrc 改变时，执行一些操作
+        this.showBN = true
+        // 抽取 'name' 属性值
+        const paths = this.options.map(item => item.path)
+        if (newVal == null) {
+          this.showBN = false
+        }
+        else {
+          const newStr = newVal.length > 0 ? newVal.substring(1) : newVal
+          if (paths.includes(newStr)) {
+            this.showBN = true
+          }
+          else {
+            this.showBN = false
+          }
+        }
+
+        this.options.forEach(item => {
+          console.log('/' + item.path === newVal)
+          if ('/' + item.path === newVal) {
+            this.selected = item.id
+          }
+        })
+
+      }
     }
   },
-  mounted: function () {
+  mounted() {
     useToggle(useDark())
     // 强制应用黑夜模式
     this.setDarkMode()
-    this.setViewHeight()
-    window.addEventListener('resize', () => {
-      this.setViewHeight()
-    })
 
     // 交易
     WalletConnect.on(WCEvent.RequestAccount, this.handleRequestAccount)
@@ -107,7 +195,7 @@ export default {
     }
   },
   // 返回清理函数
-  unmounted: function () {
+  unmounted() {
     WalletConnect.removeListener(WCEvent.RequestAccount, this.handleRequestAccount)
     window.removeEventListener('message', this.handleEvent)
   },
@@ -172,10 +260,6 @@ export default {
     },
     toggleTheme() {
       document.body.classList.toggle('dark-mode')
-    },
-    setViewHeight: function () {
-      const vh = window.innerHeight * 0.01
-      document.documentElement.style.setProperty('--vh', `${vh}px`)
     }
   }
 }
