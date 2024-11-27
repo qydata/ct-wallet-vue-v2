@@ -149,7 +149,6 @@
 
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
-import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import { LockOpenIcon } from '@heroicons/vue/outline'
@@ -257,7 +256,7 @@ export default {
       const privateKey = await storage.getPrivateKey(this.password)
 
       // create tx
-      const tx = xe.tx.sign({
+      const tx = tx.sign({
         timestamp: Date.now(),
         sender: this.address,
         recipient: this.address,
@@ -271,7 +270,7 @@ export default {
 
       // submit tx to blockchain
       try {
-        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        const { metadata, results } = await tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
         if (metadata.accepted) {
           this.completedTx = results[0]
           this.goto(2)
@@ -297,7 +296,7 @@ export default {
       this.step = step
     },
     async updateVars() {
-      this.vars = await xe.vars(process.env.VUE_APP_BLOCKCHAIN_API_URL)
+      this.vars = process.env.VUE_APP_BLOCKCHAIN_API_URL
     },
     isStakeAffordable(type) {
       return this.balance - this.vars[type + '_stake_amount'] > 0

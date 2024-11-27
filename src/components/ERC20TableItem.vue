@@ -50,7 +50,7 @@ const ethers = require('ethers')
 import {mapState} from 'vuex'
 
 export default {
-  name: 'Erc20TableItem',
+  name: 'ERC20TableItem',
   data() {
     return {
       modal: ''

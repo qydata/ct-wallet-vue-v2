@@ -143,8 +143,6 @@
 
     <div class="account-panel__modals">
       <CreateStakeModal :close="reset" v-if="modal === 'createStake'" :visible="true"/>
-      <DepositModal :close="openExchange" v-if="modal === 'deposit'" :visible="true"/>
-      <WithdrawModal :close="openExchange" v-if="modal === 'withdraw'" :visible="true"/>
       <SellModal :close="openExchange" v-if="modal == 'sell'" :visible="true"/>
       <BuyModal :close="openExchange" v-if="modal === 'buy'" :visible="true"/>
       <ReceiveModal :close="reset" v-if="modal === 'receive'" :visible="true"/>
@@ -194,26 +192,21 @@
 </template>
 
 <script>
-import AuthBindModal from '@/components/index/AuthBindModal'
 import {fetchTokenBalance, queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
-import {ArrowDown, Connection, EditPen, InfoFilled, Menu} from '@element-plus/icons-vue'
 
-import {ArrowDownIcon, ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@heroicons/vue/outline'
 import {mapState} from 'vuex'
 import {getWalletName, setWalletName} from '../utils/storage'
 import Amount from './Amount.vue'
 import ChargeModal from './index/ChargeModal'
 import PayModal from './index/PayModal'
-import CreateStakeModal from './stakes/CreateStakeModal'
 import BuyModal from './tx/BuyModal'
-import DepositModal from './tx/DepositModal'
 import ExchangeModal from './tx/ExchangeModal'
 import ReceiveModal from './tx/ReceiveModal'
 import SellModal from './tx/SellModal'
 import SendModal from './tx/SendModal'
 import SwapModal from './tx/SwapModal'
-import WithdrawModal from './tx/WithdrawModal'
+import {InfoFilled, Menu} from '@element-plus/icons-vue'
 
 // eslint-disable-next-line no-undef
 const ethers = require('ethers')
@@ -223,26 +216,14 @@ export default {
   props: ['view'],
   components: {
     Amount,
-    ArrowDownIcon,
-    ArrowUpIcon,
-    CreateStakeModal,
-    DepositModal,
     ReceiveModal,
     SellModal,
     BuyModal,
     SendModal,
     SwapModal,
     ExchangeModal,
-    EditPen,
     ChargeModal,
     PayModal,
-    // eslint-disable-next-line vue/no-unused-components
-    SwitchHorizontalIcon,
-    Connection,
-    AuthBindModal,
-    WithdrawModal,
-    ClipboardCopyIcon,
-    ArrowDown,
     Menu,
     InfoFilled
   },

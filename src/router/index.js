@@ -11,10 +11,8 @@ import Display from '@/views/Display'
 import Interact from '@/views/interact'
 import InterSign from '@/views/InterSign'
 import MintPanel from '@/views/MintPanel'
-import Nodes from '@/views/Nodes'
 import Overview from '@/views/Overview'
 import Publicity from '@/views/Publicity'
-import Staking from '@/views/Staking'
 import TestWallet from '@/views/TestWallet'
 import {createRouter, createWebHistory} from 'vue-router'
 import ChatPanel from '../views/ChatPanel.vue'
@@ -25,11 +23,6 @@ const routes = [
     path: '/',
     name: 'Index',
     component: Index
-  },
-  {
-    path: '/nodes',
-    name: 'Nodes',
-    component: Nodes
   },
   {
     path: '/publicity',
@@ -62,11 +55,6 @@ const routes = [
     path: '/testWallet',
     name: 'TestWallet',
     component: TestWallet
-  },
-  {
-    path: '/staking',
-    name: 'Staking',
-    component: Staking
   },
   {
     path: '/chatPanel',

@@ -237,23 +237,12 @@
 
 <script>
 import Header from '@/components/Header'
-import AuthBindModal from '@/components/index/AuthBindModal'
-import ChargeModal from '@/components/index/ChargeModal'
 import InPasswordModal from '@/components/index/InPasswordModal'
 import LoadingModal from '@/components/index/LoadingModal'
 import NewChatModal from '@/components/index/NewChatModal'
-import PayModal from '@/components/index/PayModal'
-import CreateStakeModal from '@/components/stakes/CreateStakeModal'
-import DepositModal from '@/components/tx/DepositModal'
-import ReceiveModal from '@/components/tx/ReceiveModal'
-import SellModal from '@/components/tx/SellModal'
-import SendModal from '@/components/tx/SendModal'
-import SwapModal from '@/components/tx/SwapModal'
-import WithdrawModal from '@/components/tx/WithdrawModal'
 import {queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
 import {Plus, Promotion} from '@element-plus/icons-vue'
-import {ArrowUpIcon, ClipboardCopyIcon, PlusIcon, SwitchHorizontalIcon} from '@heroicons/vue/outline'
 import dayjs from 'dayjs'
 import ipfsAPI from 'ipfs-api'
 import {mapState} from 'vuex'
@@ -261,7 +250,6 @@ import {getWalletName} from '../utils/storage'
 
 const ABI_const = require('@/contract/ABI_const.js')
 const ethUtil = require('ethereumjs-util')
-const EC = require('elliptic').ec
 const {encryptWithPublicKey, decryptWithPrivateKey} = require('eth-crypto')
 const ethers = require('ethers')
 const GlobalConfig = require('@/config/GlobalConfig.json')

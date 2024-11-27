@@ -416,10 +416,8 @@ import {parseAmount} from '@/utils/form'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
 import {ArrowDownIcon, ArrowRightIcon, LockOpenIcon} from '@heroicons/vue/outline'
-import {InformationCircleIcon} from '@heroicons/vue/solid'
 import useVuelidate from '@vuelidate/core'
 import {required as _required, helpers} from '@vuelidate/validators'
-import VueClicaptcha from 'vue-clicaptcha'
 import {mapState} from 'vuex'
 import {getCardList, getPrivateKey} from '../../utils/storage'
 import Amount from '../Amount'
@@ -437,16 +435,10 @@ const gasRatesUpdateInterval = 15 * 1000
 export default {
   name: 'WithdrawModal',
   components: {
-    Radio,
     Amount,
-    ArrowDownIcon,
-    ArrowRightIcon,
     HashLink,
-    InformationCircleIcon,
-    LockOpenIcon,
     Modal,
-    Tooltip,
-    VueClicaptcha
+    Tooltip
   },
   props: {
     close: Function,

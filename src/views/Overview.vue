@@ -6,7 +6,6 @@
     <div class="bg-gray-200 py-35">
       <div class="container">
         <div v-if="isTestnet" class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-          <TestnetFaucet/>
           <RecentBlocks/>
         </div>
         <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
@@ -34,7 +33,6 @@
 <script>
 /*global process*/
 import AccountPanel from '@/components/AccountPanel'
-import TestnetFaucet from '@/components/Faucet'
 import Header from '@/components/Header'
 import NewsPromo from '@/components/NewsPromo'
 import Overviews from '@/components/Overviews'
@@ -65,8 +63,7 @@ export default {
     Overviews,
     Header,
     NewsPromo,
-    RecentBlocks,
-    TestnetFaucet
+    RecentBlocks
   },
   computed: mapState(['address']),
   mounted() {

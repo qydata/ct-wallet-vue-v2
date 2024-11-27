@@ -2,10 +2,9 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import { publicKeyToChecksumAddress } from '@edge/wallet-utils'
-import { store } from './'
-import { compare, createSalt, decrypt, encrypt, hash } from '../crypto'
-import { get, getMany, set, setMany } from 'idb-keyval'
+import {get, getMany, set, setMany} from 'idb-keyval'
+import {compare, createSalt, decrypt, encrypt, hash} from '../crypto'
+import {store} from './'
 
 // v0 (legacy) wallet storage uses a fixed secret key.
 // This value is preserved solely to support automatic migration to >=v1.
@@ -19,7 +18,8 @@ const comparePassword = async password => {
 
 const getAddress = async () => {
   const publicKey = await getPublicKey()
-  return publicKeyToChecksumAddress(publicKey)
+  // 这里废弃
+  return undefined
 }
 
 const getPrivateKey = async () => {
