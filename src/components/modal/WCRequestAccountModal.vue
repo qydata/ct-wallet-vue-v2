@@ -1,56 +1,64 @@
 <template>
   <div>
+    <v-dialog persistent
+              :close-on-back="false"
+              :close="cancel"
+              max-width="36rem"
+              v-model="success">
 
-    <ModalInter :close="cancel" :visible="success">
-      <template v-slot:header>
-        <h2 class="mb-8">授权获取钱包地址<span class="testnet-header" v-if="isTestnet">(Testnet)</span>
-        </h2>
-        <div>
-          <span class="sub-heading d-block text-gray text-caption">
-          </span>
-        </div>
-      </template>
-      <template v-slot:body>
-        <div class="pb-14 min-h-310">
 
-          <div class="form-group">
-            <label>钱包地址</label>
-            <span class="flex items-center">
-            <span class="font-mono break-all text-sm2">{{ address }}</span>
+      <v-card title="授权获取钱包地址">
+        <v-card-item
+          title="钱包地址"
+          :subtitle="address"
+        >
+          <template v-slot:append>
 
-            <button
-              class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
-              v-if="canCopy"
-              @click="copyToClipboard(address)"
+            <v-btn variant="text"
+                   @click="generateWallet"
+                   :icon="RefreshIcon"
             >
-              <ClipboardCopyIcon/>
-            </button>
-          </span>
+            </v-btn>
+            <v-btn variant="text"
+                   v-if="canCopy" :icon="ClipboardCopyIcon"
+                   @click="copyToClipboard(address)"
+            >
+            </v-btn>
+          </template>
+        </v-card-item>
+        <v-form ref="myForm">
+          <v-card-item
+            title="钱包连接地址"
+          >
+            <v-text-field
+              v-model="wcCopyPasteLink"
+              :rules="wcCopyPasteLinkRules"
+              autocomplete="off"
+              label="输入 dApp URI*"
 
-          </div>
-          <div class="form-group">
-            <label>钱包连接地址</label>
-            <span class="flex items-center">
-            <el-input size="large"
-                      class="font-mono break-all text-sm2"
-                      v-model="wcCopyPasteLink"
-                      placeholder="输入 dApp URI"></el-input>
-          </span>
-          </div>
+              type="text"
+              required
+              clearable/>
 
-        </div>
-      </template>
+          </v-card-item>
+        </v-form>
+        <v-card-item>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-btn rounded="xl" block size="x-large"
+                     variant="tonal" @click="rejectFun">拒绝
+              </v-btn>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-btn rounded="xl" block size="x-large"
+                     @click="beginHandshake">连接 dApp
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-item>
+      </v-card>
 
-      <template v-slot:footer>
-        <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-          <div class="grid grid-cols-2">
-            <el-button size="large" type="primary" plain @click="rejectFun">拒接</el-button>
-            <el-button size="large" type="primary" @click="beginHandshake">连接 dApp
-            </el-button>
-          </div>
-        </div>
-      </template>
-    </ModalInter>
+    </v-dialog>
   </div>
 </template>
 
@@ -84,7 +92,13 @@ export default {
     return {
       canCopy: !!navigator.clipboard,
       success: true,
-      wcCopyPasteLink: ''
+      wcCopyPasteLink: '',
+      wcCopyPasteLinkRules: [
+        value => {
+          if (value) return true
+          return '需要一个值。'
+        }
+      ]
     }
   },
   validations() {
@@ -113,19 +127,15 @@ export default {
         await this.$store.dispatch('web3Connections/walletConnectPair', {
           uri: this.wcCopyPasteLink
         })
-      }
-      catch (err) {
+      } catch (err) {
         this.$message.error(err.message, 'Error Pairing')
-      }
-      finally {
+      } finally {
         this.resetWeb3ConnectionPage()
       }
     },
-    beginHandshake() {
-      if (!this.wcCopyPasteLink) return this.$message.error(
-        'No uri provided to connect with dApp.',
-        'Cannot connect'
-      )
+    async beginHandshake() {
+      const {valid, errors} = await this.$refs.myForm.validate()
+      if (!valid) return
       this.initPairing()
     },
     rejectFun() {
@@ -138,62 +148,14 @@ export default {
     cancel() {
       this.reset()
     }
+  },
+  setup() {
+    return {
+      ClipboardCopyIcon
+    }
   }
 }
 </script>
 
 <style scoped>
-.sub-heading :deep(.amount .currency) {
-  @apply ml-5;
-}
-
-.amount.sub :deep(.currency) {
-  @apply text-half bottom-0 ml-2;
-}
-
-.testnet-header {
-  color: #0ecc5f;
-  padding-left: 10px;
-}
-
-body {
-  padding: 0;
-  margin: 0;
-  min-height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.loading > span {
-  position: absolute;
-  width: 100%;
-  height: 50%;
-  transform: rotate(calc(var(--i) * 18deg));
-}
-
-.loading > span::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #fff;
-  animation: breath 2s linear infinite;
-  animation-delay: calc(var(--i) * 0.1s);
-}
-
-@keyframes breath {
-  0% {
-    transform: scale(0);
-  }
-  10% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
 </style>

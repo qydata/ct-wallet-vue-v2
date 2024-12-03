@@ -1,104 +1,86 @@
 <template>
-  <modal
-    name="dappCallRequestModal"
-    classes="p-2"
-    styles="overflow: visible"
-    :width="800"
-    height="auto"
-    :click-to-close="false"
-    :scrollable="true"
+  <v-dialog
+    persistent
+    :close-on-back="false"
+    :close="cancel"
+    max-width="36rem"
+    v-model="success"
   >
 
-    <ModalInter :close="cancel" :visible="success">
-      <template v-slot:header>
-        <h2 class="mb-8">{{ requestName }} </h2>
-      </template>
-      <template v-slot:body>
-        <div class="pb-14 w-full">
-          <div v-if="this.connector && this.request" class=" grid grid-cols-12 gap-2">
-            <div v-if="peerMeta.icons.length" class="col-span-2">
-              <el-image
+    <v-card :title="requestName">
+
+      <v-card-item>
+        <v-row v-if="this.connector && this.request">
+          <v-col v-if="peerMeta.icons.length" cols="2">
+            <v-avatar
+              rounded="0"
+            >
+              <v-img
                 :src="peerMeta.icons[0]"
-                class="img-fluid rounded-start w-full"
                 :lazy="true"
                 loading="lazy"
                 :alt="peerMeta.name + '-icon'"
               />
-            </div>
-            <div class="col-span-10">
-              <div class="card-body">
-                <div>
-                  <wallet-connect-request-details
-                    :request="request"
-                    :connector="connector"
-                    @getRequestedWalletConnectNetwork="
+            </v-avatar>
+          </v-col>
+          <v-col cols="10">
+            <wallet-connect-request-details
+              :request="request"
+              :connector="connector"
+              @getRequestedWalletConnectNetwork="
                   setRequestedWalletConnectNetwork
                 "
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="form-group mt-5"
-               v-if="requestName != 'New Session'"
-               :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
-            <label for="password">输入密码</label>
-            <div class="relative input-wrap">
+            />
+          </v-col>
+        </v-row>
+      </v-card-item>
 
-              <el-input
-                size="large"
-                type="password"
-                autocomplete="off"
-                placeholder="你的密码"
-                id="password"
-                v-model="v$.password.$model"
-                :prefix-icon="LockOpenIcon"
-              />
-            </div>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
-              {{ error.$message }}
-            </div>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{ passwordError }}
-            </div>
-          </div>
+      <v-card-item v-if="requestName != 'New Session'">
+        <v-form ref="myForm">
+          <v-card-item
+            title="输入密码"
+          >
+            <v-text-field
+              :error-messages="passwordError"
+              v-model="password"
+              :rules="passwordRules"
+              autocomplete="off"
+              label="你的密码*"
+              :counter="8"
 
-        </div>
-      </template>
+              :type="showPassword ? 'text' : 'password'"
+              :prepend-icon="LockOpenIcon"
+              :append-icon="showPassword ? EyeIcon : EyeOffIcon"
+              @click:append="showPassword = !showPassword"
+              required
+              clearable/>
+          </v-card-item>
+        </v-form>
+      </v-card-item>
+      <v-card-item>
+        <v-row>
+          <v-col cols="6">
+            <v-btn rounded="xl" block size="x-large"
+                   variant="tonal" @click="handleRequest(false)">拒绝
+            </v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-btn rounded="xl" block size="x-large"
+                   :loading="isLoading"
+                   :disabled="!isApprovalReady"
+                   @click="handleRequest(true)">批准
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-item>
+      <v-card-item></v-card-item>
+    </v-card>
 
-      <template v-slot:footer>
-        <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-          <div class="grid grid-cols-2">
-            <el-button
-              type="primary"
-              plain
-              size="large"
-              @click.prevent="handleRequest(false)"
-            >
-              拒绝
-            </el-button>
-            <el-button
-              type="primary"
-              size="large"
-              :loading="isLoading"
-              :disabled="!isApprovalReady"
-              @click.prevent="handleRequest(true)"
-            >
-              批准
-            </el-button>
-
-          </div>
-        </div>
-      </template>
-    </ModalInter>
-
-  </modal>
+  </v-dialog>
 </template>
 
 <script>
 import {getPrivateKey} from '../../utils/storage'
-import ModalInter from '../ModalInter.vue'
 import WalletConnectRequestDetails from './WalletConnectRequestDetails.vue'
 import * as storage from '@/utils/storage'
 import {mapState} from 'vuex'
@@ -113,13 +95,11 @@ const walletConnectRequests = {
   wallet_switchEthereumChain: 'Switch Ethereum Chain'
 }
 import {required as _required, helpers} from '@vuelidate/validators'
-import useVuelidate from '@vuelidate/core'
-import {LockOpenIcon} from '@heroicons/vue/outline'
+import {LockOpenIcon, EyeIcon, EyeOffIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'DappCallRequestModal',
   components: {
-    ModalInter,
     WalletConnectRequestDetails
   },
   props: {
@@ -137,13 +117,24 @@ export default {
   },
   data() {
     return {
-      passwordError: '',
+      passwordError: [],
       wallet: '',
       requestedWalletConnectNetwork: '',
       wallets: [],
       password: '',
+      passwordRules: [
+        value => {
+          if (value) return true
+          return '需要密码。'
+        },
+        value => {
+          if (value?.length >= 8) return true
+          return '密码必须大于 8 个字符。'
+        }
+      ],
       success: true,
-      isLoading: false
+      isLoading: false,
+      showPassword: false
     }
   },
   computed: {
@@ -190,8 +181,7 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate(),
-      LockOpenIcon
+      LockOpenIcon, EyeIcon, EyeOffIcon
     }
   },
   methods: {
@@ -216,17 +206,18 @@ export default {
     setRequestedWalletConnectNetwork(network) {
       this.requestedWalletConnectNetwork = network
     },
-    handleRequest(userApproved) {
-      return this.handleWCRequest(userApproved)
+    async handleRequest(userApproved) {
+
+      return await this.handleWCRequest(userApproved)
     },
     async checkPassword() {
-      this.v$.password.$reset()
+      this.passwordError = []
       if (await storage.comparePassword(this.password, this.walletVersion)) {
-        this.passwordError = ''
+        this.passwordError = []
         return true
       }
       else {
-        this.passwordError = '密码错误.'
+        this.passwordError = ['密码错误.']
         return false
       }
     },
@@ -234,9 +225,9 @@ export default {
       // 解密钱包
       let privateKey
       if (userApproved && this.requestName != 'New Session') {
-        this.passwordError = ''
-
-        if (!await this.v$.$validate()) return
+        this.passwordError = []
+        const {valid, errors} = await this.$refs.myForm.validate()
+        if (!valid) return
         if (!await this.checkPassword()) return
         privateKey = await getPrivateKey(this.password, this.walletVersion)
       }
@@ -287,12 +278,10 @@ export default {
           `${this.requestName} 请求已被用户拒绝。`,
           'Rejected'
         )
-      }
-      catch (err) {
+      } catch (err) {
         this.isLoading = false
         this.displayError(err)
-      }
-      finally {
+      } finally {
         this.closeModal()
       }
     },
@@ -349,8 +338,7 @@ export default {
         )
 
         this.closeModal()
-      }
-      catch (err) {
+      } catch (err) {
         this.displayError(err)
       }
     }

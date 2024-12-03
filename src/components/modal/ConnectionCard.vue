@@ -1,40 +1,28 @@
 <template>
-  <el-card class="card">
-    <template #header>
-      <el-text tag="b">
-        {{ connection.name }}
-      </el-text>
-    </template>
-    <template #default>
+  <v-card :title=" connection.name"
+          :subtitle="connection.id || ''"
+          :text="connection.description || ''"
+          variant="tonal">
+    <v-card-actions>
+      <v-btn type="primary" @click.prevent="disconnect">
+        断开连接
+      </v-btn>
+    </v-card-actions>
+    <template v-slot:prepend>
       <div class="grid grid-cols-12 gap-2">
         <div v-if="icon" class="col-span-4">
-          <img
-            :src="icon"
-            class="img-fluid rounded-start"
-            :alt="connection.name + '-icon'"
-          />
-        </div>
-        <div class="col-span-8">
-          <div class="card-body">
-            <h5 class="card-title">
-              {{ connection.name }}
-            </h5>
-            <h6 v-if="connection.id" class="card-subtitle text-muted">
-              {{ connection.id }}
-            </h6>
-            <p v-if="connection.description" class="card-text">
-              {{ connection.description }}
-            </p>
-          </div>
+          <v-avatar
+            rounded="0">
+            <v-img
+              :src="icon"
+              class="img-fluid rounded-start"
+              :alt="connection.name + '-icon'"
+            />
+          </v-avatar>
         </div>
       </div>
     </template>
-    <template #footer>
-      <el-button type="warning" @click.prevent="disconnect">
-        断开连接
-      </el-button>
-    </template>
-  </el-card>
+  </v-card>
 </template>
 
 <script>

@@ -1,35 +1,35 @@
 <template>
-  <Modal :close="cancel" :visible="visible">
-    <template v-slot:header>
-      <h2>我的支付方式</h2>
-    </template>
+  <v-dialog persistent
+            :close-on-back="false"
+            :close="cancel"
+            max-width="36rem"
+            v-model="localVisible">
 
-    <template v-slot:footer>
-      <div class="pt-48 border-gray-700 border-solid border-t-default border-opacity-30">
-        <form class="px-24 ">
-          <div class="flex items-start leading-8 text-gray mb-4">
-         <span class="flex-shrink-0 inline-block mr-12 text-white icon w-27">
-            <ShieldExclamationIcon/>
-          </span>
-            <p>所有填写的信息都经过加密和签名，只有您自己可以访问和查看。</p>
-          </div>
-          <div class="mb-16 form-group">
-            <label>选择支付方式</label>
-            <div class="grid grid-cols-3 gap-2 mt-12">
-              <Radio v-for="(items,index) in payTypeArr"
-                     v-bind:key="index"
-                     name="stake-type-host"
-                     :id="index"
-                     :extraName="items.name"
-                     :label="`\n${items.value}`"
-                     :selected="payType === items"
-                     @click="setStakeType(items)"
-              />
-            </div>
-          </div>
+    <v-card title="我的支付方式">
+      <v-card-text>
+        <v-list lines="six">
+          <v-banner color="warning" :icon="ShieldExclamationIcon"
+                    text="所有填写的信息都经过加密和签名，只有您自己可以访问和查看。">
+          </v-banner>
 
-          <div class="grid grid-cols-12 gap-4 pb-10 mt-10">
-            <el-card class="col-span-4" shadow="always"
+          <v-list-item
+            title="选择支付方式">
+            <v-radio-group v-model="payType">
+              <v-radio :label="`\n${items.value}`"
+                       v-for="(items,index) in payTypeArr"
+                       v-bind:key="index"
+                       :value="items">
+                <template v-slot:label>
+                  <div>{{ items.value }} <strong class="text-primary">{{ items.name }}</strong>
+                  </div>
+                </template>
+              </v-radio>
+              <!--              <v-radio label="Radio Two" value="two"></v-radio>-->
+              <!--              <v-radio label="Radio Three" value="three"></v-radio>-->
+            </v-radio-group>
+          </v-list-item>
+          <v-list-item>
+            <v-card class="col-span-4" shadow="always"
                      v-for="(items, index) in cardTypeArr" v-bind:key="index">
 
               <div class="text-md  py-4 text-sm">
@@ -44,23 +44,35 @@
               <div class="text-sm col-span-5 py-4 overflow-hidden overflow-ellipsis">
                 {{ items.card_id }}
               </div>
-            </el-card>
-          </div>
-        </form>
-        <el-divider/>
-        <div class="my-30 px-24 grid grid-cols-1 gap-24 md:grid-cols-2">
-          <button class="w-full button button--outline-success" @click="skip">
-            关闭
-          </button>
-          <button class="w-full button button--success" @click.prevent="addPay">添加支付方式</button>
-        </div>
-      </div>
-    </template>
-  </Modal>
+            </v-card>
+          </v-list-item>
+          <v-list-item>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-btn @click="skip"
+                       rounded="xl" block size="x-large"
+                       variant="tonal">关闭
+                </v-btn>
+                <!-- eslint-disable-next-line max-len -->
+
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-btn
+                  rounded="xl" block size="x-large"
+                  @click="addPay">添加支付方式
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-list-item>
+        </v-list>
+
+      </v-card-text>
+    </v-card>
+
+  </v-dialog>
 </template>
 
 <script>
-import Radio from '@/components/Radio.vue'
 import * as storage from '@/utils/storage'
 import {InfoFilled} from '@element-plus/icons-vue'
 import {ShieldExclamationIcon} from '@heroicons/vue/outline'
@@ -69,15 +81,11 @@ import {required as _required, helpers} from '@vuelidate/validators'
 import moment from 'moment'
 import {mapState} from 'vuex'
 import {getCardList} from '../../utils/storage'
-import Modal from '../Modal'
 
 export default {
   name: 'AuthBindModal',
   components: {
-    Radio,
-    Modal,
-    InfoFilled,
-    ShieldExclamationIcon
+    InfoFilled
   },
   props: {
     afterCharge: Function,
@@ -94,6 +102,9 @@ export default {
   },
   data() {
     return {
+
+      // 使用本地副本控制对话框的显示状态
+      localVisible: this.visible,
       privateKey: '',
       publicKey: '',
       exchangeRate: 10,
@@ -134,13 +145,18 @@ export default {
       ]
     }
   },
-
   watch: {
+    localVisible(newValue) {
+      // 当本地副本改变时，触发事件通知父组件更新
+      this.$emit('update:visible', newValue)
+    },
     address(newVal, oldVal) {
       this.toaddress = this.address
       console.log(newVal, oldVal)
     },
     async visible(v, oldv) {
+      // 当父组件的 prop 更新时，更新本地副本
+      this.localVisible = v
       if (v === oldv) return
       if (v) {
         this.toaddress = this.address
@@ -204,56 +220,11 @@ export default {
 
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(), ShieldExclamationIcon
     }
   }
 }
 </script>
 
 <style scoped>
-.private-key {
-  width: 32ch
-}
-
-.on-clicked-effect {
-  transition: all 0.4s ease-in;
-}
-
-.on-clicked-effect:before {
-  content: '';
-  background-color: aliceblue;
-  border-radius: 50%;
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: scale(0.001, 0.001);
-}
-
-.on-clicked-effect:focus:not(:active) {
-  position: relative;
-  display: inline-block;
-  outline: 0;
-}
-
-.on-clicked-effect:focus:not(:active):before {
-  animation: clicked_animation 0.8s ease-out;
-}
-
-@keyframes clicked_animation {
-  50% {
-    transform: scale(1.5, 1.5);
-    opacity: 0;
-  }
-  99% {
-    transform: scale(0.001, 0.001);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(0.001, 0.001);
-    opacity: 1;
-  }
-}
 </style>

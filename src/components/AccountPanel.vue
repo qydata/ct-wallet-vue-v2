@@ -1,194 +1,264 @@
 <template>
-  <div class="account-panel">
+  <v-container
+    class="px-10 my-20"
+  >
 
-    <div class="container">
-      <div class="account-panel__left">
-        <div class="flex gap-6 mt-5">
-          <span class="text-4xl">
+    <!-- v-alert 用于显示警告消息 -->
+    <v-alert v-if="showAlert" :type="alertType" dismissible>
+      {{ alertMessage }}
+    </v-alert>
+    <v-row justify="center">
+      <v-col align-self="center" cols="12" md="8" lg="6">
+
+        <v-card
+          variant="elevated">
+          <template v-slot:prepend>
+            <v-avatar
+              rounded="xl">
+              <v-img
+                class="bg-white"
+                src="/assets/address-icon.svg"/>
+            </v-avatar>
+
+          </template>
+          <template v-slot:title>
             地址详情
-          </span>
-          <el-tag class="self-center" effect="light" type="info">
-            {{ walletName }}
-          </el-tag>
-          <el-icon :size="20" class="self-center cursor-pointer" @click="dialogVisible = true"
-                   color="rgba(14, 204, 95)"
+            <v-chip variant="elevated" @click="dialogVisible = true" rounded="xl" size="small" color="primary">
+              {{ walletName }}
+              <template v-slot:append>
+                <v-icon size="small" :icon="EditPen"/>
+              </template>
+            </v-chip>
+          </template>
+          <template v-slot:subtitle>
+            {{ address }}
+          </template>
+          <template v-slot:append>
+            <v-btn
+              :icon="ClipboardCopyIcon"
+              variant="text"
+              @click="copyToClipboard(address)">
+            </v-btn>
+          </template>
+
+          <v-tabs
+            v-model="tab"
+            bg-color="transparent"
+            color="primary"
+            grow
           >
-            <EditPen/>
-          </el-icon>
-        </div>
-        <div class="mt-5 flex gap-6 mt-20">
-          <el-image
-            class=" rounded-full bg-yellow-500 w-20 h-20 align-middle"
-            src="/assets/address-icon.svg"/>
-          <span class="text-md overflow-hidden overflow-ellipsis" style="max-width: 75vw">{{ address }}      </span>
-          <button
-            class=" col-span-1 align-middle flex-shrink-0 w-20 text-green on-clicked-effect" v-if="canCopy"
-            @click="copyToClipboard(address)">
-            <ClipboardCopyIcon/>
-          </button>
-        </div>
+            <v-tab
+              v-for="item in items"
+              :key="item"
+              :text="item"
+              :value="item"
+            >{{ item }}
+            </v-tab>
+          </v-tabs>
+          <!-- v-tab-item 用于显示对应标签的内容 -->
+          <v-tab-item v-if="tab === items[0]">
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-list>
+                  </v-list>
+                </v-col>
+              </v-row>
+              <v-row>
 
-        <div class="account-panel__balance mt-30 grid grid-cols-9 gap-8">
+                <v-col cols="4"></v-col>
+                <v-col>
+                  <v-card-item>
+                    <v-tooltip location="top" text="账户余额">
+                      <template v-slot:activator="{ isActive,props }">
+                        <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
+                      </template>
+                    </v-tooltip>
+                    <v-chip variant="text" rounded="xl" size="x-large">
+                      余额:
+                      <template v-slot:append>
+                        <Amount :value="xctBalance" :decimalPlaces="2" currency="rmb" sub/>
+                      </template>
+                    </v-chip>
 
-          <div class="text-md col-span-2 py-4">
-            <el-tooltip class="box-item" effect="dark" content="账户余额"
-                        placement="right-end">
+                  </v-card-item>
+                  <v-card-item>
+                    <v-tooltip location="top" text="草田分余额">
+                      <template v-slot:activator="{ isActive,props }">
+                        <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
+                      </template>
+                    </v-tooltip>
+                    <v-chip variant="text" rounded="xl" size="large">
+                      手续费:
+                      <template v-slot:append>
+                        <Amount :value="balance" :decimalPlaces="6" currency="草田分" sub/>
+                      </template>
+                    </v-chip>
+                  </v-card-item>
+                </v-col>
 
-              <el-icon class="el-icon--right mb-1 align-middle">
-                <InfoFilled/>
-              </el-icon>
-            </el-tooltip>
-            余额
+              </v-row>
+              <v-list-item></v-list-item>
+              <v-card-actions>
+                <v-row justify="center" align="center">
+
+                  <v-col cols="auto" align="center">
+                    <v-btn :icon="ArrowUpIcon" size="x-large" variant="elevated" @click="openSend"></v-btn>
+                    <div class="title">发送</div>
+                  </v-col>
+
+                  <v-col cols="auto" align="center">
+                    <v-btn :icon="ArrowDownIcon" size="x-large" variant="elevated" :loading="isReceiveLoading"
+                           @click="openReceive"></v-btn>
+                    <div class="title">接收</div>
+                  </v-col>
+
+                  <v-col cols="auto" align="center">
+                    <v-btn :icon="Connection" size="x-large" variant="elevated" @click="openExchange"></v-btn>
+                    <div class="title">交易</div>
+                  </v-col>
+                </v-row>
+              </v-card-actions>
+              <v-list-item></v-list-item>
+              <v-divider/>
+              <v-list-item></v-list-item>
+              <v-list-item></v-list-item>
+            </v-container>
+          </v-tab-item>
+          <v-tab-item v-if="tab === items[1]">
+            <v-row>
+              <v-col>
+                <v-list>
+                </v-list>
+              </v-col>
+            </v-row>
+            <v-card-item>
+              <v-tooltip location="right" text="账户中的所有通证">
+                <template v-slot:activator="{ isActive,props }">
+                  <h2>
+                    <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
+                    通证
+                  </h2>
+                </template>
+
+              </v-tooltip>
+
+              <v-divider/>
+            </v-card-item>
+            <v-container>
+              <v-row class="">
+                <v-col cols="6" md="4" v-for="(token,index) in tokenBalances" :key="index">
+                  <v-card color="primary" @click="dropDown(token)">
+
+                    <template v-slot:prepend>
+                      <v-icon :icon="Menu"></v-icon>
+                    </template>
+                    <template v-slot:title>
+                      {{ token.token.name }}
+                    </template>
+                    <template v-slot:subtitle>
+                      {{ token.token.type }}
+                    </template>
+                    <template v-slot:append>
+                      {{
+                        token.token.decimals == null ? token.value :
+                          formatUnits(token.value, token.token.decimals)
+                      }}
+                    </template>
+                    <v-card-item-subtitle v-if="token.token_id != null">
+                      #{{ token.token_id.slice(0, 20) }}...
+                    </v-card-item-subtitle>
+                    <v-card-item-subtitle>
+                    </v-card-item-subtitle>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-tab-item>
+
+          <div class="account-panel">
+
+            <div class="account-panel__modals">
+              <CreateStakeModal :close="reset" v-if="modal === 'createStake'" :visible="true"/>
+              <SellModal :close="openExchange" v-if="modal == 'sell'" :visible="true"/>
+              <BuyModal :close="openExchange" v-if="modal === 'buy'" :visible="true"/>
+              <ReceiveModal :close="reset" v-if="modal === 'receive'" :visible="true"/>
+              <AuthBindModal :afterAuthBind="reset" :close="reset" v-if="modal == 'authBind'" :visible="true"/>
+              <SendModal :close="reset" :item="item" v-if="modal === 'send'" :visible="true"/>
+              <SwapModal
+                :close="reset"
+                :openDeposit="openDeposit"
+                :openWithdraw="openWithdraw"
+                :openSell="openSell"
+                v-if="modal === 'swap'" :visible="true"
+              />
+              <ExchangeModal
+                :close="reset"
+                :openDeposit="openDeposit"
+                :openWithdraw="openWithdraw"
+                :openBuy="openBuy"
+                :openCharge="openCharge"
+                :openSell="openSell"
+                v-if="modal === 'exchange'" :visible="true"
+              />
+              <ChargeModal :close="openExchange" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
+                           :label="'accountPanel'"/>
+              <PayModal :close="closePay" :order="order" v-if="modal === 'pay'" :visible="true"/>
+
+              <v-dialog
+                v-model="dialogVisible"
+                :show-close="false"
+                width="500"
+                persistent
+                :close-on-back="false"
+                max-width="36rem"
+              >
+
+                <v-card title="账户别名修改">
+                  <v-form ref="myForm">
+
+                    <v-list-item title="钱包名称:">
+                      <v-text-field
+                        v-model="walletName"
+                        :rules="walletNameRules"
+                        autocomplete="off"
+                        label="输入一个钱包名称*"
+                        id="charge-amount"
+                        type="text"
+                        required
+                        clearable>
+                      </v-text-field>
+                    </v-list-item>
+                  </v-form>
+                  <v-list-item>
+                    <v-row>
+                      <v-col cols="12" md="6">
+                        <v-btn
+                          rounded="xl" block size="x-large"
+                          variant="tonal"
+                          @click="dialogVisible = false"
+                        >
+                          关闭
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-btn
+                          rounded="xl" block size="x-large" @click="createOnEnter">确认
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-list-item>
+                </v-card>
+              </v-dialog>
+            </div>
           </div>
-          <h1 class="text-md col-span-7 py-4">
-            <Amount :value="xctBalance" :decimalPlaces="2" currency="rmb" sub/>
-          </h1>
+        </v-card>
 
-          <div class="text-md col-span-2 py-4">
-            <el-tooltip class="box-item" effect="dark" content="草田分余额"
-                        placement="right-end">
+      </v-col>
 
-              <el-icon class="el-icon--right mb-1 align-middle">
-                <InfoFilled/>
-              </el-icon>
-            </el-tooltip>
-            手续费
-          </div>
-          <h1 class="text-md col-span-7  py-4">
-            <Amount :value="balance" :decimalPlaces="6" currency="草田分" sub/>
-          </h1>
+    </v-row>
 
-          <div class="text-md col-span-2 py-4">
-            <el-tooltip class="box-item" effect="dark" content="账户中的所有通证"
-                        placement="right-end">
-
-              <el-icon class="el-icon--right mb-1 align-middle">
-                <InfoFilled/>
-              </el-icon>
-            </el-tooltip>
-            通证
-          </div>
-
-          <el-dropdown trigger="click" class="col-span-7" :disabled="tokenBalances.length==0">
-            <span class="el-dropdown-link border-2 border-gray-600 rounded-lg pb-5 pt-6 px-5 flex gap-2">
-              <el-icon class="el-icon--right mr-10">
-                <Menu/>
-              </el-icon>
-              {{ tokenBalances.length }}
-              <el-icon class="el-icon--right"><arrow-down/>
-              </el-icon>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu style="height: 50vh">
-                <el-dropdown-item v-for="(item, index) in tokenBalances" :key="index">
-                  <div @click="dropDown(item)">
-                    <div class="grid grid-cols-3" style="width: 300px">
-                      <div class="font-bold text-white col-span-3">
-                        {{ item.token.name }}
-                      </div>
-                      <span class="col-span-2 overflow-hidden overflow-ellipsis">
-                          {{ item.token.type }}
-                          <span v-if="item.token_id != null">
-                            #{{ item.token_id.slice(0, 20) }}...
-                          </span>
-                        </span>
-                      <span class="col-span-1 text-right overflow-hidden overflow-ellipsis">
-                          {{
-                          item.token.decimals == null ? item.value :
-                            formatUnits(item.value, item.token.decimals)
-                        }}
-                        </span>
-                    </div>
-                    <el-divider style="margin: 8px 0px 0px 0"></el-divider>
-                  </div>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </div>
-
-      <div class="">
-        <div class="account-panel__buttons">
-          <button class="w-full button button--success" @click="openSend">
-            <span class="w-12 button__icon">
-              <ArrowUpIcon/>
-            </span>
-            发送
-          </button>
-
-          <button class="w-full button button--outline-success" @click="openReceive">
-            <span class="w-12 button__icon">
-              <ArrowDownIcon/>
-            </span>
-            接收
-          </button>
-
-          <!--          <button class="w-full button button&#45;&#45;outline-success" @click="openCharge">-->
-          <!--            <span class="button__icon w-15">-->
-          <!--              <SwitchHorizontalIcon/>-->
-          <!--            </span>-->
-          <!--            充值-->
-          <!--          </button>-->
-
-          <button class="w-full button button--outline-success" @click="openExchange">
-            <span class="button__icon w-15">
-              <Connection/>
-            </span>
-            交易
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="account-panel__modals">
-      <CreateStakeModal :close="reset" v-if="modal === 'createStake'" :visible="true"/>
-      <SellModal :close="openExchange" v-if="modal == 'sell'" :visible="true"/>
-      <BuyModal :close="openExchange" v-if="modal === 'buy'" :visible="true"/>
-      <ReceiveModal :close="reset" v-if="modal === 'receive'" :visible="true"/>
-      <AuthBindModal :afterAuthBind="reset" :close="reset" v-if="modal == 'authBind'" :visible="true"/>
-      <SendModal :close="reset" :item="item" v-if="modal === 'send'" :visible="true"/>
-      <SwapModal
-        :close="reset"
-        :openDeposit="openDeposit"
-        :openWithdraw="openWithdraw"
-        :openSell="openSell"
-        v-if="modal === 'swap'" :visible="true"
-      />
-      <ExchangeModal
-        :close="reset"
-        :openDeposit="openDeposit"
-        :openWithdraw="openWithdraw"
-        :openBuy="openBuy"
-        :openCharge="openCharge"
-        :openSell="openSell"
-        v-if="modal === 'exchange'" :visible="true"
-      />
-      <ChargeModal :close="openExchange" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
-                   :label="'accountPanel'"/>
-      <PayModal :close="closePay" :order="order" v-if="modal === 'pay'" :visible="true"/>
-
-      <el-dialog
-        v-model="dialogVisible"
-        title=""
-        :show-close="false"
-        width="500"
-      >
-        <el-input
-          size="large" type="text" autocomplete="off" placeholder="输入一个钱包名称"
-          v-model="walletName"
-          class="pl-1"/>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button type="success" @click="createOnEnter">
-              确认
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -206,7 +276,8 @@ import ReceiveModal from './tx/ReceiveModal'
 import SellModal from './tx/SellModal'
 import SendModal from './tx/SendModal'
 import SwapModal from './tx/SwapModal'
-import {InfoFilled, Menu} from '@element-plus/icons-vue'
+import {InfoFilled, Connection, EditPen, Menu} from '@element-plus/icons-vue'
+import {ArrowDownIcon, ArrowUpIcon, ClipboardCopyIcon, ClockIcon, XCircleIcon} from '@heroicons/vue/outline'
 
 // eslint-disable-next-line no-undef
 const ethers = require('ethers')
@@ -223,15 +294,24 @@ export default {
     SwapModal,
     ExchangeModal,
     ChargeModal,
-    PayModal,
-    Menu,
-    InfoFilled
+    PayModal
   },
-  computed: mapState(['address', 'balance', 'xctBalance', 'cnyBalance']),
+  computed: mapState(['address', 'balance', 'xctBalance', 'cnyBalance', 'showAlert', 'alertMessage', 'alertType']),
+
   data() {
     return {
+      tab: '余额',
+      items: [
+        '余额', '通证'
+      ],
       modal: '',
       walletName: '',
+      walletNameRules: [
+        value => {
+          if (value) return true
+          return '需要一个值。'
+        }
+      ],
       canCopy: !!navigator.clipboard,
       item: {
         name: '草田分',
@@ -267,7 +347,8 @@ export default {
           label: 'Guangzhou'
         }],
       tokenBalances: [],
-      dialogVisible: false
+      dialogVisible: false,
+      isReceiveLoading: false
     }
   },
   watch: {
@@ -293,10 +374,12 @@ export default {
       switch (items.token.type) {
       case 'ERC-1155':
       case 'ERC-721':
+        console.log(items)
         window.open(`https://ctblock.cn/token/${items.token.address}/instance/${items.token_id}`)
         break
       default:
         console.log(items)
+        window.open(`https://ctblock.cn/token/${items.token.address}`)
         break
       }
 
@@ -336,6 +419,8 @@ export default {
     },
     async createOnEnter() {
       // 修改钱包名称
+      const {valid, errors} = await this.$refs.myForm.validate()
+      if (!valid) return
       await setWalletName(this.walletName, this.address, storage.getHighestWalletVersion())
       this.dialogVisible = false
     },
@@ -350,26 +435,29 @@ export default {
 
       // 查询实名状态
       const address = await storage.getAddress(storage.getHighestWalletVersion())
-      queryCert({address: address}).then((res) => {
-        if (res.code !== 200) {
-          console.log(res.msg)
-        }
-        else if (!res.is_cert) {
-          const r = confirm('当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!')
-          if (r == true) {
-            console.log('You pressed OK!')
-            this.modal = 'authBind'
+      queryCert({address: address})
+        .then((res) => {
+          if (res.code !== 200) {
+            console.log(res.msg)
           }
-        }
-        else {
-          this.modal = oriName
-        }
-      }).catch((e) => {
+          else if (!res.is_cert) {
+            const r = confirm('当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!')
+            if (r == true) {
+              console.log('You pressed OK!')
+              this.modal = 'authBind'
+            }
+          }
+          else {
+            this.modal = oriName
+          }
+        }).catch((e) => {
         console.log(e)
+      }).finally(() => {
+        this.isReceiveLoading = false
       })
-
     },
     async openReceive() {
+      this.isReceiveLoading = true
       await this.authJudge('receive')
     },
     openSell() {
@@ -397,89 +485,13 @@ export default {
     reset() {
       this.modal = ''
     }
+  },
+  setup() {
+    return {ArrowUpIcon, ArrowDownIcon, Connection, ClipboardCopyIcon, EditPen, InfoFilled, Menu}
   }
 }
 
 </script>
 
 <style scoped>
-.account-panel {
-  @apply bg-black-100 pt-16 pb-30;
-}
-
-.account-panel__left {
-  @apply w-full;
-}
-
-.account-panel__address {
-  @apply text-gray text-sm2 mb-7 w-full;
-}
-
-.account-panel__address span {
-  @apply text-white break-all block;
-}
-
-.account-panel__balance h3 {
-  @apply text-green mb-5;
-}
-
-.account-panel__balance h2 {
-  @apply text-gray-300 text-md mb-0;
-}
-
-.account-panel__balance h1 {
-  @apply text-white mb-0 font-normal;
-}
-
-.account-panel__left div {
-  @apply text-white;
-}
-
-.account-panel__balance h1 :deep(sub) {
-  @apply bottom-0 text-half;
-}
-
-.account-panel__buttons {
-  @apply grid gap-6 grid-cols-1 w-full flex-shrink-0 mt-12;
-}
-
-.account-panel__balance {
-  @apply flex-grow mb-6;
-}
-
-.account-panel__modals {
-  width: 1px;
-}
-
-@screen md {
-  .account-panel .container {
-    @apply flex flex-row justify-between items-end;
-  }
-
-  .account-panel__left {
-    @apply w-auto;
-  }
-
-  .account-panel__address span {
-    @apply inline;
-  }
-
-  .account-panel__buttons > button {
-    width: 140px;
-  }
-
-  .account-panel__buttons.staking-buttons > button {
-    width: 170px;
-  }
-
-  .account-panel__balance {
-    @apply mb-0;
-  }
-}
-@screen lg {
-  .account-panel__buttons {
-    @apply grid grid-cols-3 mt-0;
-  }
-
-}
 </style>

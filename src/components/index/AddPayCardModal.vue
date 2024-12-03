@@ -1,182 +1,165 @@
 <template>
-  <Modal :close="cancel" :visible="visible">
-    <template v-slot:header>
-      <h2>添加支付方式</h2>
-    </template>
+  <v-dialog persistent
+            :close-on-back="false"
+            :close="cancel"
+            max-width="36rem"
+            v-model="localVisible">
 
-    <template v-slot:footer>
-      <div class="pt-30 border-gray-700 border-solid border-t-default border-opacity-30 pb-30">
-        <form class="px-24 ">
-          <div class="flex items-start leading-8 text-gray mb-4">
-          <span class="flex-shrink-0 inline-block mr-12 text-white icon w-27">
-            <ShieldExclamationIcon/>
-          </span>
-            <p>所有填写的信息都经过加密和签名，只有您自己可以访问和查看。</p>
-          </div>
-          <div class="mb-16 form-group">
-            <label>选择支付方式</label>
-            <div class="grid grid-cols-3 gap-2 mt-12">
-              <Radio v-for="(items,index) in payTypeArr"
-                     v-bind:key="index"
-                     name="stake-type-host"
-                     :id="index"
-                     :extraName="items.name"
-                     :label="`\n${items.value}`"
-                     :selected="payType == items"
-                     @click="setPayType(items)"
-              />
-            </div>
-          </div>
-          <div class="grid grid-cols-12 gap-10">
-            <div class="form-group  col-span-5">
-              <label for="charge-amount">卡类型:</label>
-              <el-select v-model="cardType" size="large" placeholder="请选择卡类型" class="">
-                <el-option
-                  v-for="item in cardTypes"
-                  :key="item.type"
-                  :label="item.name +' '+ item.type"
-                  :value="item"
-                >
-                  <span class="float-left">{{ item.name }}</span>
-                  <span
-                    class="float-right text-md"
-                    style="color: var(--el-text-color-secondary);"
-                  >
-                    {{ item.type }}
-                  </span>
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="grid grid-cols-12 gap-10">
-            <div class="form-group col-span-12" :class="{'form-group__error': v$.card_id.$error}">
-              <label for="charge-amount">卡号:</label>
-              <el-input
-                type="number"
-                size="large"
-                autocomplete="off"
-                id="charge-amount"
-                placeholder="请填写银行卡号"
-                v-model="v$.card_id.$model"
-              />
-              <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.card_id.$errors" :key="error.$uid">
-                {{ error.$message }}
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-12 gap-10">
-            <div class="form-group col-span-8" :class="{'form-group__error': v$.mobile.$error}">
-              <label for="charge-amount">银行预留手机号码:</label>
-              <el-input
-                type="number"
-                autocomplete="off"
-                size="large"
-                id="charge-amount"
-                placeholder="请填写银行预留手机号码"
-                v-model="v$.mobile.$model"
-              >
-                <template #append>
-                  <el-button type="success" size="large" class="font-bold"
-                             @click="sendMsgCode">
-                    {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
-                  </el-button>
+    <v-card title="添加支付方式">
+      <v-card-text>
+        <v-list lines="three">
+          <v-banner color="warning" :icon="ShieldExclamationIcon"
+                    text="所有填写的信息都经过加密和签名，只有您自己可以访问和查看。">
+          </v-banner>
+          <v-list-item
+            title="选择支付方式">
+            <v-radio-group v-model="payType">
+              <v-radio :label="`\n${items.value}`"
+                       v-for="(items,index) in payTypeArr"
+                       v-bind:key="index"
+                       :value="items">
+                <template v-slot:label>
+                  <div>{{ items.value }} <strong class="text-primary">{{ items.name }}</strong>
+                  </div>
                 </template>
-              </el-input>
-              <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.mobile.$errors" :key="error.$uid">
-                {{ error.$message }}
-              </div>
-            </div>
-            <div class="form-group col-span-4" :class="{'form-group__error': v$.msg_code.$error}">
-              <label for="very-code">你的验证码</label>
-              <el-input
+              </v-radio>
+              <!--              <v-radio label="Radio Two" value="two"></v-radio>-->
+              <!--              <v-radio label="Radio Three" value="three"></v-radio>-->
+            </v-radio-group>
+          </v-list-item>
+
+          <v-form ref="myForm">
+            <v-list-item title="卡类型:">
+              <v-select
+                clearable
+                :label="cardType.name +' '+ cardType.type"
+                :items="cardTypes"
+                variant="solo-filled"
+              ></v-select>
+            </v-list-item>
+
+            <v-list-item title="卡号:">
+              <v-text-field
+                v-model="card_id"
+                :rules="card_idRules"
+                autocomplete="off"
+                label="请填写银行卡号*"
+                id="charge-amount"
                 type="text"
-                size="large"
-                autocomplete="off"
-                placeholder="请输入你的验证码"
-                id="very-code"
-                v-model="v$.msg_code.$model"
-              />
-              <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.msg_code.$errors" :key="error.$uid">
-                {{ error.$message }}
-              </div>
+                required
+                clearable>
+              </v-text-field>
+            </v-list-item>
 
-            </div>
-          </div>
-          <div class="grid grid-cols-12 mb-4">
-            <div class="col-start-6 col-span-5">
-              <label for="very-code">点击进行验证</label>
-              <el-checkbox
-                v-model="v$.isVerifys.$model"
-                @change="handleChange"
-                size="large"
-                label="验证" border></el-checkbox>
-              <VueClicaptcha
-                v-if="show" :callback="callback" :src="src"/>
-            </div>
-          </div>
-          <div class=" form-group grid grid-cols-12 mb-4 " :class="{'form-group__error': v$.isVerifys.$error}">
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error col-start-6 col-span-5" v-for="error of v$.isVerifys.$errors"
-                 :key="error.$uid">
-              {{ error.$message }}
-            </div>
-          </div>
-          <div class="grid grid-cols-12 gap-5">
-            <div class="form-group col-span-12" :class="{'form-group__error': v$.password.$error}">
-              <label for="very-code">你的密码</label>
-              <el-input
-                type="password"
-                autocomplete="off"
-                placeholder="请输入你的密码"
-                id="very-code"
-                size="large"
-                v-model="v$.password.$model"
-                :prefix-icon="LockOpenIcon"
-              />
-              <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
-                {{ error.$message }}
-              </div>
 
-            </div>
-          </div>
-        </form>
-        <div class=" px-24 grid grid-cols-1 gap-24 md:grid-cols-2">
-          <el-button size="large" type="success" plain class="font-bold" @click="skip">
-            关闭
-          </el-button>
-          <el-button size="large" type="success" @click.prevent="addPayNext">添加</el-button>
-        </div>
-      </div>
-    </template>
-  </Modal>
+            <v-list-item title="银行预留手机号码:">
+              <v-text-field
+                v-model="mobile"
+                :rules="mobileRules"
+                autocomplete="off"
+                label="预留手机号码*"
+                id="tel-number"
+                type="text"
+                required
+                clearable>
+                <template v-slot:append>
+                  <v-btn size="large" @click.prevent="sendMsgCode">
+                    {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
+                  </v-btn>
+                </template>
+              </v-text-field>
+            </v-list-item>
+
+            <v-row>
+
+              <v-col cols="5">
+                <v-checkbox label="点击进行验证"           :rules="isVerifysRules"
+                            @change="handleChange" v-model="isVerifys"></v-checkbox>
+              </v-col>
+              <v-col cols="7">
+                <!--                  TODO-->
+                <v-otp-input
+                  model-value="8011"
+                  variant="filled"
+                ></v-otp-input>
+                <v-text-field
+                  v-model="msg_code"
+                  :rules="msgCodeRules"
+                  autocomplete="off"
+                  label="你的验证码*"
+                  id="very-code"
+                  type="text"
+                  required
+                  clearable>
+                </v-text-field>
+              </v-col>
+
+            </v-row>
+
+            <VueClicaptcha
+              v-if="show" :callback="callback" :src="src"/>
+            <v-list-item
+              title="输入密码以加密此会话"
+            >
+              <v-text-field
+                :error-messages="passwordError"
+                v-model="password"
+                :rules="passwordRules"
+                autocomplete="off"
+                label="你的密码*"
+                @keypress="createOnEnter"
+                :counter="8"
+
+                :type="showPassword ? 'text' : 'password'"
+                :prepend-icon="LockOpenIcon"
+                :append-icon="showPassword ? EyeIcon : EyeOffIcon"
+                @click:append="showPassword = !showPassword"
+                required
+                clearable/>
+
+              <small class="text-caption text-medium-emphasis">*表示必填字段</small>
+            </v-list-item>
+
+
+          </v-form>
+
+
+          <v-list-item>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-btn rounded="xl" block size="x-large"
+                       variant="tonal" @click="skip">关闭
+                </v-btn>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-btn rounded="xl" block size="x-large"
+                       @click="addPayNext">添加
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+    </v-card>
+
+  </v-dialog>
 </template>
 
 <script>
-import Radio from '@/components/Radio.vue'
 import * as storage from '@/utils/storage'
-import useVuelidate from '@vuelidate/core'
 import {required as _required, helpers} from '@vuelidate/validators'
 import moment from 'moment'
 import VueClicaptcha from 'vue-clicaptcha'
 import {mapState} from 'vuex'
 import {fetchCardlist, postBindcard} from '../../utils/api'
 import {getPrivateKey, setCardList} from '../../utils/storage'
-import Modal from '../Modal'
 
 const ethers = require('ethers')
-import {LockOpenIcon, ShieldExclamationIcon} from '@heroicons/vue/outline'
+import {LockOpenIcon, ShieldExclamationIcon, EyeIcon, EyeOffIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'AuthBindModal',
   components: {
-    Radio,
-    Modal,
-    ShieldExclamationIcon,
     VueClicaptcha
   },
   props: {
@@ -189,10 +172,7 @@ export default {
     ...mapState({
       address: 'address',
       walletVersion: 'version'
-    }),
-    canSubmit() {
-      return !this.v$.$invalid
-    }
+    })
   },
   data() {
     return {
@@ -200,12 +180,56 @@ export default {
       publicKey: '',
       exchangeRate: 10,
       mobile: '',
+      mobileRules: [
+        value => {
+          if (value) return true
+          return '请输入你的手机号码。'
+        },
+        value => {
+          //截取用户提交的用户名的前两字节，也就是姓。
+          const phoneReg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/
+          let _reg = phoneReg.test(value)
+          if (_reg) return true
+          return '手机号码输入有误,请重新输入!'
+        }
+      ],
       card_id: '',
+      card_idRules: [
+        value => {
+          if (value) return true
+          return '请填写卡号'
+        },
+        value => {
+          //截取用户提交的用户名的前两字节，也就是姓。
+          //截取用户提交的用户名的前两字节，也就是姓。
+          const phoneReg = /^\d{16,19}$/
+          let _reg = phoneReg.test(value)
+          if (_reg) return true
+          return '卡号输入有误,请重新输入!'
+        }
+      ],
       password: '',
+      showPassword: false,
+      passwordRules: [
+        value => {
+          if (value) return true
+          return '需要密码。'
+        },
+        value => {
+          if (value?.length >= 8) return true
+          return '密码必须大于 8 个字符。'
+        }
+      ],
+      passwordError: [],
       msg_code: '',
-      passwordError: '',
+      msgCodeRules: [
+        value => {
+          if (value) return true
+          return '请输入验证码。'
+        }
+      ],
       canCopy: !!navigator.clipboard,
-      payType: {name: '银行卡', value: 'paycard'},
+      payType: '',
       payTypeArr: [
         // {name: '微信', value: 'wepay'},
         // {name: '支付宝', value: 'alipay'},
@@ -223,57 +247,37 @@ export default {
         {name: '建设银行', type: '信用卡', value: 'jsback_cred'}
       ],
       isVerifys: false,
+      isVerifysRules:[
+        value => {
+          if (value) return true
+          return '请验证!'
+        }
+      ],
       show: false,
       src: 'https://wallet.ctblock.cn/api/clicaptcha.php',
       nextTime: 0,
-      hcaptchaResp: null
+      hcaptchaResp: null,
+
+      // 使用本地副本控制对话框的显示状态
+      localVisible: this.visible
     }
   },
 
-  validations() {
-    return {
-      password: [
-        helpers.withMessage('请填写密码', _required)
-      ],
-      mobile: [
-        helpers.withMessage('请填写手机号码', _required),
-        helpers.withMessage('姓名输入有误,请重新输入!', v => {
-
-          //截取用户提交的用户名的前两字节，也就是姓。
-          const phoneReg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/
-          return phoneReg.test(v)
-        })
-      ],
-      msg_code: [
-        helpers.withMessage('请填写验证码', _required),
-        helpers.withMessage('验证码输入有误,请重新输入!', v => {
-
-          //截取用户提交的用户名的前两字节，也就是姓。
-          const phoneReg = /^\d{4}$/
-          return phoneReg.test(v)
-        })
-      ],
-      card_id: [
-        helpers.withMessage('请填写卡号', _required),
-        helpers.withMessage('卡号输入有误,请重新输入!', v => {
-
-          //截取用户提交的用户名的前两字节，也就是姓。
-          const phoneReg = /^\d{16,19}$/
-          return phoneReg.test(v)
-        })
-      ],
-      cardType: [
-        helpers.withMessage('请填选择卡类型', _required)
-      ],
-      isVerifys: [
-        helpers.withMessage('请验证!', v => v == true)
-      ]
+  watch: {
+    visible(newValue) {
+      // 当父组件的 prop 更新时，更新本地副本
+      this.localVisible = newValue
+    },
+    localVisible(newValue) {
+      // 当本地副本改变时，触发事件通知父组件更新
+      this.$emit('update:visible', newValue)
     }
   },
-
-  watch: {},
 
   async mounted() {
+    this.$nextTick(() => {
+      console.log(this.$el) // 确保在组件挂载后访问
+    })
     this.cardType = this.cardTypes[0]
     this.payType = this.payTypeArr[0]
   },
@@ -298,9 +302,6 @@ export default {
       // 这里进行验证码验证
       if (this.nextTime != 0) {
         this.$message.error('当前验证码有效!')
-      }
-      else if (this.v$.mobile.$invalid) {
-        this.$message.error('手机号码输入有误,请重新输入!')
       }
       else if (this.hcaptchaResp == null) {
         this.$message.error('请先通过验证')
@@ -357,8 +358,9 @@ export default {
     async addPayNext() {
       // TODO 这里逻辑暂时需要实现
 
-      this.passwordError = ''
-      if (!await this.v$.$validate()) return
+      this.passwordError = []
+      const {valid, errors} = await this.$refs.myForm.validate()
+      if (!valid) return
       if (!await this.checkPassword()) return
       const privateKey = await getPrivateKey(this.password, this.walletVersion)
 
@@ -418,13 +420,12 @@ export default {
     async addPay() {
     },
     async checkPassword() {
-      this.v$.password.$reset()
       if (await storage.comparePassword(this.password, this.walletVersion)) {
-        this.passwordError = ''
+        this.passwordError = []
         return true
       }
       else {
-        this.passwordError = '密码错误.'
+        this.passwordError = ['密码错误.']
         return false
       }
     },
@@ -440,63 +441,16 @@ export default {
 
     reset() {
       this.password = ''
-      this.v$.$reset()
     }
   },
 
   setup() {
     return {
-      v$: useVuelidate(),
-      LockOpenIcon
+      LockOpenIcon, ShieldExclamationIcon, EyeIcon, EyeOffIcon
     }
   }
 }
 </script>
 
 <style scoped>
-.private-key {
-  width: 32ch
-}
-
-.on-clicked-effect {
-  transition: all 0.4s ease-in;
-}
-
-.on-clicked-effect:before {
-  content: '';
-  background-color: aliceblue;
-  border-radius: 50%;
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: scale(0.001, 0.001);
-}
-
-.on-clicked-effect:focus:not(:active) {
-  position: relative;
-  display: inline-block;
-  outline: 0;
-}
-
-.on-clicked-effect:focus:not(:active):before {
-  animation: clicked_animation 0.8s ease-out;
-}
-
-@keyframes clicked_animation {
-  50% {
-    transform: scale(1.5, 1.5);
-    opacity: 0;
-  }
-  99% {
-    transform: scale(0.001, 0.001);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(0.001, 0.001);
-    opacity: 1;
-  }
-}
 </style>

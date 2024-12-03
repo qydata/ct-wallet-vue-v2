@@ -1,33 +1,40 @@
 <template>
-  <ul class="hidden md:flex-1 main-nav">
-    <li
-      v-for="(item, index) in mainNav"
-      :key="index"
-      class="main-nav__item"
-      :class="item.disabled ? 'disabled' : ''"
-    >
-      <el-link :underline="false"
-               v-if="item.external"
-               :href="item.link" target="_blank"
-               class="main-nav__link align-baseline">
-        {{ item.text }}
-        <el-icon color="#ffffff" size="18">
-          <TopRight/>
-        </el-icon>
-      </el-link>
-      <!-- eslint-disable max-len -->
-      <el-link
-        v-else
-        :underline="false"
-        @click="navigateToRoute(item.link)"
-        class="main-nav__link"
-        :class="location && item.link === location && ' router-link-active'"
+<!--  <v-tabs-->
+<!--    align-tabs="center"-->
+<!--    color="deep-purple-accent-4"-->
+<!--  >-->
+<!--    <v-tab v-for="(item, index) in mainNav" v-bind:key="index" :value="index">{{ item.text }}</v-tab>-->
+<!--  </v-tabs>-->
+
+    <ul class="hidden md:flex-1 main-nav">
+      <li
+        v-for="(item, index) in mainNav"
+        :key="index"
+        class="main-nav__item"
+        :class="item.disabled ? 'disabled' : ''"
       >
-        {{ item.text }}
-      </el-link>
-      <!-- eslint-enable max-len -->
-    </li>
-  </ul>
+        <el-link :underline="false"
+                 v-if="item.external"
+                 :href="item.link" target="_blank"
+                 class="main-nav__link align-baseline">
+          {{ item.text }}
+          <el-icon color="#ffffff" size="18">
+            <TopRight/>
+          </el-icon>
+        </el-link>
+        <!-- eslint-disable max-len -->
+        <el-link
+          v-else
+          :underline="false"
+          @click="navigateToRoute(item.link)"
+          class="main-nav__link"
+          :class="location && item.link === location && ' router-link-active'"
+        >
+          {{ item.text }}
+        </el-link>
+        <!-- eslint-enable max-len -->
+      </li>
+    </ul>
 </template>
 
 <script>
@@ -67,43 +74,4 @@ export default {
 </script>
 
 <style scoped>
-.main-nav__link {
-  @apply text-gray block px-12 py-20 transition bg-black-100 bg-opacity-60 hover:text-white;
-}
-
-.router-link-active {
-  --tw-bg-opacity: 1;
-  background-color: rgba(29, 29, 29, var(--tw-bg-opacity));
-  --tw-text-opacity: 1;
-  color: rgba(14, 204, 95, var(--tw-text-opacity));
-}
-
-.main-nav__item.disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-@screen md {
-  .main-nav {
-    @apply flex flex-wrap -my-20 md:pl-32;
-  }
-
-  .main-nav__link {
-    @apply py-20 px-24 my-0;
-  }
-}
-@screen lg {
-  .main-nav__link {
-    @apply py-20 pl-32;
-  }
-}
-
-@screen xl {
-  .main-nav__item {
-  }
-
-  .main-nav__link {
-    @apply py-20 px-32;
-  }
-}
 </style>

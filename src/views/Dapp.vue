@@ -1,61 +1,41 @@
 <template>
-  <div>
+  <v-container fluid class="pa-0">
     <Header/>
     <!--    <AccountPanel view="dapp"/>-->
-    <div class="bg-gray-200 dapp-div1" style="background-color: #1d1d1d">
+    <v-container>
 
-      <div class="w-full grid grid-cols-12 gap-8 mb-10">
-        <div class="col-span-1 content-center text-right">
-          <el-button @click="toHomePage"
-                     type="default"
-                     class="bg-transparent border-none"
-                     circle>
-            <el-icon color="#ffffff" size="24">
-              <HomeFilled/>
-            </el-icon>
-          </el-button>
-        </div>
-        <el-input
-          v-model="inputAddr"
-          type="text"
-          size="default"
-          class="col-span-8 md:col-span-9"
-          placeholder="请输入 dApp 地址"
-        >
-          <template #prepend>
-            <el-avatar
-              v-if="faviconUrl"
-              :src="faviconUrl"
-              size="small"
-              class="bg-transparent w-fit"
-            >
-              faviconUrl
-            </el-avatar>
-          </template>
-        </el-input>
+      <v-row align="center" no-gutters>
+        <v-col cols="auto">
+          <v-btn @click="toHomePage" class="mx-2" :icon="HomeFilled"/>
+        </v-col>
+        <v-col md="8">
+          <v-text-field
+            style="height: 60px;"
+            v-model="inputAddr"
+            type="text"
+            single-line variant="outlined"
+            clearable
+            placeholder="请输入 dApp 地址"
+          >
+          </v-text-field>
+        </v-col>
+        <v-col cols="auto">
+          <v-btn @click="isEnterLoad" class="mx-2" :icon="Position"/>
+          <v-btn @click="isRefreshLoad" :icon="RefreshRight"/>
+        </v-col>
+      </v-row>
 
-        <div class="col-span-3 md:col-span-2 content-center">
-          <el-button @click="isEnterLoad"
-                     type="default"
-                     class="bg-transparent border-none"
-                     circle>
-            <el-icon color="#ffffff" size="24">
-              <Position/>
-            </el-icon>
-          </el-button>
+    </v-container>
+    <!-- 定义 iframe，指定 src 属性 -->
+    <v-row :loading="isLoading">
 
-          <el-button @click="isRefreshLoad"
-                     type="default"
-                     class="bg-transparent border-none"
-                     circle>
-            <el-icon color="#ffffff" size="24">
-              <RefreshRight/>
-            </el-icon>
-          </el-button>
-        </div>
-      </div>
-      <!-- 定义 iframe，指定 src 属性 -->
-      <div v-loading="isLoading">
+      <v-col cols="12" align="center">
+        <v-progress-circular
+          v-if="isLoading"
+          indeterminate
+        ></v-progress-circular>
+      </v-col>
+      <v-col cols="12">
         <iframe
           v-if="isIframeLoaded"
           ref="myIframe"
@@ -63,15 +43,13 @@
           sandbox="allow-scripts allow-same-origin"
           @error="onIframeError"
           :src="iframeSrc"
-          width="100vw"
-          class="full-screen-iframe"
-          height="100vh"
+          class="h-screen w-screen"
           loading="lazy"
           allowfullscreen
         />
-      </div>
-    </div>
-  </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -81,6 +59,7 @@ import {
   Position,
   RefreshRight
 } from '@element-plus/icons-vue'
+import {mapState} from 'vuex'
 
 export default {
   name: 'ViewDapp',
@@ -88,25 +67,31 @@ export default {
     return {
       // 替换为你要嵌入的页面地址
       iframeSrc: 'https://test.ctblock.cn',
+      // iframeSrc: 'http://127.0.0.1:4783',
       inputAddr: 'https://test.ctblock.cn',
+      // inputAddr: 'http://127.0.0.1:4783',
       faviconUrl: '',
-      urlPrefix: 'https://',
       isIframeLoaded: false,
-      isLoading: false
+      isLoading: true,
+      interval: null
     }
   },
   components: {
-    Header,
-    RefreshRight,
-    HomeFilled,
-    Position
+    Header
   },
   computed: {
+    ...mapState(['address']),
     currentPage() {
       return Math.max(1, parseInt(this.$route.query.page) || 1)
     }
   },
   mounted() {
+    let dappUrl = this.$route.query.dappUrl
+    if (dappUrl) {
+      this.iframeSrc = dappUrl
+      this.inputAddr = dappUrl
+    }
+
     this.isLoading = true
     // 绑定事件监听器，使用箭头函数捕获最新的 this
     window.addEventListener('keypress', (event) => this.isKeyPress(event))
@@ -167,9 +152,27 @@ export default {
       // 更新 iframeSrc 以触发重新加载
       this.iframeSrc = url.toString()
     },
+
+    sendConfigAndStartInterval() {
+      window.Web3Bridge.sendConfig(this.$refs.myIframe, this.address)
+      this.interval = setInterval(() => {
+        window.Web3Bridge.sendConfig(this.$refs.myIframe, this.address)
+      }, 10)
+      window.Web3Bridge.sendConfig(this.$refs.myIframe, this.address)
+    },
+
     onIframeLoad() {
+      console.log('onLoad!!!!!!!!!!!!')
       console.log('iframe 加载完成')
       this.isLoading = false
+      if (!this.interval) {
+        this.sendConfigAndStartInterval()
+      }
+      // It's loaded, we can stop pushing the config
+      setTimeout(() => {
+        clearInterval(this.interval)
+        this.interval = null
+      }, 2000)
       this.getFavicon()
 
     },
@@ -188,66 +191,16 @@ export default {
       this.isLoading = true
       console.log(`iframeSrc changed from ${oldVal} to ${newVal}`)
     }
+  },
+
+  setup() {
+    return {
+      HomeFilled, RefreshRight, Position
+    }
   }
 }
 </script>
 
 <style scoped>
-
-.checkbox-container label {
-  @apply cursor-pointer mr-5 mb-0;
-}
-
-.checkbox-container input {
-  opacity: 0;
-  height: 0;
-  width: 0;
-}
-
-/* Create custom checkbox */
-
-/* On mouse-over, add grey background color */
-.checkbox-container:hover input ~ .checkmark {
-  border-color: rgb(70, 70, 70);
-}
-
-/* When checkbox is checked, add green background */
-.checkbox-container input:checked ~ .checkmark {
-  background-color: rgb(14, 204, 95);
-  border: none;
-}
-
-
-/* Show checkmark when checked */
-.checkbox-container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style for checkmark */
-.checkbox-container .checkmark:after {
-  left: 4px;
-  top: 1px;
-  width: 5px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-
-/* 确保 iframe 父元素及根容器无多余边距 */
-.full-screen-iframe {
-  margin: 0;
-  padding: 0;
-  height: 90vh;
-  width: 100vw;
-  overflow: hidden;
-}
-
-.dapp-div1 {
-  padding-top: 1vh;
-  overflow-x: hidden;
-}
 </style>
 

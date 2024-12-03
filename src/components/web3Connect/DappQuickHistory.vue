@@ -113,24 +113,4 @@ export default {
 </script>
 
 <style scoped>
-.history-container {
-  height: 80vh;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  &::-webkit-scrollbar-thumb {
-    @apply bg-blue-600;
-  }
-  &::-webkit-scrollbar-track {
-    @apply bg-gray-200;
-  }
-}
-.eth-title::after {
-  content: 'ETH';
-}
-.xtz-title::after {
-  content: 'XTZ';
-}
 </style>

@@ -1,59 +1,86 @@
 <template>
-  <Modal :close="close" :preventClickOutside="true" :showCloseButton="true" :visible="visible" :width="900">
-    <template v-slot:header>
-      <h2>交易<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-    </template>
+  <v-dialog
+    persistent
+    :close-on-back="false"
+    max-width="36rem"
+    v-model="localVisible" :close="close"
+    :showCloseButton="true"
+    :width="900">
 
-    <template v-slot:body>
-      <div class="grid grid-cols-1 gap-24 pt-12 pb-20 md:grid-cols-3">
-        <div>
-          <div class="leading-7 text-caption mb-65">
-            <strong>充值草田分</strong>
-            <p class="mb-25">充值草田分手续费，用来在API调用中使用。</p>
-            <img src="/assets/recharge.svg" alt="质押从CT到XCT" class="account-panel__swap-img">
+    <template v-slot:default="{ isActive }">
+      <v-card rounded="lg">
+        <v-alert v-if="showAlert" type="error" dismissible>
+          {{ alertMessage }}
+        </v-alert>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="text-h5 text-medium-emphasis ps-2">
+            交易
           </div>
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="close"
+          ></v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-row>
 
-          <button class="w-full button--outline-success button" @click="openCharge">
-            <span class="w-12 button__icon">
-              <ArrowNarrowLeftIcon/>
-            </span>
-            充值草田分
-          </button>
-        </div>
-        <div>
-          <div class="leading-7 text-caption mb-65">
-            <strong>充值</strong>
-            <p class="mb-25">在草天链网络上以 CNY 的价格充值。</p>
-            <img src="/assets/buy.svg" alt="提现 从 RMB 到 CT" class="account-panel__swap-img">
-          </div>
-          <button class="w-full button--outline-success button" @click="openBuy">
-            <span class="w-12 button__icon">
-              <ArrowNarrowRightIcon/>
-            </span>
-            充值
-          </button>
-        </div>
-        <div>
-          <div class="leading-7 text-caption mb-65">
-            <strong>提现</strong>
-            <p class="mb-25">在草天链网络上以 CNY 的价格提现。</p>
-            <img src="/assets/sell.svg" alt="以人民币的价格出售 CT" class="account-panel__swap-img">
-          </div>
-          <button class="w-full button--outline-success button" @click="openSell">
-            <span class="w-12 button__icon">
-              <CurrencyDollarIcon/>
-            </span>
-            提现
-          </button>
-        </div>
-      </div>
+            <v-col cols="12" md="4" align="center">
+              <v-card-item title="充值草田分" subtitle="充值草田分手续费，用来在API调用中使用。">
+                <v-img :width="100" :height="100"
+                       aspect-ratio="16/9" src="/assets/recharge.svg" alt="质押从CT到XCT"/>
+                <v-btn :prepend-icon="ArrowNarrowLeftIcon"
+                       :loading="chargeCTLoading"
+                       @click="()=>{
+                         chargeCTLoading = true;
+                         openCharge()
+                       }">
+                  充值草田分
+                </v-btn>
+              </v-card-item>
+              <v-divider/>
+            </v-col>
+            <v-col cols="12" md="4" align="center">
+              <v-card-item title="充值" subtitle="在草天链网络上以 CNY 的价格充值。">
+                <v-img :width="100" :height="100"
+                       aspect-ratio="16/9" src="/assets/buy.svg" alt="提现 从 RMB 到 CT"/>
+                <v-btn :prepend-icon="ArrowNarrowRightIcon"
+                       @click="()=>{
+                         showAlert = true;
+                         alertMessage = '暂未开放';
+                         // openBuy()
+                       }">>
+                  充值
+                </v-btn>
+              </v-card-item>
+              <v-divider/>
+            </v-col>
+            <v-col cols="12" md="4" align="center">
+              <v-card-item title="提现" subtitle="在草天链网络上以 CNY 的价格提现。">
+                <v-img :width="100" :height="100"
+                       aspect-ratio="16/9" src="/assets/sell.svg" alt="以人民币的价格出售 CT"/>
+                <v-btn :prepend-icon="CurrencyDollarIcon"
+                       @click="()=>{
+                         showAlert = true;
+                         alertMessage = '暂未开放';
+                         // openSell()
+                       }">
+                  提现
+                </v-btn>
+              </v-card-item>
+              <v-divider/>
+            </v-col>
+          </v-row>
+          <v-card-item/>
+        </v-card-text>
+      </v-card>
     </template>
-  </Modal>
+  </v-dialog>
 </template>
 
 <script>
 import Modal from '../Modal'
-import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon } from '@heroicons/vue/outline'
+import {ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'ExchangeModal',
@@ -63,6 +90,16 @@ export default {
     CurrencyDollarIcon,
     Modal
   },
+
+  data() {
+    return {
+      // 使用本地副本控制对话框的显示状态
+      localVisible: this.visible,
+      chargeCTLoading: false,
+      showAlert: false,
+      alertMessage: false
+    }
+  },
   props: {
     close: Function,
     openDeposit: Function,
@@ -71,17 +108,26 @@ export default {
     openBuy: Function,
     openCharge: Function,
     visible: Boolean
+  },
+
+  watch: {
+    visible(newValue) {
+      // 当父组件的 prop 更新时，更新本地副本
+      this.localVisible = newValue
+    },
+    localVisible(newValue) {
+      // 当本地副本改变时，触发事件通知父组件更新
+      this.$emit('update:visible', newValue)
+    }
+  },
+  setup() {
+    return {CurrencyDollarIcon, ArrowNarrowRightIcon, ArrowNarrowLeftIcon}
   }
 }
 </script>
 
 <style scoped>
-.account-panel__swap-img {
-  height: 24px;
-}
-
-.testnet-header {
-  color: #0ecc5f;
-  padding-left: 10px;
-}
 </style>
+
+<script setup lang="ts">
+</script>

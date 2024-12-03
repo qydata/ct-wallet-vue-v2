@@ -1,39 +1,40 @@
 <template>
-  <div id="app" class="app">
+  <v-app>
+    <v-main>
+      <v-drawer
+        title="ToolWallet"
+        v-model="drawer"
+        size="60%"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+        :direction="direction"
+        :before-close="handleClose">
+        <WCRequestAccountModal
+          v-if="modal === WCEvent.RequestAccount"
+          :displayUri="displayUri"
+          :onSuccess="handleSuccess"
+          :onReject="handleReject"
+        />
+        <DappCallRequestModal
+          v-if="modal === 'dappCallRequestModal'"
+          :request="dappRequest"
+          :fmodal="{hide: hideModal}"
+          :connector="dappConnector"
+        />
+      </v-drawer>
+      <div class="md:hidden" v-if="active">
+        <v-bottom-navigation :active="true" :elevation="8" color="primary" grow v-model="selected">
+          <v-btn value="wallet" :to="item.path" v-for="(item,index ) in options" v-bind:key="index">
+            <v-icon>{{ item.icon }}</v-icon>
+            <span>{{ item.title }}</span>
+          </v-btn>
+        </v-bottom-navigation>
+      </div>
+      <router-view :key="$route.fullPath"/>
+    </v-main>
 
-    <el-drawer
-      title="ToolWallet"
-      v-model="drawer"
-      size="60%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
-      :direction="direction"
-      :before-close="handleClose">
-      <WCRequestAccountModal
-        v-if="modal === WCEvent.RequestAccount"
-        :displayUri="displayUri"
-        :onSuccess="handleSuccess"
-        :onReject="handleReject"
-      />
-      <DappCallRequestModal
-        v-if="modal === 'dappCallRequestModal'"
-        :request="dappRequest"
-        :fmodal="{hide: hideModal}"
-        :connector="dappConnector"
-      />
-    </el-drawer>
-
-    <div v-show="showBN" class="block md:hidden">
-      <WindowsBottomNavigation :options="options" v-model="selected"
-                               background-color='#FFFFFF'
-                               border-color='#000000'
-                               badge-color='#828282'
-      ></WindowsBottomNavigation>
-    </div>
-    <router-view :key="$route.fullPath"/>
-
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -44,7 +45,7 @@ import DappCallRequestModal from './components/web3Connect/DappCallRequest.vue'
 
 import WalletConnect, {WCEvent} from './store/walletConnect'
 // import {CurvedBottomNavigation} from 'bottom-navigation-vue'
-
+// 在App.vue中
 export default {
   components: {
     DappCallRequestModal,
@@ -56,55 +57,37 @@ export default {
   },
   data() {
     return {
-      selected: 1,
-      showBN: false,
+      selected: 0,
+      active: false,
       options: [
         {
-          id: 1,
-          icon: 'fa fa-home',
-          title: '总览',
+          id: 0,
+          icon: 'mdi-wallet',
+          title: '钱包',
           modelValue: 'overview',
-          path: 'overview',
-          replaceRoute: true
+          path: 'overview'
+        },
+        {
+          id: 1,
+          icon: 'mdi-newspaper',
+          title: '资讯',
+          modelValue: 'news',
+          path: 'news'
         },
         {
           id: 2,
-          icon: 'fa fa-life-ring',
-          title: '通证',
-          modelValue: 'display',
-          path: 'display',
-          replaceRoute: true
+          icon: 'mdi-web',
+          title: '发现',
+          modelValue: 'discover',
+          path: 'discover'
         },
         {
           id: 3,
-          icon: 'fa fa-television',
-          title: '公示',
-          modelValue: 'publicity',
-          path: 'publicity',
-          replaceRoute: true
-        },
-        {
-          id: 4,
-          icon: 'fa fa-bandcamp',
+          icon: 'mdi-semantic-web',
           title: 'Dapp',
           modelValue: 'dapp',
-          path: 'dapp',
-          replaceRoute: true
+          path: 'dapp'
         }
-        // {
-        //   id: 5,
-        //   icon: 'fa fa-cog',
-        //   title: '其它',
-        //   childs: [
-        //     {id: 501, icon: 'fa fa-cog', title: '导出私钥'},
-        //     {id: 502, icon: 'fa fa-cog', title: '实名'},
-        //     {id: 503, icon: 'fa fa-cog', title: 'dApp 会话'},
-        //     {id: 504, icon: 'fa fa-cog', title: '新建账户'},
-        //     {id: 505, icon: 'fa fa-cog', title: '导入账户'},
-        //     {id: 506, icon: 'fa fa-cog', title: '我的支付'},
-        //     {id: 507, icon: 'fa fa-cog', title: '锁定钱包'}
-        //   ]
-        // }
       ],
       modal: '',
       displayUri: '',
@@ -123,7 +106,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address'])
+    ...mapState(['address', 'showAlert', 'alertMessage', 'alertType'])
   },
   watch: {
     address(newVal, oldVal) {
@@ -145,19 +128,21 @@ export default {
       handler: function (newVal, oldVal) {
         console.log(`fullPath changed from ${oldVal} to ${newVal}`)
         // 当 iframeSrc 改变时，执行一些操作
-        this.showBN = true
+        this.active = true
         // 抽取 'name' 属性值
-        const paths = this.options.map(item => item.path)
         if (newVal == null) {
-          this.showBN = false
+          this.active = false
         }
         else {
-          const newStr = newVal.length > 0 ? newVal.substring(1) : newVal
+          let tempUrl = newVal.substring(1)
+          tempUrl = tempUrl.split('?')[0]
+          const newStr = newVal.length > 0 ? tempUrl : newVal
+          const paths = this.options.map(item => item.path)
           if (paths.includes(newStr)) {
-            this.showBN = true
+            this.active = true
           }
           else {
-            this.showBN = false
+            this.active = false
           }
         }
 
@@ -200,6 +185,9 @@ export default {
     window.removeEventListener('message', this.handleEvent)
   },
   methods: {
+    showErrorMessage() {
+      this.$message.error('这是一个错误信息!')
+    },
     async handleEvent(event) {
       if (event.data && event.data.type === 'display_uri') {
         console.log('Event triggered', event.data)
@@ -260,13 +248,14 @@ export default {
     },
     toggleTheme() {
       document.body.classList.toggle('dark-mode')
+    },
+    toLink(item) {
+      this.selected = item.id
+      this.$router.push(item.path)
     }
   }
 }
 </script>
 
 <style>
-.app {
-  @apply bg-gray-200 h-screen;
-}
 </style>

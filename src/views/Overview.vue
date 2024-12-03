@@ -3,30 +3,30 @@
     <Header/>
     <AccountPanel/>
 
-    <div class="bg-gray-200 py-35">
-      <div class="container">
-        <div v-if="isTestnet" class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-          <RecentBlocks/>
-        </div>
-        <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          <NewsPromo/>
-          <RecentBlocks/>
-        </div>
+    <!--    <div class="bg-gray-200 py-35">-->
+    <!--      <div class="container">-->
+    <!--        <div v-if="isTestnet" class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">-->
+    <!--          <RecentBlocks/>-->
+    <!--        </div>-->
+    <!--        <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">-->
+    <!--          <NewsPromo/>-->
+    <!--          <RecentBlocks/>-->
+    <!--        </div>-->
 
-        <div class="mt-35">
-          <h3 class="text-black">最近的交易</h3>
-          <p class="text-black" v-if="loading">
-            正在加载...
-          </p>
-          <p v-if="error">{{ error }}</p>
+    <!--        <div class="mt-35">-->
+    <!--          <h3 class="text-black">最近的交易</h3>-->
+    <!--          <p class="text-black" v-if="loading">-->
+    <!--            正在加载...-->
+    <!--          </p>-->
+    <!--          <p v-if="error">{{ error }}</p>-->
 
-          <p v-if="!loading">
-            <Overviews :transactions="transactions"/>
-          </p>
-        </div>
+    <!--          <p v-if="!loading">-->
+    <!--            <Overviews :transactions="transactions"/>-->
+    <!--          </p>-->
+    <!--        </div>-->
 
-      </div>
-    </div>
+    <!--      </div>-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -60,10 +60,7 @@ export default {
   },
   components: {
     AccountPanel,
-    Overviews,
-    Header,
-    NewsPromo,
-    RecentBlocks
+    Header
   },
   computed: mapState(['address']),
   mounted() {

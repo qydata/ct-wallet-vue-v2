@@ -16,7 +16,9 @@ import Publicity from '@/views/Publicity'
 import TestWallet from '@/views/TestWallet'
 import {createRouter, createWebHistory} from 'vue-router'
 import ChatPanel from '../views/ChatPanel.vue'
+import Discover from '../views/Discover.vue'
 import Index from '../views/Index.vue'
+import News from '../views/News.vue'
 
 const routes = [
   {
@@ -28,6 +30,16 @@ const routes = [
     path: '/publicity',
     name: 'Publicity',
     component: Publicity
+  },
+  {
+    path: '/news',
+    name: 'News',
+    component: News
+  },
+  {
+    path: '/discover',
+    name: 'Discover',
+    component: Discover
   },
   {
     path: '/overview',

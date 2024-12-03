@@ -49,39 +49,4 @@ export default {
 </script>
 
 <style scoped>
-.modal-backdrop {
-
-}
-
-.modal-outer {
-  @apply flex items-center justify-center px-10 sm:px-30 md:px-0;
-}
-
-.modal {
-  @apply w-full bg-black-100 flex flex-col rounded-md text-white mx-auto;
-}
-
-.modal-header {
-  @apply relative pt-21 px-24 text-white;
-}
-
-
-.modal-body {
-  @apply relative pt-20 px-24 text-white;
-}
-
-.btn-close {
-  @apply text-white w-32 top-20 absolute right-20 hover:text-green focus:outline-none;
-}
-
-
-.modal-fade-enter,
-.modal-fade-leave-to {
-  @apply opacity-0;
-}
-
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  @apply transition-opacity duration-500 ease-in-out;
-}
 </style>

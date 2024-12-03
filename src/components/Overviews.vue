@@ -22,8 +22,4 @@ export default {
 </script>
 
 <style scoped>
-.overview-items {
-  /* max-width: 997px; */
-  @apply mx-auto;
-}
 </style>

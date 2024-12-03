@@ -91,26 +91,6 @@ export default {
       if (target !== 'header-tools__expand') {
         this.showTools = false
       }
-    },
-    forget() {
-      this.showTools = false
-      this.openForgetWalletModal()
-    },
-    lock() {
-      this.$store.commit('lock')
-      this.$router.push('/')
-    },
-    exportKey() {
-      this.showTools = false
-      this.openExportKeyModal()
-    },
-    newAccount() {
-      this.showTools = false
-      this.openCreateModal()
-    },
-    importKey() {
-      this.showTools = false
-      this.openImportKeyModal()
     }
   },
   props: {
@@ -124,78 +104,4 @@ export default {
 </script>
 
 <style scoped>
-.header-tools {
-  @apply mt-auto px-15 flex-shrink-0;
-  z-index: 1;
-}
-
-.green {
-  color: green;
-}
-
-.header-tools__expand {
-  /*@apply hidden md:flex items-center text-gray transition-colors hover:text-white;*/
-  @apply flex items-center text-gray transition-colors hover:text-white;
-}
-
-.header-tools__link {
-  @apply flex items-center text-gray transition-colors hover:text-white p-12;
-}
-
-.header-tools__link--red {
-  @apply text-red hover:text-red-500;
-}
-
-.header-tools__icon {
-  @apply block flex-shrink-0 mr-7 w-16;
-}
-
-.header-tools__icon--expand {
-  @apply block flex-shrink-0 w-15;
-}
-
-.header-tools__icon--users {
-  @apply w-20;
-}
-
-/*@screen md {*/
-.header-tools {
-  /*@apply flex-col space-y-10 absolute top-40 w-56 right-0 bg-black p-0 rounded flex-wrap mt-0;*/
-  @apply flex-col space-y-10 absolute w-56 bg-black p-0 rounded flex-wrap mt-2 right-0 top-40;
-}
-
-.header-tools__item {
-  @apply flex flex-wrap mt-0 w-full border-gray-300 md:border-b border-opacity-25 !important;
-}
-
-.header-tools__item:last-child {
-  @apply border-none;
-}
-
-.header-tools__link {
-  @apply p-16 m-0 w-full;
-  cursor: pointer;
-}
-
-.header-tools__expand {
-  padding: 0.75rem 1.6875rem;
-}
-
-@screen md {
-  .header-tools__expand {
-    padding: 0;
-  }
-}
-
-@screen lg {
-  .header-tools {
-    /* @apply ml-32; */
-  }
-}
-
-@screen xl {
-  .header-tools {
-    /* @apply ml-48; */
-  }
-}
 </style>

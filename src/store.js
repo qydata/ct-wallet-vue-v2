@@ -27,8 +27,7 @@ const init = async () => {
   const address = await (async () => {
     try {
       return await getAddress(version)
-    }
-    catch (err) {
+    } catch (err) {
       console.debug(err)
       return ''
     }
@@ -57,8 +56,11 @@ const init = async () => {
         XCT: _address.XCT,
         env: process.env
       },
-      wcConnectorSession: {}
+      wcConnectorSession: {},
 
+      showAlert: false,
+      alertMessage: '',
+      alertType: 'info' // 类型可以是 'info', 'success', 'error'
     },
     mutations: {
       lock(state) {
@@ -86,6 +88,14 @@ const init = async () => {
       unlock(state) {
         state.locked = false
         setUnlockExpiry(new Date(Date.now() + WALLET_EXPIRY))
+      },
+      showAlert(state, {message, type}) {
+        state.alertMessage = message
+        state.alertType = type
+        state.showAlert = true
+        setTimeout(() => {
+          state.showAlert = false
+        }, 3000) // 显示3秒后自动关闭
       }
     },
     actions: {
@@ -110,31 +120,36 @@ const init = async () => {
         commit('reset')
       },
       async refresh({commit, dispatch, state}) {
-        const customHttpProvider = new ethers.providers.JsonRpcProvider(state.config.blockchain.baseURL, {
-          chainId: 27
-        })
-        const CtMultCallAddress = state.config.MULT_CALL
-        const CtXCTAddress = state.config.XCT
-        const contract = new ethers.Contract(
-          CtMultCallAddress,
-          ABI_const['CtMultCall'].abi,
-          customHttpProvider
-        )
+        try {
+          const customHttpProvider = new ethers.providers.JsonRpcProvider(state.config.blockchain.baseURL, {
+            chainId: 27
+          })
+          const CtMultCallAddress = state.config.MULT_CALL
+          const CtXCTAddress = state.config.XCT
+          const contract = new ethers.Contract(
+            CtMultCallAddress,
+            ABI_const['CtMultCall'].abi,
+            customHttpProvider
+          )
 
-        const accountBalance = await contract.callStatic.queryBalanceAndTokenBalance(
-          state.address,
-          CtXCTAddress,
-          0,
-          20
-        )
-        if (!state.address) return
-        if (state.locked) return
-        // const info = await xe.wallet.infoWithNextNonce(state.config.blockchain.baseURL, state.address)
-        const balance = ethers.utils.formatEther(accountBalance.balance)
-        commit('setBalance', balance)
+          const accountBalance = await contract.callStatic.queryBalanceAndTokenBalance(
+            state.address,
+            CtXCTAddress,
+            0,
+            20
+          )
+          if (!state.address) return
+          if (state.locked) return
+          // const info = await xe.wallet.infoWithNextNonce(state.config.blockchain.baseURL, state.address)
+          const balance = ethers.utils.formatEther(accountBalance.balance)
+          commit('setBalance', balance)
 
-        commit('setXctBalance', ethers.utils.formatUnits(accountBalance.tokenBalance, 2))
-        dispatch('refreshTokenValue')
+          commit('setXctBalance', ethers.utils.formatUnits(accountBalance.tokenBalance, 2))
+          dispatch('refreshTokenValue')
+        } catch (e) {
+          console.log(e)
+        }
+
       },
       async refreshTokenValue({commit, state}) {
         const tokenValue = await fetchTokenValue()

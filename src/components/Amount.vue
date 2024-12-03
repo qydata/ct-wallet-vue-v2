@@ -1,7 +1,7 @@
 <template>
-  <span class="amount" :class="{'sub': sub}">
+  <span class="amount">
     <span class="value" v-html="formattedValue"/>
-    <sub v-if="currency && sub" class="currency">{{ currency }}</sub>
+    <span v-if="currency && sub" class="currency">{{ currency }}</span>
     <span v-else-if="currency" class="currency">{{ currency }}</span>
   </span>
 </template>

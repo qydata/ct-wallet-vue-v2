@@ -146,41 +146,4 @@ export default {
 </script>
 
 <style scoped>
-table {
-  @apply w-full table-fixed
-}
-
-table, tbody, tr {
-  @apply block;
-}
-
-th {
-  @apply font-normal text-sm2 text-left text-black bg-gray-100 border-b-2 border-gray-200 py-13 px-5;
-}
-
-th:first-of-type {
-  @apply pl-20;
-}
-
-th.amount-col {
-  @apply text-right
-}
-
-th .icon {
-  @apply w-15 inline-block align-middle text-gray-400;
-}
-
-@screen lg {
-  table {
-    @apply table;
-  }
-
-  tbody {
-    @apply table-row-group;
-  }
-
-  tr {
-    @apply table-row;
-  }
-}
 </style>

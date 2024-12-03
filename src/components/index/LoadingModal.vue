@@ -1,28 +1,35 @@
 <template>
-  <Modal :close="cancel" :visible="visible">
-    <template v-slot:body>
-      <body>
-      <div class="loading">
-        <span style="--i: 0;"></span>
-        <span style="--i: 2;"></span>
-        <span style="--i: 4;"></span>
-        <span style="--i: 6;"></span>
-        <span style="--i: 8;"></span>
-        <span style="--i: 10;"></span>
-        <span style="--i: 12;"></span>
-        <span style="--i: 14;"></span>
-        <span style="--i: 16;"></span>
-        <span style="--i: 18;"></span>
-      </div>
-      </body>
+  <v-dialog persistent
+            :close-on-back="false"
+            :close="cancel"
+            max-width="36rem"
+            v-model="localVisible">
+    <v-card>
+      <template v-slot:text>
+        <body>
+        <div class="loading">
+          <span style="--i: 0;"></span>
+          <span style="--i: 2;"></span>
+          <span style="--i: 4;"></span>
+          <span style="--i: 6;"></span>
+          <span style="--i: 8;"></span>
+          <span style="--i: 10;"></span>
+          <span style="--i: 12;"></span>
+          <span style="--i: 14;"></span>
+          <span style="--i: 16;"></span>
+          <span style="--i: 18;"></span>
+        </div>
+        </body>
+        <v-card-item align="center">
+          <h3>加载中</h3>
+        </v-card-item>
+      </template>
 
-    </template>
-    <template v-slot:footer>
-      <div style="text-align: center;">
-        <h3>加载中</h3>
-      </div>
-    </template>
-  </Modal>
+      <v-card-item>
+      </v-card-item>
+    </v-card>
+
+  </v-dialog>
 </template>
 
 <script>
@@ -39,9 +46,20 @@ export default {
     close: Function,
     visible: Boolean
   },
+  watch: {
+    visible(newValue) {
+      // 当父组件的 prop 更新时，更新本地副本
+      this.localVisible = newValue
+    },
+    localVisible(newValue) {
+      // 当本地副本改变时，触发事件通知父组件更新
+      this.$emit('update:visible', newValue)
+    }
+  },
   data() {
     return {
-      canCopy: !!navigator.clipboard
+      canCopy: !!navigator.clipboard,
+      localVisible: this.visible
     }
   },
   validations() {

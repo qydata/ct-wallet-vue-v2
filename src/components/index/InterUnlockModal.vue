@@ -23,7 +23,7 @@
                   @keypress="unlockOnEnter"
                   autocomplete="off"
                   placeholder="你的密码"
-                  id="password"
+
                   v-model="v$.password.$model"
                 :prefix-icon="LockOpenIcon"
               />

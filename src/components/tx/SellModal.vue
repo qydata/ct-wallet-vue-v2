@@ -173,7 +173,7 @@
                   autocomplete="off"
                   type="password"
                   placeholder="你的密码"
-                  id="password"
+
                   v-model="v$.password.$model"
                   @keypress="sellOnEnter"
                   :prefix-icon="LockOpenIcon"
@@ -549,24 +549,4 @@ export default {
 </script>
 
 <style scoped>
-.sub-heading :deep(.amount .currency) {
-  @apply ml-5;
-}
-
-.convert-info :deep(.amount .currency) {
-  @apply ml-5;
-}
-
-.amount.sub {
-  @apply text-white text-3xl;
-}
-
-.amount.sub :deep(.currency) {
-  @apply text-half bottom-0 ml-2;
-}
-
-.testnet-header {
-  color: #0ecc5f;
-  padding-left: 10px;
-}
 </style>

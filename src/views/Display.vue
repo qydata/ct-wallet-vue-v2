@@ -149,7 +149,11 @@ export default {
     async updateTransactions() {
       this.loading = true
       // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
-      this.transactionsAll = (await fetchTokenBalance(this.address)).data
+      let temoTrans = (await fetchTokenBalance(this.address)).data
+      if (temoTrans && temoTrans.message != 'Not found') {
+        console.log(temoTrans)
+        this.transactionsAll = temoTrans
+      }
       this.processTransaction()
     },
     send(item) {
@@ -212,39 +216,4 @@ export default {
 </script>
 
 <style scoped>
-
-.account-panel__address span {
-  @apply text-white break-all block;
-}
-
-.account-panel__balance h3 {
-  @apply text-green mb-5;
-}
-
-.account-panel__balance h2 {
-  @apply text-gray-300 text-md mb-0;
-}
-
-.account-panel__balance h1 {
-  @apply text-white mb-0 font-normal;
-}
-
-.account-panel__balance h1 :deep(sub) {
-  @apply bottom-0 text-half;
-}
-
-@screen md {
-  .account-panel .container {
-    @apply flex flex-row justify-between items-end;
-  }
-
-  .account-panel__address span {
-    @apply inline;
-  }
-
-
-  .account-panel__balance {
-    @apply mb-0;
-  }
-}
 </style>

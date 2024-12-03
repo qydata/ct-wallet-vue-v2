@@ -110,7 +110,7 @@
                   @keypress="createOnEnter"
                   autocomplete="off"
                   placeholder="输入你的密码"
-                  id="password"
+
                   v-model="v$.password.$model"
                   :prefix-icon="LockOpenIcon"
                 />

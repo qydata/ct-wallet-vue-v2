@@ -1,219 +1,222 @@
 <template>
   <div>
-    <Modal :close="cancel" :visible="visible && step === 1">
-      <template v-slot:header>
-        <h2 class="mb-8">发送 {{ item.name + '(' + item.symbol + ')' }}<span class="testnet-header" v-if="isTestnet">(Testnet)</span>
-        </h2>
-        <div>
-          <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance" currency="CT"/> 可用
-          </span>
-        </div>
+    <v-dialog persistent
+              :close-on-back="false"
+              :close="cancel"
+              max-width="36rem"
+              v-model="localVisible1">
+      <v-card :title="'发送' + item.name + '(' + item.symbol + ')'">
+        <v-card-subtitle>
+          &nbsp;
+          <Amount :value="balance" currency="CT"/>
+          可用
+        </v-card-subtitle>
         <div v-if="item.type != 'CT'">
           <span class="sub-heading d-block text-gray text-caption">
           <Amount :value="formattedAmount" :currency="item.name+'('+item.symbol+')'"/> 可用
         </span>
         </div>
-      </template>
-      <template v-slot:body>
-        <div class="pb-14 min-h-310">
-          <div class="form-group" :class="{'form-group__error': v$.recipient.$error}">
-            <label for="send-send" class="label">发送到</label>
-            <el-input
-              size="large"
-              id="send-send"
-              placeholder="CT 地址"
-              ref="recipient"
-              type="text"
-              v-model="v$.recipient.$model"
-            />
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.recipient.$errors" :key="error.$uid">
-              {{ error.$message }}
-            </div>
-          </div>
-          <div class="form-group" :class="{'form-group__error': v$.memo.$error}" v-show="false">
-            <label for="memo" class="label">备忘录 (可选)</label>
-            <el-input
-              size="large" type="text" placeholder="输入一个备忘录" id="memo" v-model="v$.memo.$model"/>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.memo.$errors" :key="error.$uid">
-              {{ error.$message }}
-            </div>
-          </div>
-          <div
-            class="lg-input-group"
-            :class="{'form-group__error': v$.amount.$error}"
-          >
-            <label for="amount-send">数量</label>
-            <div class="relative input-wrap">
-              <el-input
-                size="large"
-                type="number"
-                id="amount-send"
-                placeholder="0.00"
-                v-model="v$.amount.$model"
-                class="placeholder-white placeholder-opacity-100"
-              />
-              <span class="absolute right-0 text-xl currentColor top-23">{{ item.type }}</span>
-              <!-- eslint-disable-next-line max-len -->
-              <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors"
-                   :key="error.$uid">{{ error.$message }}
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-wrap pt-12 radio-list">
-            <!-- eslint-disable-next-line max-len -->
-            <Radio name="amount-send1" id="max" label="最大值" :selected="isMaxAmountEntered"
-                   @click="setAmountAsPercent(100)"/>
-          </div>
-        </div>
-      </template>
 
-      <template v-slot:footer>
-        <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-          <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-            <button class="w-full button button--outline-success" @click="cancel">返回</button>
-            <button class="w-full button button--success" :disabled="!canReadySend" @click="readySend">发送</button>
-          </div>
-        </div>
-      </template>
-    </Modal>
 
-    <Modal :close="cancel" :visible="visible && step === 2">
-      <template v-slot:header>
-        <h2 class="mb-8">发送 {{ item.name + '(' + item.symbol + ')' }}<span class="testnet-header" v-if="isTestnet">(Testnet)</span>
-        </h2>
-        <div>
-          <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance" currency="CT"/> 可用
-        </span>
-        </div>
-        <div v-if="item.type != 'CT'">
-          <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="formattedAmount" :currency="item.name+'('+item.symbol+')'"/> 可用
-        </span>
-        </div>
-      </template>
-      <template v-slot:body>
-        <div class="pb-14 min-h-310">
-          <div class="form-group mb-14">
-            <label class="label">发送到</label>
-            <HashLink to="explorer" :wallet="recipient"/>
-          </div>
-          <div class="form-group mb-14 text-xl" v-show="false">
-            <label class="label">备忘录</label>
-            <span class="break-all">{{ memo || 'None' }}</span>
-          </div>
-          <div class="mb-16 form-group">
-            <label>数量</label>
-            <Amount :value="amountParsed" :currency="item.name+'('+item.symbol+')'" short sub/>
-          </div>
-          <div class="mb-16 form-group">
-            <label>手续费</label>
-            <Amount :value="gas" currency="CT" short sub/>
-          </div>
-          <div class="mb-0 form-group">
-            <label>接收人收到</label>
-            <Amount :value="amountParsedCalc" :currency="item.name+'('+item.symbol+')'" short sub/>
-          </div>
-        </div>
-      </template>
-
-      <template v-slot:footer>
-        <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-          <form>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group"
-                 :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
-              <label for="pass-step">输入密码</label>
-              <div class="relative input-wrap">
-                <el-input
-                  size="large"
-                  type="password"
+        <v-card-text>
+          <v-form validate-on="submit lazy"
+                  ref="myForm">
+            <v-list lines="six">
+              <v-list-item
+                title="发送到"
+                subtitle=""
+              >
+                <v-text-field
+                  v-model="recipient"
+                  :rules="recipientRules"
                   autocomplete="off"
-                  @keypress="sendOnEnter"
-                  placeholder="你的密码"
-                  id="pass-step"
-                  v-model="v$.password.$model"
-                  :prefix-icon="LockOpenIcon"
-                />
-              </div>
-              <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
-                {{ error.$message }}
-              </div>
-              <!-- eslint-disable-next-line max-len -->
-              <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">
-                {{ passwordError }}
-              </div>
-            </div>
-          </form>
-          <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-            <button class="w-full button button--outline-success" @click="() => goto(1)">返回</button>
-            <button
-              :disabled="!canSend"
-              @click="send"
-              class="w-full button button--success"
-            >确认交易
-            </button>
-          </div>
-          <!-- eslint-disable-next-line max-len -->
-          <div v-if="submitError"
-               class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
-            <div class="">
-              <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+                  label="CT 地址*"
+
+                  type="text"
+                  required
+                  clearable/>
+              </v-list-item>
+
+              <v-list-item
+                v-show="false"
+                title="备忘录 (可选)"
+              >
+                <v-text-field
+                  v-model="memo"
+                  autocomplete="off"
+                  label="输入一个备忘录"
+
+                  type="text"
+                  required
+                  clearable/>
+              </v-list-item>
+              <v-list-item
+                title="数量"
+              >
+                <v-text-field
+                  v-model="amount"
+                  :rules="amountRules"
+                  autocomplete="off"
+                  label="0.00"
+
+                  type="text"
+                  required
+                  clearable>
+                  <template v-slot:append>
+                    {{ item.type }}
+                  </template>
+                </v-text-field>
+                <v-btn size="small" @click="setAmountAsPercent(100)">
+                  最大值
+                </v-btn>
+              </v-list-item>
+              <small class="text-caption text-medium-emphasis">*表示必填字段</small>
+              <v-divider/>
+              <v-list-item>
+                <v-row>
+                  <v-col cols="6" md="6">
+                    <v-btn rounded="xl" block size="x-large"
+                           variant="tonal" @click="cancel">返回
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="6" md="6">
+                    <v-btn rounded="xl" block size="x-large"
+                           @click="readySend">发送
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-list-item>
+            </v-list>
+          </v-form>
+        </v-card-text>
+      </v-card>
+
+    </v-dialog>
+
+    <v-dialog persistent
+              :close-on-back="false"
+              :close="cancel"
+              max-width="36rem"
+              v-model="localVisible2">
+
+
+      <v-card :title="'发送' + item.name + '(' + item.symbol + ')'">
+
+        <v-card-subtitle>
+          &nbsp;
+          <Amount :value="balance" currency="CT"/>
+          可用
+        </v-card-subtitle>
+        <div v-if="item.type != 'CT'">
+          <span class="sub-heading d-block text-gray text-caption">
+          <Amount :value="formattedAmount" :currency="item.name+'('+item.symbol+')'"/> 可用
+        </span>
+        </div>
+        <v-card-text>
+          <v-form validate-on="submit lazy"
+                  ref="myForm1">
+            <v-list lines="six">
+              <v-list-item title="发送到" :subtitle="recipient"></v-list-item>
+              <v-list-item v-show="false" title="备忘录" :subtitle="memo || 'None'"></v-list-item>
+              <v-list-item title="数量">
+                <v-list-item-subtitle>
+                  <Amount :value="amountParsed" :currency="item.name+'('+item.symbol+')'" short sub/>
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item title="手续费">
+                <v-list-item-subtitle>
+                  <Amount :value="gas" currency="CT" short sub/>
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item title="接收人收到">
+                <v-list-item-subtitle>
+                  <Amount :value="amountParsedCalc" :currency="item.name+'('+item.symbol+')'" short sub/>
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+
+            <v-list-item
+              title="输入密码以加密此会话"
+            >
+              <v-text-field
+                :error-messages="passwordError"
+                v-model="password"
+                :rules="passwordRules"
+                autocomplete="off"
+                label="你的密码*"
+                @keypress="sendOnEnter"
+                :counter="8"
+
+                :type="showPassword ? 'text' : 'password'"
+                :prepend-icon="LockOpenIcon"
+                :append-icon="showPassword ? EyeIcon : EyeOffIcon"
+                @click:append="showPassword = !showPassword"
+                required
+                clearable/>
+
+              <small class="text-caption text-medium-emphasis">*表示必填字段</small>
+            </v-list-item>
+            <v-list-item>
+              <v-btn rounded="xl" block size="x-large" @click="send">确认交易</v-btn>
+            </v-list-item>
+            <v-list-item v-if="submitError">
+              <v-list-item-subtitle>
                 {{ submitError }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </template>
-    </Modal>
+              </v-list-item-subtitle>
+            </v-list-item>
+          </v-form>
+        </v-card-text>
+      </v-card>
 
-    <Modal :close="cancel" :visible="visible && step === 3">
-      <template v-slot:header>
-        <h2 class="mb-8">交易已发送<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-      </template>
-      <template v-slot:body>
-        <div class="pb-14 min-h-410">
-          <div class="form-group mb-14">
-            <label class="label">接收人</label>
-            <HashLink to="explorer" :wallet="recipient"/>
-          </div>
-          <div class="form-group mb-14 text-xl" v-show="false">
-            <label class="label">备忘录</label>
-            <span class="break-all">{{ completedTx.data || 'None' }}</span>
-          </div>
-          <div class="mb-14 form-group">
-            <label>数量</label>
-            <Amount :value="amount" currency="CT" short sub/>
-          </div>
-          <div class="mb-14 form-group">
-            <label>手续费</label>
-            <Amount :value="(completedTx.gasPrice * completedTx.gasLimit)/1e18" currency="CT" short sub/>
-          </div>
-          <div class="mb-14 form-group">
-            <label>接收人将接收</label>
-            <Amount :value="amount" :currency="item.name" short sub/>
-          </div>
-          <div class="form-group mb-14">
-            <label>交易哈希</label>
-            <HashLink to="explorer" :transaction="completedTx.hash" truncated/>
-          </div>
-        </div>
-      </template>
+    </v-dialog>
 
-      <template v-slot:footer>
-        <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
-          <button
-            @click="cancel"
-            class="block w-full mx-auto text-center button button--success md:w-1/2"
-          >关闭
-          </button>
-        </div>
-      </template>
-    </Modal>
+    <v-dialog persistent
+              :close-on-back="false"
+              :close="cancel"
+              max-width="36rem"
+              v-model="localVisible3">
+
+
+      <v-card title="交易已发送">
+
+        <v-card-text>
+          <v-list>
+            <v-list-item title="接收人" :subtitle="recipient"></v-list-item>
+            <v-list-item v-show="false" title="备忘录" :subtitle="memo || 'None'"></v-list-item>
+            <v-list-item title="数量">
+              <v-list-item-subtitle>
+                <Amount :value="amount" currency="CT" short sub/>
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item title="手续费">
+              <v-list-item-subtitle>
+                <Amount :value="(completedTx.gasPrice * completedTx.gasLimit)/1e18" currency="CT" short sub/>
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item title="接收人收到">
+              <v-list-item-subtitle>
+                <Amount :value="amount" :currency="item.name" short sub/>
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item title="交易哈希">
+              <v-list-item-subtitle>
+                <HashLink to="explorer" :transaction="completedTx.hash" truncated/>
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
+              <v-row>
+                <v-col cols="auto">
+                  <v-btn rounded="xl" block size="x-large"
+                         variant="tonal" @click="cancel">关闭
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+      </v-card>
+
+    </v-dialog>
 
     <LoadingModal :visible="loading"/>
 
@@ -227,14 +230,13 @@ import LoadingModal from '@/components/index/LoadingModal'
 import {parseAmount} from '@/utils/form'
 import * as storage from '@/utils/storage'
 import * as validation from '@/utils/validation'
-import {LockOpenIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
-import {helpers} from '@vuelidate/validators'
 import {mapState} from 'vuex'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import Modal from '../Modal'
 import Radio from '../Radio'
+import {ClipboardCopyIcon, LockOpenIcon, ShieldExclamationIcon, EyeIcon, EyeOffIcon} from '@heroicons/vue/outline'
 
 const Web3 = require('web3')
 const ABI_const = require('@/contract/ABI_const.js')
@@ -273,45 +275,74 @@ export default {
 
       recipient: '',
       amount: '',
+      recipientRules: [
+        value => {
+          if (value) return true
+          return '需要一个值。'
+        },
+        value => {
+          const ctAddressRegexp = /^0x[a-fA-F0-9]{40}$/
+          /**
+           * CT address validator.
+           */
+          let ret = ctAddressRegexp.test(value)
+          if (ret) return true
+          return '无效的草田链地址.'
+        }],
+      amountRules: [
+        value => {
+          if (value) return true
+          return '需要一个值。'
+        },
+        value => {
+
+          let _bal
+          if (this.item == null || this.item.type === 'CT') {
+            _bal = this.balance
+          }
+          else {
+            _bal = this.item.balance
+          }
+
+          if (isNaN(parseAmount(value))) {
+            return '无效的金额。'
+          }
+          if (isNaN(_bal)) {
+            return '无效的金额。'
+          }
+          if (_bal <= parseAmount(value)) {
+            return '余额不足。'
+          }
+          return true
+        }
+      ],
       memo: '',
       password: '',
-      passwordError: '',
-
+      passwordError: [],
+      showPassword: false,
+      passwordRules: [
+        value => {
+          if (value) return true
+          return '需要密码。'
+        },
+        value => {
+          if (value?.length >= 8) return true
+          return '密码必须大于 8 个字符。'
+        }
+      ],
       completedTx: null,
       submitError: '',
       gas: 0,
-      loading: false
+      loading: false,
+
+      // 使用本地副本控制对话框的显示状态
+      localVisible1: false,
+      localVisible2: false,
+      localVisible3: false
     }
   },
   validations() {
-    let amountV = []
-    if (this.item == null || this.item.type == 'CT') {
-      amountV = [
-        validation.required,
-        ...validation.amount(this.balance, this.amountParsed)
-      ]
-    }
-    else {
-      amountV = [
-        validation.required,
-        ...validation.amount(this.item.balance, this.amountParsed)
-      ]
-    }
-
     return {
-      recipient: [
-        validation.required,
-        validation.ctAddress
-      ],
-      amount: amountV,
-      memo: [
-        helpers.withMessage(
-          // eslint-disable-next-line max-len
-          'Memo is limited to 32 characters and should include only upper and lowercase letters, numbers, hyphens and spaces.',
-          // v => v.length === 0 || memoRegexp.test(v)
-          v => true
-        )
-      ],
       password: [validation.passwordRequired]
     }
   },
@@ -328,12 +359,6 @@ export default {
       else {
         return parseAmount(this.amount)
       }
-    },
-    canReadySend() {
-      return ![this.v$.recipient, this.v$.memo, this.v$.amount].map(f => f.$invalid).includes(true)
-    },
-    canSend() {
-      return !this.v$.$invalid
     },
     isMaxAmountEntered() {
       switch (this.item.type) {
@@ -357,36 +382,26 @@ export default {
     }
   },
   watch: {
-    visible(v, oldv) {
-      if (v === oldv) return
-      if (v) {
+    visible(newValue, oldv) {
+      console.log('watch visible', newValue, oldv)
+      if (newValue === oldv) return
+      this.localVisible1 = newValue && this.step == 1
+      this.localVisible2 = newValue && this.step == 2
+      this.localVisible3 = newValue && this.step == 3
+      if (newValue) {
         this.$store.dispatch('refresh')
       }
+    },
+    step(newValue, oldv) {
+      console.log('watch step', newValue, oldv)
+      if (newValue === oldv) return
+      this.localVisible1 = this.visible && newValue == 1
+      this.localVisible2 = this.visible && newValue == 2
+      this.localVisible3 = this.visible && newValue == 3
     }
-    // item(oldVal, newVal) {
-    //
-    //   console.log('item', newVal)
-    //   if (newVal != null) {
-    //     switch (newVal.type) {
-    //     case 'ERC-20':
-    //     case 'ERC-721':
-    //     case 'ERC-1155':
-    //       this.amount = [
-    //         validation.required,
-    //         ...validation.amount(this.balance, this.amountParsed)
-    //       ]
-    //       break
-    //     default:
-    //       this.amount = [
-    //         validation.required,
-    //         ...validation.amount(this.item.balance, this.amountParsed)
-    //       ]
-    //     }
-    //   }
-    // }
   },
   mounted() {
-
+    this.localVisible1 = this.visible && this.step == 1
   },
   methods: {
 
@@ -413,7 +428,6 @@ export default {
       }
     },
     async checkPassword() {
-      this.v$.password.$reset()
       if (await storage.comparePassword(this.password)) {
         this.passwordError = ''
         return true
@@ -426,12 +440,10 @@ export default {
     goto(step) {
       this.step = step
     },
-    readySend() {
+    async readySend() {
       // validate only step 1
-      const fields = [this.v$.recipient, this.v$.memo, this.v$.amount]
-      fields.forEach(f => f.$touch())
-      if (fields.map(f => f.$error).includes(true)) return
-
+      const {valid, errors} = await this.$refs.myForm.validate()
+      if (!valid) return
 
       // 这里计算gas
       this.gasCalc()
@@ -442,14 +454,13 @@ export default {
 
       this.recipient = ''
       this.amount = ''
+
       this.memo = ''
       this.password = ''
       this.passwordError = ''
 
       this.completedTx = null
       this.submitError = ''
-
-      this.v$.$reset()
     },
     async easGasSend() {
       // 转账为固定手续费
@@ -529,8 +540,8 @@ export default {
     },
     async send() {
       this.passwordError = ''
-
-      if (!await this.v$.$validate()) return
+      const {valid, errors} = await this.$refs.myForm1.validate()
+      if (!valid) return
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
       const customHttpProvider = new ethers.providers.JsonRpcProvider(this.$store.state.config.blockchain.baseURL, {
@@ -589,8 +600,7 @@ export default {
             this.submitError = recept.err
           }
 
-        }
-        catch (e) {
+        } catch (e) {
           console.error(e)
           this.loading = false
           this.submitError = e.message
@@ -639,8 +649,7 @@ export default {
             this.submitError = recept.err
           }
 
-        }
-        catch (e) {
+        } catch (e) {
           console.error(e)
           this.submitError = e.message
         }
@@ -687,8 +696,7 @@ export default {
             this.submitError = recept.err
           }
 
-        }
-        catch (e) {
+        } catch (e) {
           console.error(e)
           this.submitError = e.message
         }
@@ -733,8 +741,7 @@ export default {
           else {
             this.submitError = results[0].reason
           }
-        }
-        catch (err) {
+        } catch (err) {
           console.error(err)
           this.loading = false
           this.submitError = err.message
@@ -764,75 +771,11 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate(),
-      LockOpenIcon
+      LockOpenIcon, EyeIcon, EyeOffIcon
     }
   }
 }
 </script>
 
 <style scoped>
-.sub-heading :deep(.amount .currency) {
-  @apply ml-5;
-}
-
-.amount.sub {
-  @apply text-white text-3xl;
-}
-
-.amount.sub :deep(.currency) {
-  @apply text-half bottom-0 ml-2;
-}
-
-.testnet-header {
-  color: #0ecc5f;
-  padding-left: 10px;
-}
-
-body {
-  padding: 0;
-  margin: 0;
-  min-height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.loading {
-  width: 50px;
-  height: 50px;
-  position: relative;
-}
-
-.loading > span {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transform: rotate(calc(var(--i) * 18deg));
-}
-
-.loading > span::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #fff;
-  animation: breath 2s linear infinite;
-  animation-delay: calc(var(--i) * 0.1s);
-}
-
-@keyframes breath {
-  0% {
-    transform: scale(0);
-  }
-  10% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
 </style>

@@ -1,29 +1,17 @@
 <template>
-  <div class="text-blue-50">
-    <div v-if="views.includes(view)">
-      <div v-if="warning" class="alert alert-warning">
-        {{ warning }}
-      </div>
-      <div
-        v-for="param in paramsFormatted"
-        :key="'param-list-item-' + param.label"
-        class="py-5"
-      >
-        <div class="grid grid-cols-12 gap-4">
+  <v-row v-for="param in paramsFormatted"
+         :key="'param-list-item-' + param.label">
 
-          <el-text class="col-span-2 self-start" tag="b" size="large">{{ param.label }}</el-text>
-          <el-text class="col-span-10" line-clamp="5" size="small">
-            {{ param.value }}
-          </el-text>
-        </div>
-        <el-divider class="py-6"/>
-      </div>
-    </div>
-
-    <div v-else>
-      <p class="h6 warining">ToolWallet 无法执行请求的操作。</p>
-    </div>
-  </div>
+    <v-col cols="3">
+      <el-text class="col-span-2 self-start" tag="b" size="large">{{ param.label }}</el-text>
+    </v-col>
+    <v-col cols="9">
+      <el-text class="col-span-10" line-clamp="5" size="small">
+        {{ param.value }}
+      </el-text>
+    </v-col>
+    <v-divider class="py-3"/>
+  </v-row>
 </template>
 
 <script>
@@ -222,8 +210,4 @@ export default {
 </script>
 
 <style scoped>
-.param-value-container {
-  max-height: 8rem;
-  overflow: auto;
-}
 </style>

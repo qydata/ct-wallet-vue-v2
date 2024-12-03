@@ -18,34 +18,156 @@
       :showAddPay="showAddPay"
       :visible="true" v-if="createAndImportModal === 'card'"/>
     <AddPayCardModal :afterCharge="openCardModal" :visible="true" v-if="createAndImportModal === 'addcard'"/>
-    <header class="relative z-10 py-5 header md:pb-10" :class="{'menu-open':showNav}">
-      <div class="container flex items-center justify-between">
-        <Logo/>
-        <BurgerButton @click="showNav = !showNav"/>
-        <!-- eslint-disable-next-line max-len -->
-        <div
-          class="absolute left-0 right-0 flex flex-col flex-1 pt-12 pb-24 bg-black mobile-drop top-full md:static md:flex-row md:pl-15 md:p-0">
-          <Menu :mainNav="mainNav"/>
 
-          <WalletList/>
-          <div style="width: 40px"></div>
-          <HeaderTools :openForgetWalletModal="openForgetWalletModal"
-                       :openExportKeyModal="openExportKeyModal"
-                       :openAuthBindModal="openAuthBindModal"
-                       :openCreateModal="openCreateModal"
-                       :openSessionModal="openSessionModal"
-                       :openImportKeyModal="openImportKeyModal"
-                       :openCardModal="openCardModal"
+    <v-app-bar :elevation="2" :collapse="false">
 
-          />
+      <template v-slot:prepend>
+        <v-avatar
+          rounded="0">
+          <v-img src="/assets/logo.svg" alt="CT Wallet"/>
+        </v-avatar>
 
+      </template>
+      <template v-slot:title>
+        <div class="hidden md:block">
+          <v-tabs
+            v-model="tab"
+            align-tabs="start"
+          >
+            <v-tab :to="item.link" v-for="(item, index) in mainNav"
+                   v-bind:key="index"
+                   :value="item.link">
+              {{ item.text }}
+            </v-tab>
+
+          </v-tabs>
         </div>
-      </div>
-    </header>
+      </template>
+      <template v-slot:append>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn :prepend-icon="UsersIcon" :append-icon="ChevronDownIcon" v-bind="props">切换账户</v-btn>
+          </template>
+          <v-list lines="one">
+            <v-list-item
+              :title="item.walletName"
+              @click="switchAccount(item)"
+              v-for="(item, index) in walletList" :key="index"
+              :subtitle="publicKeyToAddress(item.p1)"
+            >
+              <template v-slot:prepend>
+                <v-btn
+                  :icon="KeyIcon"
+                  :color="address.toLowerCase() == publicKeyToAddress(item.p1).toLowerCase() && 'primary'"
+                  variant="text"
+                >
+                </v-btn>
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn :icon="DotsVerticalIcon" variant="text" v-bind="props"></v-btn>
+          </template>
+
+          <v-list>
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="openExportKeyModal"
+                  :prepend-icon="SortDescendingIcon"
+                  variant="text"
+                >导出私钥
+                </v-btn>
+              </template>
+            </v-list-item>
+
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="openAuthBindModal"
+                  :prepend-icon="UserIcon"
+                  variant="text"
+                >实名
+                </v-btn>
+              </template>
+            </v-list-item>
+
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="openSessionModal"
+                  :prepend-icon="SparklesIcon"
+                  variant="text"
+                >dApp 会话
+                </v-btn>
+              </template>
+            </v-list-item>
+
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="openCreateModal"
+                  :prepend-icon="PlusIcon"
+                  variant="text"
+                >新建账户
+                </v-btn>
+              </template>
+            </v-list-item>
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="openImportKeyModal"
+                  :prepend-icon="SortAscendingIcon"
+                  variant="text"
+                >导入账户
+                </v-btn>
+              </template>
+            </v-list-item>
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="openCardModal"
+                  :prepend-icon="CreditCardIcon"
+                  variant="text"
+                >我的支付
+                </v-btn>
+              </template>
+            </v-list-item>
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="lock"
+                  :prepend-icon="LockOpenIcon"
+                  variant="text"
+                >锁定钱包
+                </v-btn>
+              </template>
+            </v-list-item>
+
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-btn
+                  @click="open('https://github.com/qydata/ct-wallet-vue-v2')"
+                  :prepend-icon="LockOpenIcon"
+                  variant="text"
+                >开源链接
+                </v-btn>
+              </template>
+            </v-list-item>
+
+          </v-list>
+        </v-menu>
+      </template>
+    </v-app-bar>
   </div>
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import BurgerButton from '@/components/BurgerButton'
 import HeaderTools from '@/components/HeaderTools'
 import AddPayCardModal from '@/components/index/AddPayCardModal'
@@ -62,12 +184,25 @@ import Menu from '@/components/Menu'
 import WalletList from '@/components/WalletList'
 import {queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
+import {
+  DotsVerticalIcon, ChevronDownIcon, SortDescendingIcon, UsersIcon, UserIcon,
+  SparklesIcon,
+  PlusIcon,
+  SortAscendingIcon,
+  CreditCardIcon,
+  LockOpenIcon,
+  KeyIcon
+} from '@heroicons/vue/outline'
+import {inject} from 'vue'
+
+const ethUtil = require('ethereumjs-util')
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Header',
   data: function () {
     return {
+      tab: '/overview',
       showForgetWalletModal: false,
       showExportKeyModal: false,
       showCreateModal: false,
@@ -91,19 +226,28 @@ export default {
         //   link: '/nodes',
         //   text: 'Nodes'
         // },
-        {
-          link: '/display',
-          text: '通证'
-        },
+        // {
+        //   link: '/display',
+        //   text: '通证'
+        // },
+
+        // {
+        //   link: '/publicity',
+        //   text: '公示'
+        // },
 
         {
-          link: '/publicity',
-          text: '公示'
+          text: '资讯',
+          link: '/news'
+        },
+        {
+          text: '发现',
+          link: '/discover'
         },
         {
           link: '/dapp',
           text: 'Dapp'
-        },
+        }
 
         // {
         //   link: process.env.VUE_APP_GOVERNANCE_URL,
@@ -118,16 +262,30 @@ export default {
         //   link: '/mintPanel',
         //   text: 'NFT'
         // },
-        {
-          link: 'https://github.com/qydata/ct-wallet-vue-v2',
-          external: 'https://github.com/qydata/ct-wallet-vue-v2',
-          text: '开源链接'
-        }
-      ]
+        // {
+        //   link: 'https://github.com/qydata/ct-wallet-vue-v2',
+        //   external: 'https://github.com/qydata/ct-wallet-vue-v2',
+        //   text: '开源链接'
+        // }
+      ],
+      walletList: []
     }
   },
+  watch: {
+    async showTools(newVal, oldVal) {
+      if (newVal == true) {
+        this.walletList = await storage.getWalletList(storage.getHighestWalletVersion())
+      }
+    },
+    async walletList() {
+      this.address = await storage.getAddress(storage.getHighestWalletVersion())
+    }
+  },
+  computed: {
+    ...mapState(['address'])
+  },
   async mounted() {
-
+    this.walletList = await storage.getWalletList(storage.getHighestWalletVersion())
     const intent = this.$route.query.intent
     if (intent !== null && intent !== undefined && intent.length > 1) {
       console.log('intent', intent)
@@ -149,6 +307,31 @@ export default {
     }
   },
   methods: {
+    openLink(_item) {
+      this.tab = '/dapp'
+      window.open(_item.link)
+    },
+    async switchAccount(walletItem) {
+      await storage.switchWallet(walletItem.p1, JSON.parse(JSON.stringify(walletItem.p2)), walletItem.walletName, storage.getHighestWalletVersion())
+      this.address = await storage.getAddress(storage.getHighestWalletVersion())
+      this.$store.commit('setAddress', this.address)
+      this.$store.dispatch('refresh')
+      this.showTools = false
+
+      // 跳转到总览
+      location.reload()
+      // await this.$router.push('overview')
+      // this.$router.replace({ path: '/overview', query: { t: Date.now() } });
+      // this.$forceUpdate()
+    },
+    publicKeyToAddress(publicKey) {
+      if (publicKey !== undefined) return ethUtil.addHexPrefix(ethUtil.publicToAddress(new Buffer(ethUtil.stripHexPrefix(publicKey), 'hex')).toString('hex'))
+      return undefined
+    },
+    lock() {
+      this.$store.commit('lock')
+      this.$router.push('/')
+    },
     closeForgetWalletModal() {
       this.showForgetWalletModal = false
     },
@@ -284,30 +467,19 @@ export default {
     ChargeModal,
     PayCardModal,
     AddPayCardModal
+  },
+  setup() {
+    return {
+      DotsVerticalIcon,
+      ChevronDownIcon, UsersIcon, UserIcon,
+      SparklesIcon, SortDescendingIcon,
+      PlusIcon,
+      SortAscendingIcon,
+      CreditCardIcon,
+      LockOpenIcon, KeyIcon
+    }
   }
 }
 </script>
 <style scoped>
-.header {
-  @apply bg-black text-white;
-}
-
-.mobile-drop {
-  height: calc((var(--vh) * 100) - 71px);
-  transform: translateX(-100%);
-  transition: 0.3s transform cubic-bezier(.01, .1, .11, 1), 0.3s opacity cubic-bezier(.01, .1, .11, 1), 0.3s visibility cubic-bezier(.01, .1, .11, 1);
-  @apply overflow-hidden overflow-y-auto opacity-0 invisible;
-}
-
-@screen md {
-  .mobile-drop {
-    transform: translateX(0);
-    @apply h-auto overflow-visible opacity-100 visible;
-  }
-}
-
-.menu-open .mobile-drop {
-  transform: translateX(0);
-  @apply opacity-100 visible;
-}
 </style>

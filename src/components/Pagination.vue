@@ -44,35 +44,4 @@ export default {
 </script>
 
 <style scoped>
-.pagination {
-  @apply mt-10;
-}
-
-.pagination__list {
-  @apply flex items-center flex-wrap justify-center md:justify-end text-sm2 space-x-4;
-}
-
-.pagination__item {
-  @apply bg-white rounded text-gray-400;
-}
-
-.pagination__item a, .pagination__item span {
-  @apply py-6 px-12 block;
-}
-
-.pagination__item a {
-  @apply hover:text-green;
-}
-
-.pagination__item span.not-link {
-  @apply opacity-25;
-}
-
-.pagination__item .active {
-  @apply text-green;
-}
-
-.pagination__item svg {
-  @apply w-18;
-}
 </style>
