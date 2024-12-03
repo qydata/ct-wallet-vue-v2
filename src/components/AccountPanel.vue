@@ -1,9 +1,8 @@
 <template>
-  <v-container
-    class="px-10 my-20"
-  >
+  <v-container class="d-flex align-center justify-center" style="height: 90vh;">
 
-    <!-- v-alert 用于显示警告消息 -->
+
+  <!-- v-alert 用于显示警告消息 -->
     <v-alert v-if="showAlert" :type="alertType" dismissible>
       {{ alertMessage }}
     </v-alert>
@@ -66,7 +65,7 @@
               </v-row>
               <v-row>
 
-                <v-col cols="4"></v-col>
+                <v-col cols="2" md="4"></v-col>
                 <v-col>
                   <v-card-item>
                     <v-tooltip location="top" text="账户余额">
@@ -232,7 +231,7 @@
                   </v-form>
                   <v-list-item>
                     <v-row>
-                      <v-col cols="12" md="6">
+                      <v-col cols="6">
                         <v-btn
                           rounded="xl" block size="x-large"
                           variant="tonal"
@@ -241,7 +240,7 @@
                           关闭
                         </v-btn>
                       </v-col>
-                      <v-col cols="12" md="6">
+                      <v-col cols="6">
                         <v-btn
                           rounded="xl" block size="x-large" @click="createOnEnter">确认
                         </v-btn>

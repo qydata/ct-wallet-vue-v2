@@ -48,14 +48,14 @@
             </div>
           </form>
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-            <el-button type="success" size="large" plain @click="cancel">返回</el-button>
-            <el-button :loading="loading"
+            <v-btn type="success" size="large" plain @click="cancel">返回</v-btn>
+            <v-btn :loading="loading"
                        :disabled="!canUnlock"
                        @click="handlerZf"
                        type="success"
                        size="large"
             >{{ p_type ? '赞成' : '反对' }}
-            </el-button>
+            </v-btn>
           </div>
           <!-- eslint-disable-next-line max-len -->
           <div v-if="submitError"

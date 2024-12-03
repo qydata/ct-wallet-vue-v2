@@ -1,81 +1,95 @@
 <template>
-  <Modal :close="cancel" :visible="visible">
-    <template v-slot:header>
-      <h2>导入钱包</h2>
-    </template>
+  <v-dialog persistent
+            :close-on-back="false"
+            :close="cancel"
+            max-width="36rem"
+            v-model="localVisible">
 
-    <template v-slot:body>
-      <div class="pt-15">
-        <form>
-          <div class="form-group" :class="{'form-group__error': v$.privateKey.$error}">
-            <label for="key">输入私钥</label>
-            <div class="relative input-wrap">
-              <el-input
-                size="large" type="password" placeholder="你的私钥" id="key" v-model="v$.privateKey.$model"
-                :prefix-icon="KeyIcon"/>
-            </div>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.privateKey.$errors" :key="error.$uid">
-              {{ error.$message }}
-            </div>
-          </div>
 
-          <div class="form-group" :class="{'form-group__error': v$.password.$error || v$.repeatPassword.$error}">
-            <label for="password">输入密码</label>
-            <div class="relative input-wrap">
+    <v-card>
 
-              <el-input
-                size="large"
-                type="password"
-                autocomplete="off"
-                placeholder="输入你的密码"
+      <template v-slot:title>
+        <h2>导入钱包</h2>
+      </template>
 
-                v-model="v$.password.$model"
-                :prefix-icon="LockOpenIcon"
-              />
-            </div>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">
-              {{ error.$message }}
-            </div>
 
-            <label for="repeat-password" class="mt-10">确认密码</label>
-            <div class="relative input-wrap">
+      <v-form validate-on="submit lazy"
+              ref="myForm">
 
-              <el-input
-                size="large"
-                type="password"
-                @keypress="restoreOnEnter"
-                autocomplete="off"
-                placeholder="重复你的密码"
-                id="repeat-password"
-                v-model="v$.repeatPassword.$model"
-                :prefix-icon="LockOpenIcon"
-              />
-            </div>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.repeatPassword.$errors" :key="error.$uid">
-              {{ error.$message }}
-            </div>
-          </div>
+        <v-list lines="six">
+          <v-list-item
+            title="输入私钥"
+          >
+            <v-text-field
+              v-model="privateKey"
+              :rules="privateKeyRules"
+              autocomplete="off"
+              :prepend-icon="KeyIcon"
+              label="你的私钥*"
+              type="text"
+              required
+              clearable/>
+          </v-list-item>
+          <v-list-item
+            title="输入密码"
+          >
+            <v-text-field
+              v-model="password"
+              :rules="passwordRules"
+              autocomplete="off"
+              label="输入你的密码*"
+              :counter="8"
 
-        </form>
-      </div>
-    </template>
+              :type="showPassword ? 'text' : 'password'"
+              :prepend-icon="LockOpenIcon"
+              :append-icon="showPassword ? EyeIcon : EyeOffIcon"
+              @click:append="showPassword = !showPassword"
+              required
+              clearable/>
 
-    <template v-slot:footer>
-      <!-- eslint-disable-next-line max-len -->
-      <div
-        class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
-        <button class="w-full button button--outline-success" @click="cancel">返回</button>
-        <button class="w-full button button--success" :disabled="!canSubmit" @click="restore">导入</button>
-      </div>
-    </template>
-  </Modal>
+          </v-list-item>
+          <v-list-item
+            title="确认密码"
+          >
+            <v-text-field
+              :error-messages="repeatPasswordError"
+              v-model="repeatPassword"
+              :rules="repeatPasswordRules"
+              autocomplete="off"
+              label="重复你的密码*"
+              :counter="8"
+              @keypress="restoreOnEnter"
+              :type="showPassword ? 'text' : 'password'"
+              :prepend-icon="LockOpenIcon"
+              :append-icon="showPassword ? EyeIcon : EyeOffIcon"
+              @click:append="showPassword = !showPassword"
+              required
+              clearable/>
+
+          </v-list-item>
+
+          <v-list-item>
+            <v-row>
+              <v-col cols="6">
+                <v-btn rounded="xl" block size="x-large"
+                       variant="tonal" @click="cancel">返回
+                </v-btn>
+              </v-col>
+              <v-col cols="6">
+                <v-btn rounded="xl" block size="x-large"
+                       @click="restore">导入
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-list-item>
+        </v-list>
+      </v-form>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
-import {KeyIcon, LockOpenIcon} from '@heroicons/vue/outline'
+import {KeyIcon, LockOpenIcon, EyeOffIcon, EyeIcon} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers, sameAs} from '@vuelidate/validators'
 import * as storage from '@/utils/storage'
@@ -102,28 +116,51 @@ export default {
     return {
       privateKey: '',
 
+      privateKeyRules: [
+        value => {
+          if (value) return true
+          return '需要一个值。'
+        },
+        value => {
+          if (privateKeyRegexp.test(value)) return true
+          return '无效的私钥。'
+        }
+      ],
+      repeatPasswordRules: [
+        value => {
+          if (value == this.password) return true
+          return '前后密码不匹配。'
+        }
+      ],
+      passwordRules: [
+        value => {
+          if (value) return true
+          return '需要密码。'
+        },
+        value => {
+          if (value?.length >= 8) return true
+          return '密码必须大于 8 个字符。'
+        }
+      ],
       password: '',
-      repeatPassword: ''
-    }
-  },
-  validations() {
-    return {
-      privateKey: [
-        validation.required,
-        helpers.withMessage('Invalid private key.', v => privateKeyRegexp.test(v))
-      ],
-      password: [
-        validation.passwordRequired,
-        validation.passwordLength
-      ],
-      repeatPassword: [
-        helpers.withMessage('Passwords do not match.', sameAs(this.password))
-      ]
+      showPassword: false,
+      repeatPassword: '',
+      localVisible: this.visible
     }
   },
   computed: {
     canSubmit() {
       return !this.v$.$invalid
+    }
+  },
+  watch: {
+    visible(newValue) {
+      // 当父组件的 prop 更新时，更新本地副本
+      this.localVisible = newValue
+    },
+    localVisible(newValue) {
+      // 当本地副本改变时，触发事件通知父组件更新
+      this.$emit('update:visible', newValue)
     }
   },
   methods: {
@@ -163,7 +200,7 @@ export default {
       v$: useVuelidate(),
       LockOpenIcon,
       EditPen,
-      KeyIcon
+      KeyIcon, EyeOffIcon, EyeIcon
     }
   }
 }

@@ -40,7 +40,7 @@
     </td>
 
     <td data-title="操作:">
-      <el-button type="success" @click="sendErc20(item)">发送</el-button>
+      <v-btn type="success" @click="sendErc20(item)">发送</v-btn>
     </td>
   </tr>
 </template>

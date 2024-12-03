@@ -3,7 +3,7 @@
     <div class="d-flex justify-between">
       <h4 class="h4 mb-4">快速历史记录</h4>
       <div class="btn-group">
-        <el-button
+        <v-btn
           type="primary"
           v-ripple="'rgba(255, 255, 255, .2)'"
           class="btn btn-secondary dropdown-toggle w-40"
@@ -14,7 +14,7 @@
           @click="showFilterOpts = !showFilterOpts"
         >
           {{ filterOpts[selectedFilterOpt] }}
-        </el-button>
+        </v-btn>
         <div
           class="dropdown-menu dropstart"
           :style="'display:' + (showFilterOpts ? 'block' : 'none') + ';'"

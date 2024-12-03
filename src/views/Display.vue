@@ -5,12 +5,12 @@
 
     <div class="bg-gray-200 py-25">
       <div class="container">
-        <el-button v-bind:key="index" v-for="(items,index) in tabArray"
+        <v-btn v-bind:key="index" v-for="(items,index) in tabArray"
                    :type="tabModel === items.name?'success':'default'"
                    size="large"
                    @click="items.fun">
           {{ items.name }}
-        </el-button>
+        </v-btn>
       </div>
     </div>
     <div class="bg-gray-200">

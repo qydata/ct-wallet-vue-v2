@@ -51,8 +51,8 @@
       </tbody>
     </table>
     <!--    <div class="w-full text-right my-20">-->
-    <!--      <el-button type="success" @click="open(`https://ctblock.cn/blocks`)">展示所有-->
-    <!--      </el-button>-->
+    <!--      <v-btn type="success" @click="open(`https://ctblock.cn/blocks`)">展示所有-->
+    <!--      </v-btn>-->
     <!--    </div>-->
   </div>
 </template>

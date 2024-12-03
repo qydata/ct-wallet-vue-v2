@@ -38,7 +38,7 @@
             </v-list-item>
             <v-list-item>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn
                     rounded="xl" block size="x-large"
                     variant="tonal"
@@ -47,7 +47,7 @@
                     忘记钱包
                   </v-btn>
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn rounded="xl" block size="x-large" :loading="isUnlockLoading" @click="unlock">解锁钱包</v-btn>
                 </v-col>
               </v-row>

@@ -201,12 +201,12 @@
           </div>
 
           <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
-            <el-button class="w-full" type="success" size="large" plain @click="() => goto(1)">
+            <v-btn class="w-full" type="success" size="large" plain @click="() => goto(1)">
               返回
-            </el-button>
-            <el-button class="w-full" :loading="loading" type="success" :disabled="!canSell" size="large" @click="sell">
+            </v-btn>
+            <v-btn class="w-full" :loading="loading" type="success" :disabled="!canSell" size="large" @click="sell">
               确认
-            </el-button>
+            </v-btn>
           </div>
         </div>
       </template>

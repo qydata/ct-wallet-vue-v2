@@ -3,10 +3,10 @@
     <Header/>
     <!--    <AccountPanel view="dapp"/>-->
     <div class="bg-gray-200 dapp-div1">
-      <el-button @click="handleRequestAccount(1)">
+      <v-btn @click="handleRequestAccount(1)">
         Request Account
-      </el-button>
-      <el-button @click="handleSendTransaction({
+      </v-btn>
+      <v-btn @click="handleSendTransaction({
       from: address,
       to: '0x6331384FD95eedC4C5cE96d4bdFe14D7fC365554',
       value:'0',
@@ -15,15 +15,15 @@
        chainId: 27 // 指定 chainId
       })">
         Request Send Transaction
-      </el-button>
+      </v-btn>
 
-      <el-button
+      <v-btn
         @click="handlePersonalSign('0x584d5450203a20456e61626c65206c64656e746974790a663238653664376535626562636533633230393338366164316164303132323361656131356331343935366164333033393837393831326462373630356664610a0a466f72206d6f726520696e666f3a0a68747470733a2f2f6374626c6f636b2e636e2f7369676e6174757265732f')">
         Request Personal Sign
-      </el-button>
-      <el-button @click="handleNotSupported('method_not_supported')">
+      </v-btn>
+      <v-btn @click="handleNotSupported('method_not_supported')">
         Request Not Supported
-      </el-button>
+      </v-btn>
     </div>
     <Sessions/>
     <DappQuickHistory/>

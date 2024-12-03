@@ -49,7 +49,7 @@
 
 
     <td data-title="操作:">
-      <el-button type="success" size="small" @click="sendNft(item)">发送</el-button>
+      <v-btn type="success" size="small" @click="sendNft(item)">发送</v-btn>
     </td>
   </tr>
 </template>

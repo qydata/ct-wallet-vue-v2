@@ -1,10 +1,10 @@
 <template>
-  <el-button
+  <v-btn
     size="default"
     type="success"
     class="nav-opener md:hidden">
     <span></span>
-  </el-button>
+  </v-btn>
 </template>
 
 <script>

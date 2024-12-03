@@ -105,22 +105,22 @@
     </td>
 
     <td data-title="">
-      <el-button
+      <v-btn
         :disabled="item._chainpayOrder_state != 0"
         type="success"
         class="font-bold"
         @click="openModal(true)"
       >
         赞成
-      </el-button>
-      <el-button
+      </v-btn>
+      <v-btn
         :disabled="item._chainpayOrder_state != 0"
         type="warning"
         class="font-bold"
         @click="openModal(false)"
       >
         反对
-      </el-button>
+      </v-btn>
     </td>
   </tr>
 </template>

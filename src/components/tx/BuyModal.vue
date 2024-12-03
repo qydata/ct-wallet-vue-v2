@@ -329,9 +329,9 @@
                   v-model="mobile"
                 >
                   <template #append>
-                    <el-button type="success" size="large" class="font-bold" @click.prevent="sendMsgCode">
+                    <v-btn type="success" size="large" class="font-bold" @click.prevent="sendMsgCode">
                       {{ nextTime == 0 ? '获取验证码' : nextTime + '秒' }}
-                    </el-button>
+                    </v-btn>
                   </template>
                 </el-input>
 

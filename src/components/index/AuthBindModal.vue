@@ -125,12 +125,12 @@
 
             <v-list-item>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn v-if="isInIframe() === false" rounded="xl" block size="x-large"
                          variant="tonal" @click="skip">跳过
                   </v-btn>
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn rounded="xl" block size="x-large" @click.prevent="create">下一步</v-btn>
                 </v-col>
               </v-row>

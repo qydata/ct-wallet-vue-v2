@@ -18,11 +18,11 @@
               @click="openNewChat"
             >
               <div>
-                <el-button type="success" circle>
+                <v-btn type="success" circle>
                   <el-icon>
                     <Plus/>
                   </el-icon>
-                </el-button>
+                </v-btn>
 
               </div>
             </div>
@@ -69,12 +69,12 @@
               <div v-if="messages.length == 0" class="newChatRightPanel">
                 <h2>欢迎来到去中心化聊天</h2>
                 <div>
-                  <el-button type="success" size="large" @click.native="openNewChat">
+                  <v-btn type="success" size="large" @click.native="openNewChat">
                     <el-icon :size="20">
                       <Plus/>
                     </el-icon>
                     开始新的聊天
-                  </el-button>
+                  </v-btn>
                 </div>
               </div>
               <div v-for="(message, index) in messages" :key="index">
@@ -98,7 +98,7 @@
 
                     </div>
                     <div>
-                      <el-button
+                      <v-btn
                         type="success"
                         :class="
                               'button button--' +
@@ -111,7 +111,7 @@
                         plain
                       >
                         查看
-                      </el-button>
+                      </v-btn>
                       <p v-show="!isEncText(message.text)">{{ message.text }}</p>
                     </div>
 
@@ -188,7 +188,7 @@
 
               </div>
               <div style="display: flex;align-self: end;">
-                <el-button
+                <v-btn
                   style="margin-left: 10px"
                   type="success"
                   @click.native="sendMessagePass"
@@ -196,7 +196,7 @@
                   <el-icon :size="24">
                     <Promotion/>
                   </el-icon>
-                </el-button>
+                </v-btn>
               </div>
               <!--              <input-->
               <!--                v-model="newMessage"-->

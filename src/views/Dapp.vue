@@ -29,9 +29,8 @@
     <!-- 定义 iframe，指定 src 属性 -->
     <v-row :loading="isLoading">
 
-      <v-col cols="12" align="center">
+      <v-col cols="12" v-if="isLoading" align="center">
         <v-progress-circular
-          v-if="isLoading"
           indeterminate
         ></v-progress-circular>
       </v-col>

@@ -103,12 +103,12 @@
             <small class="text-caption text-medium-emphasis">*表示必填字段</small>
             <v-list-item>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn rounded="xl" block size="x-large"
                          variant="tonal" @click="cancel">返回
                   </v-btn>
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn rounded="xl" block size="x-large"
                          @click="create">下一步
                   </v-btn>

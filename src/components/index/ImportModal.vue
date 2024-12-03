@@ -38,8 +38,6 @@
                 autocomplete="off"
                 :prepend-icon="KeyIcon"
                 label="你的私钥*"
-                :counter="8"
-
                 type="text"
                 required
                 clearable/>
@@ -55,7 +53,6 @@
                 autocomplete="off"
                 label="你的密码*"
                 :counter="8"
-                @keypress="createOnEnter"
 
                 :type="showPassword ? 'text' : 'password'"
                 :prepend-icon="LockOpenIcon"
@@ -68,12 +65,12 @@
 
             <v-list-item>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn rounded="xl" block size="x-large"
                          variant="tonal" @click="cancel">返回
                   </v-btn>
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="6">
                   <v-btn rounded="xl" block size="x-large"
                          @click="restore">导入
                   </v-btn>
@@ -89,7 +86,11 @@
 </template>
 
 <script>
-import {KeyIcon, LockOpenIcon} from '@heroicons/vue/outline'
+import {
+  KeyIcon, LockOpenIcon,
+  EyeOffIcon,
+  EyeIcon
+} from '@heroicons/vue/outline'
 import useVuelidate from '@vuelidate/core'
 import {helpers} from '@vuelidate/validators'
 import * as storage from '@/utils/storage'
@@ -121,7 +122,17 @@ export default {
       // 使用本地副本控制对话框的显示状态
       localVisible: this.visible,
       password: '',
-      passwordError: '',
+      passwordRules: [
+        value => {
+          if (value) return true
+          return '需要密码。'
+        },
+        value => {
+          if (value?.length >= 8) return true
+          return '密码必须大于 8 个字符。'
+        }
+      ],
+      passwordError: [],
       walletName: '',
       walletNameRules: [
         value => {
@@ -129,6 +140,7 @@ export default {
           return '需要一个值。'
         }
       ],
+      showPassword: false
     }
   },
   validations() {
@@ -197,11 +209,11 @@ export default {
     async checkPassword() {
       this.v$.password.$reset()
       if (await storage.comparePassword(this.password, this.walletVersion)) {
-        this.passwordError = ''
+        this.passwordError = []
         return true
       }
       else {
-        this.passwordError = '密码错误.'
+        this.passwordError = ['密码错误.']
         return false
       }
     },
@@ -223,11 +235,11 @@ export default {
       }
 
       if (isHas) {
-        this.passwordError = '钱包已存在.'
+        this.passwordError = ['钱包已存在.']
         return false
       }
       else {
-        this.passwordError = ''
+        this.passwordError = []
         return true
       }
     },
@@ -242,7 +254,9 @@ export default {
       v$: useVuelidate(),
       LockOpenIcon,
       KeyIcon,
-      EditPen
+      EditPen,
+      EyeOffIcon,
+      EyeIcon
     }
   }
 }

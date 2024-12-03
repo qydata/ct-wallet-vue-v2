@@ -48,7 +48,7 @@
           </v-list-item>
           <v-list-item>
             <v-row>
-              <v-col cols="12" md="6">
+              <v-col cols="6">
                 <v-btn @click="skip"
                        rounded="xl" block size="x-large"
                        variant="tonal">关闭
@@ -56,7 +56,7 @@
                 <!-- eslint-disable-next-line max-len -->
 
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="6">
                 <v-btn
                   rounded="xl" block size="x-large"
                   @click="addPay">添加支付方式

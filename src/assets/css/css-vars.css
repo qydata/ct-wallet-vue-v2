@@ -71,8 +71,8 @@ body.dark-mode {
   --el-mask-color-extra-light: rgba(0, 0, 0, 0.3)
 }
 
-body.dark-mode .el-button {
-  --el-button-disabled-text-color: rgba(255, 255, 255, 0.5)
+body.dark-mode .v-btn {
+  --v-btn-disabled-text-color: rgba(255, 255, 255, 0.5)
 }
 
 body.dark-mode .el-card {
