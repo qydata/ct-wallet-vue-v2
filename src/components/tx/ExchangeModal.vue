@@ -4,8 +4,7 @@
     :close-on-back="false"
     max-width="36rem"
     v-model="localVisible" :close="close"
-    :showCloseButton="true"
-    :width="900">
+    :showCloseButton="true">
 
     <template v-slot:default="{ isActive }">
       <v-card rounded="lg">
