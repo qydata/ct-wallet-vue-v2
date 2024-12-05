@@ -181,7 +181,7 @@ const getUnlockExpiry = async () => {
 const getWalletVersion = async () => {
   const v = await get(KEY_WALLET_VERSION, store)
   if (v !== undefined) return v
-  return 0
+  return 2
 }
 
 /**

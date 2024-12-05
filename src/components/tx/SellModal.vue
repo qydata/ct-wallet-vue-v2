@@ -154,7 +154,7 @@
              class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
           <div class="">
             <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-              汇率已更新。交换最大值现在是 {{ exchangeRate.limit }} RMB.
+              价格已更新。交换最大值现在是 {{ exchangeRate.limit }} RMB.
             </span>
           </div>
         </div>
@@ -241,7 +241,7 @@
           </div>
 
           <!--          <div class="form-group mb-14">-->
-          <!--            <label>汇率</label>-->
+          <!--            <label>价格</label>-->
           <!--            <Amount :value="exchangeRateOnSubmit" currency="CNY" sub/>-->
           <!--          </div>-->
 

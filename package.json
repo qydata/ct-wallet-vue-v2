@@ -41,7 +41,6 @@
     "dayjs": "^1.11.7",
     "detect-browser": "^5.2.0",
     "dotenv": "^8.2.0",
-    "element-plus": "^2.7.5",
     "elliptic": "^6.6.1",
     "eth-crypto": "^2.6.0",
     "eth-sig-util": "^3.0.1",

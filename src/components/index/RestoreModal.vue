@@ -90,13 +90,7 @@
 
 <script>
 import {KeyIcon, LockOpenIcon, EyeOffIcon, EyeIcon} from '@heroicons/vue/outline'
-import useVuelidate from '@vuelidate/core'
-import {helpers, sameAs} from '@vuelidate/validators'
 import * as storage from '@/utils/storage'
-import * as validation from '@/utils/validation'
-import Modal from '../Modal'
-
-const ethers = require('ethers')
 
 const ethUtil = require('ethereumjs-util')
 const privateKeyRegexp = /^(0x)?[a-fA-F0-9]{64}$/
@@ -105,7 +99,6 @@ import {EditPen} from '@element-plus/icons-vue'
 export default {
   name: 'CreateModal',
   components: {
-    Modal
   },
   props: {
     afterRestore: Function,
@@ -115,7 +108,6 @@ export default {
   data() {
     return {
       privateKey: '',
-
       privateKeyRules: [
         value => {
           if (value) return true
@@ -148,11 +140,7 @@ export default {
       localVisible: this.visible
     }
   },
-  computed: {
-    canSubmit() {
-      return !this.v$.$invalid
-    }
-  },
+  computed: {},
   watch: {
     visible(newValue) {
       // 当父组件的 prop 更新时，更新本地副本
@@ -172,11 +160,10 @@ export default {
       this.privateKey = ''
       this.password = ''
       this.repeatPassword = ''
-      this.v$.$reset()
     },
     async restore() {
-      if (!await this.v$.$validate()) return
-
+      const {valid, errors} = await this.$refs.myForm.validate()
+      if (!valid) return
       let publicKey = ethUtil.privateToPublic(new Buffer(ethUtil.stripHexPrefix(this.privateKey), 'hex'))
       const address = ethUtil.addHexPrefix(ethUtil.publicToAddress(publicKey).toString('hex'))
 
@@ -197,7 +184,6 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate(),
       LockOpenIcon,
       EditPen,
       KeyIcon, EyeOffIcon, EyeIcon

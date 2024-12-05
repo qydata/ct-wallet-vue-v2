@@ -1,5 +1,5 @@
 <template>
-  <v-container class="d-flex align-center justify-center" style="height: 90vh;">
+  <v-container class="d-flex align-center justify-center">
 
 
   <!-- v-alert 用于显示警告消息 -->

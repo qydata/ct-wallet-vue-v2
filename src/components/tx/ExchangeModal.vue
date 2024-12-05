@@ -40,7 +40,7 @@
               <v-divider/>
             </v-col>
             <v-col cols="12" md="4" align="center">
-              <v-card-item title="充值" subtitle="在草天链网络上以 CNY 的价格充值。">
+              <v-card-item title="充值" subtitle="在草田链网络上以 CNY 的价格充值。">
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/buy.svg" alt="提现 从 RMB 到 CT"/>
                 <v-btn :prepend-icon="ArrowNarrowRightIcon"
@@ -55,7 +55,7 @@
               <v-divider/>
             </v-col>
             <v-col cols="12" md="4" align="center">
-              <v-card-item title="提现" subtitle="在草天链网络上以 CNY 的价格提现。">
+              <v-card-item title="提现" subtitle="在草田链网络上以 CNY 的价格提现。">
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/sell.svg" alt="以人民币的价格出售 CT"/>
                 <v-btn :prepend-icon="CurrencyDollarIcon"

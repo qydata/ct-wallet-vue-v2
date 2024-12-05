@@ -10,20 +10,6 @@ class BlockchainInterface {
     this.networks = networks
   }
 
-  /**
-   * @param {String} network Network to configure interface with.
-   */
-  setNetwork(network) {
-    if (!this.networks[network]) {
-      throw new Error(
-        `Network ${network} is not a valid network for ${
-          this.interfaceName
-        }. Valid networks: ${Object.keys(this.networks)}`
-      )
-    }
-
-    this.network = this.networks[network]
-  }
 }
 
 export default BlockchainInterface

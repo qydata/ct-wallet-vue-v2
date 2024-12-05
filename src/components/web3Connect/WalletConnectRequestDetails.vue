@@ -1,21 +1,14 @@
 <template>
-  <v-row v-for="param in paramsFormatted"
-         :key="'param-list-item-' + param.label">
-
-    <v-col cols="3">
-      <el-text class="col-span-2 self-start" tag="b" size="large">{{ param.label }}</el-text>
-    </v-col>
-    <v-col cols="9">
-      <el-text class="col-span-10" line-clamp="5" size="small">
-        {{ param.value }}
-      </el-text>
-    </v-col>
+  <div>
+    <v-card v-for="param in paramsFormatted"
+            :key="'param-list-item-' + param.label" :title="param.label" :text="param.value"/>
     <v-divider class="py-3"/>
-  </v-row>
+  </div>
 </template>
 
 <script>
 import {providers, utils} from 'ethers'
+import {EIP155Method} from '../../services/config/EIP155'
 import walletConnect from '../../store/walletConnect'
 import {ctchain} from '../../utils/cryptos/blockchainApi/infura'
 
@@ -42,8 +35,8 @@ const initState = () => ({
 export default {
   name: 'WalletConnectRequestDetails',
   props: {
-    request: {
-      type: Object,
+    method: {
+      type: String,
       required: true
     },
     connector: {
@@ -54,27 +47,37 @@ export default {
   data: initState,
   computed: {
     view() {
-      return this.request.method
-    },
-    method() {
-      const isSessionProposal = this.request.method === sessionProposal
-      if (isSessionProposal) {
-        return this.request.method
-      }
-      return this.params.request.method
+      return this.method
     },
     params() {
-      return this.request.params
+      switch (this.method) {
+      case EIP155Method.PersonalSign:
+        return [this.format('message', this.connector.message)]
+      case EIP155Method.EthSendTransaction:
+        console.log(this.connector)
+        return [
+          this.format('from', this.connector.transaction.from),
+          this.format('to', this.connector.transaction.to),
+          this.format('data', this.connector.transaction.data)
+        ]
+      }
+      return []
     },
     paramsFormatted() {
       const params = this.params
-
-      if (this.view === sessionRequest) {
-        const params = this.params.request.params
+      console.log('params:', params)
+      if (this.method === sessionRequest) {
+        const params = this.params.method.params
         const formatted = this.formatSessionRequest(this.method, params)
         return formatted
       }
-      else if (this.view === sessionProposal) {
+      else if (this.method === EIP155Method.PersonalSign) {
+        return params
+      }
+      else if (this.method === EIP155Method.EthSendTransaction) {
+        return params
+      }
+      else if (this.method === sessionProposal) {
         const peer = params.proposer.metadata
 
         // Format Namespaces
@@ -158,11 +161,11 @@ export default {
         if (tx.value) formatted.push(this.format('Value', parseInt(tx.value)))
         formatted.push(this.format('Data', tx.data))
 
-        // Return formatted transaction request
+        // Return formatted transaction method
         return formatted
       }
       else if (typedRequests.includes(method)) {
-        // Return formatted typed request
+        // Return formatted typed method
         return [
           this.format('Address', params[0]),
           this.format('Data', JSON.stringify(params[1]))
@@ -174,7 +177,7 @@ export default {
           const messageText = Buffer.from(messageArray).toString()
           return messageText
         }
-        // Return formatted typed request
+        // Return formatted typed method
         const [address, message] =
           method === 'personal_sign' ? [params[1], decode(params[0])] : params
         return [

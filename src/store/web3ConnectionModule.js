@@ -1,4 +1,5 @@
 import Web3ConnectionService from '../service/Web3ConnectionService'
+import Web3Bridge from '../services/Web3Bridge'
 import WalletConnect from './walletConnect'
 
 const dbConnection = new Web3ConnectionService()
@@ -64,39 +65,23 @@ export default {
     },
     async handleWCCallRequest(
       {rootGetters, rootState},
-      {approved, request, wallet}
+      {approved, method, params, wallet}
     ) {
-      let network
-      if (approved) {
-        network = 'ctchain'
-      }
 
       await WalletConnect.handleCallRequest({
         approved,
-        request: {
-          ...request,
-          network
-        },
+        method,
+        params,
         wallet: wallet
       })
     },
 
-    async walletConnectInit({commit, state, dispatch}, {modal}) {
-      // Return if Web3Wallet(V2) has already been initialized
-      if (state.walletConnect.web3wallet) return
+    async walletConnectInit({commit, state, dispatch}, {modal, address}) {
 
-      // Create and store instance of Web3Wallet
-      const web3wallet = await WalletConnect.initWeb3Wallet(
+      window.Web3Bridge = new Web3Bridge(state, address)
+      window.Web3Bridge.init(
         modal,
-        dispatch
-      )
-      commit('setWalletConnect', web3wallet)
-      const sessions = web3wallet.getActiveSessions()
-      // console.log('sessions', sessions)
-      for (const session in sessions) {
-        commit('setWalletConnectSession', sessions[session])
-      }
-      return web3wallet
+        dispatch)
     },
 
     async walletConnectPair({dispatch}, {uri, modal}) {
@@ -106,11 +91,9 @@ export default {
       // Handle v1 sessions
       try {
         await WalletConnect.sessionDisconnect(topic)
-      }
-      catch (err) {
+      } catch (err) {
         console.error(err)
-      }
-      finally {
+      } finally {
         commit('removeWalletConnectSession', topic)
       }
     },

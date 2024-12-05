@@ -43,7 +43,7 @@
                   <v-icon :icon="InformationCircleIcon" v-bind="props"></v-icon>
                 </template>
               </v-tooltip>
-              汇率
+              价格
             </template>
             <template v-slot:subtitle>
               1 rmb = {{ exchangeRate }} 草田分

@@ -1,9 +1,12 @@
+import {EIP155Method} from './config/EIP155'
+
 export default class Web3Bridge {
-  constructor(state) {
+  constructor(state, address) {
     this.projectMetadata = null
     this.targetOrigin = '*' //Gets set by the DAppModal
     this.targetFrame = null
     this.state = state
+    this.address = address
   }
 
   endSession() {
@@ -25,7 +28,8 @@ export default class Web3Bridge {
     }), this.targetOrigin)
   }
 
-  init() {
+  init(modal,
+    dispatch) {
     window.addEventListener('message', async (event) => {
       // TODO ensure the origin is whitelisted in our wallet-metadata
       // if (event.origin !== "https://example-dapp.com") return; // Check origin for security
@@ -33,8 +37,8 @@ export default class Web3Bridge {
       try {
         const sourceFrame = event.source
 
-        const selectedAddress = this.state.address
-
+        const selectedAddress = this.address
+        console.log('init selectedAddress:', selectedAddress)
         const buildRPCResponse = (id, result, error) => {
           if (error) {
             return {
@@ -56,7 +60,14 @@ export default class Web3Bridge {
           sourceFrame.postMessage(JSON.stringify(response), this.targetOrigin)
         }
 
-        const data = event.data
+        let data
+        if (typeof event.data === 'string') {
+          data = JSON.parse(event.data)
+        }
+        else {
+          data = event.data
+        }
+        console.log('data:', data)
         if (data.type === 'connect') {
           // Ignore?
         }
@@ -68,6 +79,7 @@ export default class Web3Bridge {
           const {id, method, params} = request
 
           try {
+            console.log('parent method:', method)
             switch (method) {
             case 'wallet_switchEthereumChain': {
               const [targetChain] = params
@@ -83,7 +95,25 @@ export default class Web3Bridge {
               }
 
               // TODO set network
-              // await store.dispatch(setNetwork(network))
+              // dispatch(setNetwork(network))
+              respond(request, true)
+              break
+            }
+            case 'wallet_requestPermissions': {
+              const [targetChain] = params
+              let {chainId} = targetChain
+              chainId = parseInt(chainId, 16)
+
+              if (chainId !== 27) {
+                respond(request, null, {
+                  code: -32000,
+                  message: 'Unsupported chain id'
+                })
+                break
+              }
+
+              // TODO set network
+              // dispatch(setNetwork(network))
               respond(request, true)
               break
             }
@@ -97,7 +127,7 @@ export default class Web3Bridge {
 
               // TODO need to show the modal here...
               console.log('eth_sign', decodedMessage)
-              // store.dispatch(showModal(ModalTypes.PERSONAL_SIGN, {
+              // dispatch(modal.show(ModalTypes.PERSONAL_SIGN, {
               //     wallet: selectedIdentity,
               //     chainInfo: network,
               //     projectMetadata: projectMetadata,
@@ -114,50 +144,57 @@ export default class Web3Bridge {
               // }))
               break
             }
-              // case 'personal_sign': {
-              //   const [message, address] = params
-              //   const decodedMessage = Buffer.from(message.replace('0x', ''), 'hex').toString('utf8')
-              //   console.log('personal_sign', decodedMessage)
-              //   store.dispatch(showModal({
-              //     type: ModalTypes.PERSONAL_SIGN,
-              //     props: {
-              //       message: decodedMessage,
-              //       onAccept: async (signedMessage) => {
-              //
-              //         store.dispatch(hideModal())
-              //         respond(request, signedMessage)
-              //       },
-              //       onReject: () => {
-              //         store.dispatch(hideModal())
-              //         respond(request, null, {
-              //           code: 4001,
-              //           message: 'User rejected the request.'
-              //         })
-              //       }
-              //     }
-              //   }))
-              //   break
-              // }
-              // case 'eth_sendTransaction': {
-              //   const [transaction] = params
-              //   window.transaction = transaction
-              //   store.dispatch(createTransactionRequest({
-              //     txData: transaction,
-              //     txType: TxType.SmartContract
-              //   }, {
-              //     onAccept: async (txHash) => {
-              //       respond(request, txHash)
-              //     },
-              //     onReject: () => {
-              //       respond(request, null, {
-              //         code: 4001,
-              //         message: 'User rejected the request.'
-              //       })
-              //     }
-              //   }))
-              // }
+            case 'personal_sign': {
+              const [message, address] = params
+              const decodedMessage = Buffer.from(message.replace('0x', ''), 'hex').toString('utf8')
+              console.log('personal_sign', decodedMessage)
+              modal.show({
+                type: EIP155Method.PersonalSign,
+                props: {
+                  message: decodedMessage,
+                  onAccept: async (signedMessage) => {
+                    console.log('personal_sign rejected - onAccept', signedMessage)
+                    modal.hide()
+                    respond(request, signedMessage)
+                  },
+                  onReject: () => {
+                    console.log('personal_sign rejected - onReject')
+                    modal.hide()
+                    respond(request, null, {
+                      code: 4001,
+                      message: 'User rejected the request.'
+                    })
+                  }
+                }
+              })
+              break
+            }
+            case 'eth_sendTransaction': {
+              const [transaction] = params
+
+              modal.show({
+                type: EIP155Method.EthSendTransaction,
+                props: {
+                  transaction: transaction,
+                  onAccept: async (signedMessage) => {
+                    console.log('personal_sign rejected - onAccept', signedMessage)
+                    modal.hide()
+                    respond(request, signedMessage)
+                  },
+                  onReject: () => {
+                    console.log('personal_sign rejected - onReject')
+                    modal.hide()
+                    respond(request, null, {
+                      code: 4001,
+                      message: 'User rejected the request.'
+                    })
+                  }
+                }
+              })
+            }
             }
           } catch (e) {
+            console.trace(e)
             respond(request, null, {
               code: -32603,
               message: 'Internal JSON-RPC error.'

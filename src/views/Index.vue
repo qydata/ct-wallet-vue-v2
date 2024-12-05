@@ -3,8 +3,8 @@
     class="bg-black bg-center bg-no-repeat bg-cover"
     :style="!hasWallet ? 'background-image: url(/assets/map.svg);' : ''"
   >
-    <div class="flex items-center justify-center min-h-screen py-128">
-      <v-container class="container">
+    <div class="flex items-center justify-center min-h-screen">
+      <v-container>
         <div class="mx-auto max-w-800">
           <div class="text-white md:px-6 mb-11 text-caption" v-if="!hasWallet">
             <v-card-item title="欢迎到草田链" subtitle="创建或者导入一个草田链钱包去开始">

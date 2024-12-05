@@ -47,7 +47,7 @@ const ethAddressRegexp = /^0x[a-fA-F0-9]{40}$/
 /**
  * Ethereum address validator.
  */
-export const ethAddress = helpers.withMessage('无效的 草天链地址.', v => ethAddressRegexp.test(v))
+export const ethAddress = helpers.withMessage('无效的 草田链地址.', v => ethAddressRegexp.test(v))
 
 /**
  * Password length validator.

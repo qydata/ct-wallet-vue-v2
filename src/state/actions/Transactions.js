@@ -17,7 +17,7 @@ import {
   RESET
 } from '../types/Transactions'
 import {reduxFetch} from './Api'
-import {hideLoader, hideModal, hideModals, hideModalsExceptDapp, showLoader, showModal} from './ui'
+import {hideLoader, hideModal, hideModals, hideModalsExceptDapp, showLoader} from './ui'
 import {updateAccountStakes} from './Wallet'
 
 export function fetchThetaTransactions() {
@@ -167,21 +167,21 @@ export function resetTransactionsState() {
   }
 }
 
-export function createTransactionRequest(transactionRequest, opts) {
+export function createTransactionRequest(modal, transactionRequest, opts) {
   return async (dispatch) => {
     try {
       const result = Wallet.controller.RPCApi.addTransactionRequest({
         transactionRequest: transactionRequest
       })
 
-      dispatch(showModal({
+      modal.show({
         type: ModalTypes.CONFIRM_TRANSACTION,
         props: {
           closeable: false,
           onReject: opts && opts.onReject,
           onAccept: opts && opts.onAccept
         }
-      }))
+      })
 
       return result
     } catch (error) {

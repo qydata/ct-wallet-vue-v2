@@ -1,53 +1,42 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container class="dapp_container">
     <Header/>
     <!--    <AccountPanel view="dapp"/>-->
-    <v-container>
-
-      <v-row align="center" no-gutters>
-        <v-col cols="auto">
-          <v-btn @click="toHomePage" class="mx-2" :icon="HomeFilled"/>
-        </v-col>
-        <v-col md="8">
-          <v-text-field
-            style="height: 60px;"
-            v-model="inputAddr"
-            type="text"
-            single-line variant="outlined"
-            clearable
-            placeholder="请输入 dApp 地址"
-          >
-          </v-text-field>
-        </v-col>
-        <v-col cols="auto">
-          <v-btn @click="isEnterLoad" class="mx-2" :icon="Position"/>
-          <v-btn @click="isRefreshLoad" :icon="RefreshRight"/>
-        </v-col>
-      </v-row>
-
-    </v-container>
-    <!-- 定义 iframe，指定 src 属性 -->
-    <v-row :loading="isLoading">
-
-      <v-col cols="12" v-if="isLoading" align="center">
-        <v-progress-circular
-          indeterminate
-        ></v-progress-circular>
+    <v-row align="center" no-gutters>
+      <v-col cols="auto">
+        <v-btn size="x-small" @click="toHomePage" class="mx-2" :icon="HomeFilled"/>
       </v-col>
-      <v-col cols="12">
-        <iframe
-          v-if="isIframeLoaded"
-          ref="myIframe"
-          @load="onIframeLoad"
-          sandbox="allow-scripts allow-same-origin"
-          @error="onIframeError"
-          :src="iframeSrc"
-          class="h-screen w-screen"
-          loading="lazy"
-          allowfullscreen
+      <v-col md="7">
+        <v-text-field
+          :hide-details="true"
+          v-model="inputAddr"
+          type="text"
+
+          single-line variant="tonal"
+          clearable
+          placeholder="请输入 dApp 地址"
         />
       </v-col>
+      <v-col cols="3">
+        <v-btn size="x-small" @click="isEnterLoad" class="mx-2" :icon="Position"/>
+        <v-btn size="x-small" @click="isRefreshLoad" :icon="RefreshRight"/>
+      </v-col>
     </v-row>
+    <!-- 定义 iframe，指定 src 属性 -->
+    <v-progress-linear v-if="isLoading" color="primary" indeterminate :height="5"></v-progress-linear>
+    <iframe
+      v-if="isIframeLoaded"
+      ref="myIframe"
+      @load="onIframeLoad"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      @error="onIframeError"
+      scrolling="no"
+      :src="iframeSrc"
+      style="width: 100%;overflow:hidden;"
+      class=" h-screen"
+      loading="lazy"
+      allowfullscreen
+    />
   </v-container>
 </template>
 
@@ -59,6 +48,7 @@ import {
   RefreshRight
 } from '@element-plus/icons-vue'
 import {mapState} from 'vuex'
+import Web3Bridge from '../services/Web3Bridge'
 
 export default {
   name: 'ViewDapp',
@@ -172,7 +162,7 @@ export default {
         clearInterval(this.interval)
         this.interval = null
       }, 2000)
-      this.getFavicon()
+      // this.getFavicon()
 
     },
     onIframeError() {
@@ -201,5 +191,10 @@ export default {
 </script>
 
 <style scoped>
+.dapp_container {
+  padding: 0px;
+  height: 100%;
+  overflow: scroll;
+}
 </style>
 

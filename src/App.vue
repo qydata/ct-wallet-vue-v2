@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main class="overflow-scroll h-screen">
       <v-drawer
         title="ToolWallet"
         v-model="drawer"
@@ -18,20 +18,18 @@
         />
         <DappCallRequestModal
           v-if="modal === 'dappCallRequestModal'"
-          :request="dappRequest"
+          :method="method"
           :fmodal="{hide: hideModal}"
           :connector="dappConnector"
         />
       </v-drawer>
-      <div class="md:hidden" v-if="active">
-        <v-bottom-navigation :active="true" :elevation="8" color="primary" grow v-model="selected">
-          <v-btn value="wallet" :to="item.path" v-for="(item,index ) in options" v-bind:key="index">
-            <v-icon>{{ item.icon }}</v-icon>
-            <span>{{ item.title }}</span>
-          </v-btn>
-        </v-bottom-navigation>
-      </div>
       <router-view :key="$route.fullPath"/>
+      <v-bottom-navigation :active="active" class="sticky bottom-0 md:hidden" color="primary" grow v-model="selected">
+        <v-btn value="wallet" :to="item.path" v-for="(item,index ) in options" v-bind:key="index">
+          <v-icon>{{ item.icon }}</v-icon>
+          <span>{{ item.title }}</span>
+        </v-btn>
+      </v-bottom-navigation>
     </v-main>
 
   </v-app>
@@ -102,7 +100,7 @@ export default {
       drawer: false,
       direction: 'btt',
       dappConnector: null,
-      dappRequest: null
+      method: null
     }
   },
   computed: {
@@ -117,7 +115,8 @@ export default {
           modal: {
             show: that.showModal,
             hide: that.hideModal
-          }
+          },
+          address: newVal
         })
       }
     },
@@ -164,9 +163,6 @@ export default {
     // 交易
     WalletConnect.on(WCEvent.RequestAccount, this.handleRequestAccount)
 
-    // 父窗口接收来自子 iframe 的信息
-    window.addEventListener('message', (event) => this.handleEvent(event))
-
     const that = this
     if (this.address) {
       // this.initializeWallet(this.address)
@@ -175,47 +171,29 @@ export default {
         modal: {
           show: that.showModal,
           hide: that.hideModal
-        }
+        },
+        address: this.address
       })
     }
   },
   // 返回清理函数
-  unmounted() {
-    WalletConnect.removeListener(WCEvent.RequestAccount, this.handleRequestAccount)
-    window.removeEventListener('message', this.handleEvent)
-  },
   methods: {
-    showErrorMessage() {
-      this.$message.error('这是一个错误信息!')
-    },
-    async handleEvent(event) {
-      if (event.data && event.data.type === 'display_uri') {
-        console.log('Event triggered', event.data)
-        const display_uri = event.data.data
-        console.log(display_uri)
-        this.displayUri = display_uri
-        // this.handleRequestAccount()
-        this.drawer = true
-        await this.$store.dispatch('web3Connections/walletConnectPair', {
-          uri: display_uri
-        })
-      }
-    },
-    showModal(name, {
-      request,
-      connector
-    }) {
-      console.log('request:', request)
 
-      this.dappRequest = request
-      this.dappConnector = connector
-      // this.modal = name
+    showModal({
+      type,
+      props
+    }) {
+      console.log('request:', type,
+        props)
+
+      this.method = type
+      this.dappConnector = props
       this.modal = 'dappCallRequestModal'
       this.drawer = true
     },
 
-    hideModal(name) {
-      console.log('hide name', name)
+    hideModal() {
+      console.log('hide name')
       this.modal = ''
       this.drawer = false
     },

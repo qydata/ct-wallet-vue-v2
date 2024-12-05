@@ -10,22 +10,10 @@
     <v-card :title="requestName">
 
       <v-card-item>
-        <v-row v-if="this.connector && this.request">
-          <v-col v-if="peerMeta.icons.length" cols="2">
-            <v-avatar
-              rounded="0"
-            >
-              <v-img
-                :src="peerMeta.icons[0]"
-                :lazy="true"
-                loading="lazy"
-                :alt="peerMeta.name + '-icon'"
-              />
-            </v-avatar>
-          </v-col>
-          <v-col cols="10">
-            <wallet-connect-request-details
-              :request="request"
+        <v-row v-if="this.connector && this.method">
+          <v-col cols="12">
+            <WalletConnectRequestDetails
+              :method="method"
               :connector="connector"
               @getRequestedWalletConnectNetwork="
                   setRequestedWalletConnectNetwork
@@ -81,7 +69,6 @@
 
 <script>
 import {getPrivateKey} from '../../utils/storage'
-import WalletConnectRequestDetails from './WalletConnectRequestDetails.vue'
 import * as storage from '@/utils/storage'
 import {mapState} from 'vuex'
 
@@ -96,6 +83,7 @@ const walletConnectRequests = {
 }
 import {required as _required, helpers} from '@vuelidate/validators'
 import {LockOpenIcon, EyeIcon, EyeOffIcon} from '@heroicons/vue/outline'
+import WalletConnectRequestDetails from './WalletConnectRequestDetails.vue'
 
 export default {
   name: 'DappCallRequestModal',
@@ -104,7 +92,7 @@ export default {
   },
   props: {
     fmodal: Object,
-    request: Object,
+    method: String,
     connector: Object
   },
 
@@ -153,26 +141,9 @@ export default {
     },
 
     requestName() {
-      // Format Wallet Connect V2 Request Name
-      if (this.request.method === 'session_proposal') return walletConnectRequests[this.request.method]
-      const method = this.request.params.request.method
+      const method = this.method
+      console.log('method', method)
       return walletConnectRequests[method]
-    },
-    peerMeta() {
-      if (!this.request) return
-      if (this.request.method === 'session_proposal') {
-        // Wallet Connect V2 Session Proposal Peer Meta
-        return this.request.params.proposer.metadata
-      }
-      else if (this.request.method === 'session_request') {
-        // Wallet Connect V2 Session Request Peer Meta
-        const {sessions} = this.$store.state.web3Connections.walletConnect
-        return sessions[this.request.topic].peer.metadata
-      }
-      return {
-        icons: [],
-        name: 'Peer Data Not Found'
-      }
     }
   },
   async mounted() {
@@ -189,7 +160,7 @@ export default {
       console.log('cancel')
     },
     closeModal() {
-      this.fmodal.hide('dappCallRequestModal')
+      this.fmodal.hide()
     },
     onModalOpen(event) {
       const {request, connector, wallet} = event.params
@@ -249,28 +220,13 @@ export default {
           //   network: this.requestedWalletConnectNetwork
           // })
         }
-
-        if (this.request.method === 'session_request') {
-          await this.$store.dispatch(
-            'web3Connections/handleWCSessionRequest',
-            {
-              approved: userApproved,
-              request: this.request,
-              wallet: {privateKey}
-            }
-          )
-        }
-        else if (this.request.method === 'session_proposal') {
-          await this.handleWCSessionProposal(userApproved)
-        }
-        else {
-          // Wallet Connect V1 Request Handler
-          await this.$store.dispatch('web3Connections/handleWCCallRequest', {
-            request: this.request,
-            approved: userApproved,
-            wallet: {privateKey}
-          })
-        }
+        // Wallet Connect V1 Request Handler
+        await this.$store.dispatch('web3Connections/handleWCCallRequest', {
+          method: this.method,
+          params: this.connector,
+          approved: userApproved,
+          wallet: {privateKey}
+        })
 
         // Display toast confirming user approval/rejection
         if (userApproved) this.$message.success(`${this.requestName} 请求已获得批准。`)
@@ -283,63 +239,6 @@ export default {
         this.displayError(err)
       } finally {
         this.closeModal()
-      }
-    },
-    handleWCSessionProposal(userApproved) {
-      if (!userApproved) {
-        this.rejectWCRequest('Request was rejected.')
-        this.connector.disconnect({
-          // 传入当前会话的 topic
-          topic: this.request.topic,
-          reason: {
-            code: 6000,
-            message: 'User disconnected'
-          }
-        })
-      }
-      else {
-        if (!this.address) throw new Error('You must select a wallet to start a session.')
-        this.$store.dispatch('web3Connections/handleWCSessionProposal', {
-          approved: userApproved,
-          wallet: this.address,
-          proposal: this.request
-        })
-      }
-    },
-    rejectWCRequest(message) {
-      const response = {
-        id: this.request.id,
-        reason: {
-          // 错误代码，4001 通常表示用户拒绝
-          code: 4001,
-          message: message
-        }
-      }
-      this.connector.rejectSession(response)
-      this.closeModal()
-    },
-    async handleWBRequest(userApproved) {
-      try {
-        await this.$store.dispatch('web3Connections/handleWBRequest', {
-          approved: userApproved,
-          request: this.request,
-          wallet: this.wallet
-        })
-
-        // format request success toast details
-        let reqName = this.requestName
-        reqName = reqName[0].toUpperCase() + reqName.slice(1)
-
-        // Display toast confirming user approval/rejection
-        if (userApproved) this.$message.success(`${reqName} request has been approved.`)
-        else this.$message.error(
-          `${reqName} request has been rejected by user.`,
-          'Rejected'
-        )
-
-        this.closeModal()
-      } catch (err) {
-        this.displayError(err)
       }
     }
   }

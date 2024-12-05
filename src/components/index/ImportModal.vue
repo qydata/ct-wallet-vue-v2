@@ -34,7 +34,7 @@
             >
               <v-text-field
                 v-model="privateKey"
-                :rules="walletNameRules"
+                :rules="privateKeyRules"
                 autocomplete="off"
                 :prepend-icon="KeyIcon"
                 label="你的私钥*"
@@ -118,7 +118,16 @@ export default {
   data() {
     return {
       privateKey: '',
-
+      privateKeyRules: [
+        value => {
+          if (value) return true
+          return '需要一个值。'
+        },
+        value => {
+          if (privateKeyRegexp.test(value)) return true
+          return '无效的私钥。'
+        }
+      ],
       // 使用本地副本控制对话框的显示状态
       localVisible: this.visible,
       password: '',
@@ -189,9 +198,9 @@ export default {
       this.v$.$reset()
     },
     async restore() {
-      if (!await this.v$.$validate()) return
+      const {valid, errors} = await this.$refs.myForm.validate()
+      if (!valid) return
       if (!await this.checkPassword()) return
-
 
       let publicKey = ethUtil.privateToPublic(new Buffer(ethUtil.stripHexPrefix(this.privateKey), 'hex'))
       const address = ethUtil.addHexPrefix(ethUtil.publicToAddress(publicKey).toString('hex'))

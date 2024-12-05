@@ -29,8 +29,7 @@ class InfuraEthereum extends BlockchainInterface {
    * @param {String} network name of ETH network to connect to. default: 'homestead'
    * @returns InfuraProvider instance
    */
-  getProvider(network = 'ctchain') {
-    this.setNetwork(network)
+  getProvider() {
     return new ethers.providers.JsonRpcProvider('https://ctblock.cn/blockChain', {
       chainId: 27
     })
@@ -51,8 +50,8 @@ class InfuraEthereum extends BlockchainInterface {
    * @param {String} network to use as provider
    * @returns {Wallet} instance of Signer
    */
-  getSigner({privateKey, network = 'homestead'}) {
-    const provider = this.getProvider(network)
+  getSigner({privateKey}) {
+    const provider = this.getProvider()
     const signer = new ethers.Wallet(privateKey, provider)
     return signer
   }

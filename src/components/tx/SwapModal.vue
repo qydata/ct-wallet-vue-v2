@@ -36,7 +36,7 @@
         <div>
           <div class="leading-7 text-caption mb-65">
             <strong>出售</strong>
-            <p class="mb-25">在草天链网络上以 CNY 的价格出售 CT。</p>
+            <p class="mb-25">在草田链网络上以 CNY 的价格出售 CT。</p>
             <img src="/assets/sell.svg" alt="以人民币的价格出售 CT" class="account-panel__swap-img">
           </div>
           <button class="w-full button--outline-success button" @click="openSell">

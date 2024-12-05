@@ -5,8 +5,6 @@
 import bottomNavigationVue from 'bottom-navigation-vue'
 import 'bottom-navigation-vue/dist/style.css'
 import 'font-awesome/css/font-awesome.css'
-// 统一导入el-icon图标
-import ElementPlus from 'element-plus'
 import './tailwind.css'
 // main.ts
 // if you just want to import css
@@ -44,7 +42,6 @@ const init = async () => {
     // 使用Vuetify
     .use(vuetify)
     .use(bottomNavigationVue)
-    .use(ElementPlus)
     .mixin(titleMixin)
     .mixin({
       data() {
@@ -87,8 +84,6 @@ const init = async () => {
     }
   })
 
-  window.Web3Bridge = new Web3Bridge(store)
-  window.Web3Bridge.init()
   if (store.state.address) store.dispatch('refresh')
   setInterval(() => store.dispatch('backgroundRefresh', newApp.$router), WALLET_REFRESH_INTERVAL)
 }
