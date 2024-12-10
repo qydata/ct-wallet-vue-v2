@@ -2,8 +2,6 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import bottomNavigationVue from 'bottom-navigation-vue'
-import 'bottom-navigation-vue/dist/style.css'
 import 'font-awesome/css/font-awesome.css'
 import './tailwind.css'
 // main.ts
@@ -19,7 +17,6 @@ import vuetify from './plugins/vuetify'
 // 如果使用自定义字体
 import {loadFonts} from './plugins/webfontloader'
 import router from './router'
-import Web3Bridge from './services/Web3Bridge'
 import Store from './store'
 
 import './utils'
@@ -32,16 +29,9 @@ const init = async () => {
 
   const app = createApp(App, {store}).use(router)
     .use(store)
-    // .use(VModal, {
-    //   dialog: true,
-    //   dynamicDefaults: {
-    //     draggable: true
-    //   }
-    // })
     .use(VueCookies)
     // 使用Vuetify
     .use(vuetify)
-    .use(bottomNavigationVue)
     .mixin(titleMixin)
     .mixin({
       data() {
@@ -50,7 +40,6 @@ const init = async () => {
         }
       }
     })
-
 
   // 手动将 store 挂载到 globalProperties
   app.config.globalProperties.$store = store

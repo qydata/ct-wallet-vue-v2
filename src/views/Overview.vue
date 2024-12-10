@@ -34,9 +34,6 @@
 /*global process*/
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
-import NewsPromo from '@/components/NewsPromo'
-import Overviews from '@/components/Overviews'
-import RecentBlocks from '@/components/RecentBlocks'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {mapState} from 'vuex'

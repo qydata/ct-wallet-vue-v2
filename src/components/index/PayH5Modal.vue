@@ -5,48 +5,38 @@
             max-width="36rem"
             v-model="localVisible">
 
-    <v-card title="扫码支付">
+    <v-card title="H5支付">
       <template v-slot:subtitle>
-        订单号: {{ order.order_id }}
+        订单号: {{ orderStorage.order_id }}
       </template>
       <v-card-text>
         <v-list>
-          <v-list-item>
-            <v-row>
-              <v-col cols="12" md="6">
-                <VueQrcode
-                  :value="order.code_url"
-                  :options="{
-                    margin: 1,
-                    width: 200
-                  }"
-                />
-              </v-col>
+          <v-list-item align="center">
 
-              <v-col cols="12" md="6">
-                <span class="address">{{ address }}</span>
-              </v-col>
+            <v-progress-circular
+              :size="70"
+              :width="7"
+              model-value="100"
+              color="purple"
+              :indeterminate="!isPay"
+            ></v-progress-circular>
 
-            </v-row>
+          </v-list-item>
+          <v-list-item title="手续费接收地址:" :subtitle="address">
           </v-list-item>
           <v-divider></v-divider>
         </v-list>
 
         <v-list-item>
-          <v-row>
-            <v-col cols="6">
-              <v-btn
-                rounded="xl" block size="x-large"
-                variant="tonal"
-                @click="cancel"
-              >
-                取消
-              </v-btn>
-            </v-col>
-            <v-col cols="6">
-              <v-btn rounded="xl" block size="x-large" @click="checkPayStatus">已支付</v-btn>
-            </v-col>
-          </v-row>
+          <v-btn
+            rounded="xl" block size="x-large"
+            variant="tonal"
+            @click="cancel"
+            v-if="!isPay"
+          >
+            取消
+          </v-btn>
+          <v-btn v-else rounded="xl" block size="x-large" @click="cancel">支付成功</v-btn>
         </v-list-item>
       </v-card-text>
     </v-card>
@@ -55,22 +45,21 @@
 
 <script>
 import {checkPay} from '@/utils/api'
-import VueQrcode from '@chenfengyuan/vue-qrcode'
 import {mapState} from 'vuex'
 
 export default {
-  name: 'PayModal',
+  name: 'PayH5Modal',
   data() {
     return {
       displayTooltip: false,
       // 使用本地副本控制对话框的显示状态
       localVisible: this.visible,
-      isMobile: false
+      isMobile: false,
+      isPay: false,
+      orderStorage: this.order
     }
   },
-  components: {
-    VueQrcode
-  },
+  components: {},
   props: {
     close: Function,
     visible: Boolean,
@@ -79,8 +68,30 @@ export default {
   async mounted() {
     // 检测是否为移动端
     this.isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+
+    if (this.orderStorage.order_id) {
+      window.localStorage.setItem('order', JSON.stringify(this.orderStorage))
+    }
+
+    let orderStorage = window.localStorage.getItem('order')
+    if (orderStorage) {
+      this.orderStorage = JSON.parse(orderStorage)
+    }
+
+    window.setTimeout(() => {
+      window.open(this.orderStorage.code_url)
+    }, 1000)
+
+    this.interId = window.setInterval(() => {
+      this.checkPayStatus()
+    }, 1000)
   },
   watch: {
+    isPay(newValue) {
+      if (newValue) {
+        window.clearInterval(this.interId)
+      }
+    },
     visible(newValue) {
       // 当父组件的 prop 更新时，更新本地副本
       this.localVisible = newValue
@@ -95,20 +106,17 @@ export default {
   },
   methods: {
     checkPayStatus() {
-      console.log(this.order.order_id)
-      checkPay({order_id: this.order.order_id})
+      console.log(this.orderStorage.order_id)
+      checkPay({order_id: this.orderStorage.order_id})
         .then((res) => {
           console.log(res)
           if (res.code !== 200) {
-            this.$message.error(res.msg)
+            // this.$message.error(res.msg)
           }
           else {
             console.log(res)
-            this.payCodeDialog = false
-            // this.getBalance(this.ruleForm.toaddress);
             this.$message.success('草田分到账可能存在延迟,请稍后查看账户.')
-            this.close()
-
+            this.isPay = true
             //把token放在浏览器上
             // this.$router.push("/home");
           }
@@ -119,6 +127,7 @@ export default {
     },
     cancel() {
       this.displayTooltip = false
+      window.clearInterval(this.interId)
       this.close()
     },
     copy() {

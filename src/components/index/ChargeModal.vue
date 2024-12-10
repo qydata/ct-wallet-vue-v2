@@ -113,28 +113,18 @@
 
 <script>
 import Amount from '@/components/Amount.vue'
-import Tooltip from '@/components/Tooltip.vue'
 import {putChangeReq, queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
 import {ShieldExclamationIcon} from '@heroicons/vue/outline'
-import useVuelidate from '@vuelidate/core'
-import {required as _required, helpers} from '@vuelidate/validators'
 import {mapState} from 'vuex'
-import Modal from '../Modal'
 import {InformationCircleIcon} from '@heroicons/vue/solid'
 import moment from 'moment'
-import {ArrowDownIcon, ArrowRightIcon} from '@heroicons/vue/outline'
+import {ArrowRightIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'AuthBindModal',
   components: {
-    Tooltip,
-    Amount,
-    Modal,
-    ShieldExclamationIcon,
-    InformationCircleIcon,
-    ArrowDownIcon,
-    ArrowRightIcon
+    Amount
   },
   props: {
     afterCharge: Function,
@@ -172,7 +162,8 @@ export default {
       canCopy: !!navigator.clipboard,
 
       // 使用本地副本控制对话框的显示状态
-      localVisible: this.visible
+      localVisible: this.visible,
+      isMobile: false
     }
   },
 
@@ -196,6 +187,9 @@ export default {
     }
   },
   async mounted() {
+    // 检测是否为移动端
+    this.isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+
     this.toaddress = await storage.getAddress(storage.getHighestWalletVersion())
   },
   methods: {
@@ -230,7 +224,10 @@ export default {
 
           const data = {
             charge_amount: this.tovalue,
-            address: this.toaddress
+            address: this.toaddress,
+            // TODO 这里需要等待微信测试通过后才可以测试
+            // pc, h5
+            type: this.isMobile ? 'h5' : 'pc'
           }
           putChangeReq(data).then((res) => {
             if (res.code !== 200) {

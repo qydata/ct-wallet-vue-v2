@@ -1,5 +1,6 @@
 <template>
   <v-app>
+
     <v-main class="overflow-scroll h-screen">
       <v-drawer
         title="ToolWallet"
@@ -32,23 +33,27 @@
       </v-bottom-navigation>
     </v-main>
 
+    <!-- v-alert 用于显示警告消息 -->
+    <div v-if="showAlert" style="z-index: 99999999999999999"
+         class="fixed top-10 right-10 ">
+      <v-alert :type="alertType" dismissible>
+        {{ alertMessage }}
+      </v-alert>
+    </div>
   </v-app>
 </template>
 
 <script>
-import {useDark, useToggle} from '@vueuse/core'
 import WCRequestAccountModal from './components/modal/WCRequestAccountModal.vue'
 import {mapState} from 'vuex'
 import DappCallRequestModal from './components/web3Connect/DappCallRequest.vue'
 
 import WalletConnect, {WCEvent} from './store/walletConnect'
-// import {CurvedBottomNavigation} from 'bottom-navigation-vue'
 // 在App.vue中
 export default {
   components: {
     DappCallRequestModal,
     WCRequestAccountModal
-    // CurvedBottomNavigation
   },
   title() {
     return '草田链'
@@ -156,14 +161,12 @@ export default {
     }
   },
   mounted() {
-    useToggle(useDark())
-    // 强制应用黑夜模式
-    this.setDarkMode()
+
+    let that = this
 
     // 交易
     WalletConnect.on(WCEvent.RequestAccount, this.handleRequestAccount)
 
-    const that = this
     if (this.address) {
       // this.initializeWallet(this.address)
       const dispatch = this.$store.dispatch
@@ -178,7 +181,6 @@ export default {
   },
   // 返回清理函数
   methods: {
-
     showModal({
       type,
       props
@@ -220,16 +222,6 @@ export default {
     handleRequestAccount() {
       this.modal = WCEvent.RequestAccount
       this.drawer = true
-    },
-    setDarkMode() {
-      document.body.classList.add('dark-mode')
-    },
-    toggleTheme() {
-      document.body.classList.toggle('dark-mode')
-    },
-    toLink(item) {
-      this.selected = item.id
-      this.$router.push(item.path)
     }
   }
 }

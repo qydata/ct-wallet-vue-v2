@@ -32,7 +32,14 @@
                        :loading="chargeCTLoading"
                        @click="()=>{
                          chargeCTLoading = true;
-                         openCharge()
+                         try {
+                            openCharge()
+                         } catch (e) {
+                           console.log(e)
+                         }finally {
+                           chargeCTLoading = false;
+                         }
+
                        }">
                   充值草田分
                 </v-btn>

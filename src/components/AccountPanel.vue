@@ -1,14 +1,8 @@
 <template>
   <v-container class="d-flex align-center justify-center">
 
-
-  <!-- v-alert 用于显示警告消息 -->
-    <v-alert v-if="showAlert" :type="alertType" dismissible>
-      {{ alertMessage }}
-    </v-alert>
     <v-row justify="center">
       <v-col align-self="center" cols="12" md="8" lg="6">
-
         <v-card
           variant="elevated">
           <template v-slot:prepend>
@@ -203,6 +197,7 @@
               <ChargeModal :close="openExchange" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
                            :label="'accountPanel'"/>
               <PayModal :close="closePay" :order="order" v-if="modal === 'pay'" :visible="true"/>
+              <PayH5Modal :close="closePay" :order="order" v-if="modal === 'h5pay'" :visible="true"/>
 
               <v-dialog
                 v-model="dialogVisible"
@@ -267,8 +262,10 @@ import * as storage from '@/utils/storage'
 import {mapState} from 'vuex'
 import {getWalletName, setWalletName} from '../utils/storage'
 import Amount from './Amount.vue'
+import AuthBindModal from './index/AuthBindModal.vue'
 import ChargeModal from './index/ChargeModal'
 import PayModal from './index/PayModal'
+import PayH5Modal from './index/PayH5Modal'
 import BuyModal from './tx/BuyModal'
 import ExchangeModal from './tx/ExchangeModal'
 import ReceiveModal from './tx/ReceiveModal'
@@ -290,9 +287,11 @@ export default {
     SellModal,
     BuyModal,
     SendModal,
+    AuthBindModal,
     SwapModal,
     ExchangeModal,
     ChargeModal,
+    PayH5Modal,
     PayModal
   },
   computed: mapState(['address', 'balance', 'xctBalance', 'cnyBalance', 'showAlert', 'alertMessage', 'alertType']),
@@ -347,7 +346,8 @@ export default {
         }],
       tokenBalances: [],
       dialogVisible: false,
-      isReceiveLoading: false
+      isReceiveLoading: false,
+      isMobile: false
     }
   },
   watch: {
@@ -362,7 +362,12 @@ export default {
   },
   async mounted() {
     this.walletName = await getWalletName()
-    this.isInIframe()
+    // 检测是否为移动端
+    this.isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+
+    if (this.$route.query.modal) {
+      this.modal = this.$route.query.modal
+    }
     this.getTokenBalance()
   },
   methods: {
@@ -390,24 +395,19 @@ export default {
         }
       })
     },
-    isInIframe() {
-      if (window.self !== window.top) {
-        console.log('这个网页是在 iframe 中加载的。')
-        return true
-      }
-      else {
-        console.log('这个网页不是在 iframe 中加载的。')
-        return false
-      }
-    },
-
     closeCharge() {
       this.modal = ''
     },
     openPay(order) {
+
       console.log(order)
       this.order = order
-      this.modal = 'pay'
+      if (this.isMobile) {
+        this.modal = 'h5pay'
+      }
+      else {
+        this.modal = 'pay'
+      }
     },
     closePay() {
       this.modal = ''

@@ -204,13 +204,9 @@
               </v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
-              <v-row>
-                <v-col cols="auto">
                   <v-btn rounded="xl" block size="x-large"
                          variant="tonal" @click="cancel">关闭
                   </v-btn>
-                </v-col>
-              </v-row>
             </v-list-item>
           </v-list>
         </v-card-text>
