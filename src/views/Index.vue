@@ -1,54 +1,50 @@
 <template>
-  <div
+  <v-container
     class="bg-black bg-center bg-no-repeat bg-cover"
     :style="!hasWallet ? 'background-image: url(/assets/map.svg);' : ''"
   >
     <div class="flex items-center justify-center min-h-screen">
-      <v-container>
-        <div class="mx-auto max-w-800">
-          <div class="text-white md:px-6 mb-11 text-caption" v-if="!hasWallet">
-            <v-card-item title="欢迎到草田链" subtitle="创建或者导入一个草田链钱包去开始">
-              <template v-slot:prepend>
-                <Logo/>
-              </template>
-            </v-card-item>
-          </div>
-
-          <v-row
-            v-if="!hasWallet"
-          >
-            <v-col cols="12" md="6">
-              <v-card title="创建" subtitle="创建一个新的钱包">
-                <template v-slot:append>
-                  <v-btn size="large" @click="openCreateModal">
-                    创建钱包
-                  </v-btn>
-                </template>
-                <CreateModal :afterCreate="gotoOverview" :close="reset" :visible="true" v-if="modal === 'create'"/>
-              </v-card>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-card title="导入" subtitle="导入一个已存在的钱包">
-                <template v-slot:append>
-                  <v-btn size="large" @click="openRestoreModal">导入钱包</v-btn>
-                </template>
-                <RestoreModal :afterRestore="gotoOverview" :close="reset" :visible="true" v-if="modal === 'restore'"/>
-              </v-card>
-            </v-col>
-          </v-row>
-          <div>
-            <UnlockModal
-              :afterUnlock="gotoOverview"
-              :close="resetAuto"
-              :switchToForgetModal="openForgetModal"
-              :visible="true" v-if="modal === 'unlock'"
-            />
-            <ForgetModal :afterForget="reset" :close="resetAuto" :visible="true" v-if="modal === 'forget'"/>
-          </div>
+      <div class=" max-w-800">
+        <div class="text-white md:px-6 mb-11 text-caption" v-if="!hasWallet">
+          <v-card-item title="欢迎到草田链" subtitle="创建或者导入一个草田链钱包去开始">
+            <template v-slot:prepend>
+              <Logo/>
+            </template>
+          </v-card-item>
         </div>
-      </v-container>
+
+        <v-row
+          v-if="!hasWallet"
+        >
+          <v-col cols="12" md="6">
+            <v-card title="创建" subtitle="创建一个新的钱包">
+              <template v-slot:append>
+                <v-btn size="large" @click="openCreateModal">
+                  创建钱包
+                </v-btn>
+              </template>
+            </v-card>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-card title="导入" subtitle="导入一个已存在的钱包">
+              <template v-slot:append>
+                <v-btn size="large" @click="openRestoreModal">导入钱包</v-btn>
+              </template>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
     </div>
-  </div>
+    <UnlockModal
+      :afterUnlock="gotoOverview"
+      :close="resetAuto"
+      :switchToForgetModal="openForgetModal"
+      :visible="true" v-if="modal === 'unlock'"
+    />
+    <ForgetModal :afterForget="reset" :close="resetAuto" :visible="true" v-if="modal === 'forget'"/>
+    <RestoreModal :afterRestore="gotoOverview" :close="reset" :visible="true" v-if="modal === 'restore'"/>
+    <CreateModal :afterCreate="gotoOverview" :close="reset" :visible="true" v-if="modal === 'create'"/>
+  </v-container>
 </template>
 
 <script>

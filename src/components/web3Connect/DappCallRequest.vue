@@ -3,6 +3,7 @@
     persistent
     :close-on-back="false"
     :close="cancel"
+    width="99%"
     max-width="36rem"
     v-model="success"
   >

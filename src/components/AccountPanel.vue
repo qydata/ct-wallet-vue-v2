@@ -1,257 +1,250 @@
 <template>
-  <v-container class="d-flex align-center justify-center">
+  <v-container class=" d-flex align-center justify-center">
 
-    <v-row justify="center">
-      <v-col align-self="center" cols="12" md="8" lg="6">
-        <v-card
-          variant="elevated">
-          <template v-slot:prepend>
-            <v-avatar
-              rounded="xl">
-              <v-img
-                class="bg-white"
-                src="/assets/address-icon.svg"/>
-            </v-avatar>
+    <v-card
+      variant="elevated">
+      <template v-slot:prepend>
+        <v-avatar
+          rounded="xl">
+          <v-img
+            class="bg-white"
+            src="/assets/address-icon.svg"/>
+        </v-avatar>
 
-          </template>
-          <template v-slot:title>
-            地址详情
-            <v-chip variant="elevated" @click="dialogVisible = true" rounded="xl" size="small" color="primary">
-              {{ walletName }}
-              <template v-slot:append>
-                <v-icon size="small" :icon="EditPen"/>
-              </template>
-            </v-chip>
-          </template>
-          <template v-slot:subtitle>
-            {{ address }}
-          </template>
+      </template>
+      <template v-slot:title>
+        地址详情
+        <v-chip variant="elevated" @click="dialogVisible = true" rounded="xl" size="small" color="primary">
+          {{ walletName }}
           <template v-slot:append>
-            <v-btn
-              :icon="ClipboardCopyIcon"
-              variant="text"
-              @click="copyToClipboard(address)">
-            </v-btn>
+            <v-icon size="small" :icon="EditPen"/>
           </template>
+        </v-chip>
+      </template>
+      <template v-slot:subtitle>
+        {{ address }}
+      </template>
+      <template v-slot:append>
+        <v-btn
+          :icon="ClipboardCopyIcon"
+          variant="text"
+          @click="copyToClipboard(address)">
+        </v-btn>
+      </template>
 
-          <v-tabs
-            v-model="tab"
-            bg-color="transparent"
-            color="primary"
-            grow
-          >
-            <v-tab
-              v-for="item in items"
-              :key="item"
-              :text="item"
-              :value="item"
-            >{{ item }}
-            </v-tab>
-          </v-tabs>
-          <!-- v-tab-item 用于显示对应标签的内容 -->
-          <v-tab-item v-if="tab === items[0]">
-            <v-container>
-              <v-row>
-                <v-col>
-                  <v-list>
-                  </v-list>
-                </v-col>
-              </v-row>
-              <v-row>
+      <v-tabs
+        v-model="tab"
+        bg-color="transparent"
+        color="primary"
+        grow
+      >
+        <v-tab
+          v-for="item in items"
+          :key="item"
+          :text="item"
+          :value="item"
+        >{{ item }}
+        </v-tab>
+      </v-tabs>
+      <!-- v-tab-item 用于显示对应标签的内容 -->
+      <v-tab-item v-if="tab === items[0]">
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-list>
+              </v-list>
+            </v-col>
+          </v-row>
+          <v-row>
 
-                <v-col cols="2" md="4"></v-col>
-                <v-col>
-                  <v-card-item>
-                    <v-tooltip location="top" text="账户余额">
-                      <template v-slot:activator="{ isActive,props }">
-                        <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
-                      </template>
-                    </v-tooltip>
-                    <v-chip variant="text" rounded="xl" size="x-large">
-                      余额:
-                      <template v-slot:append>
-                        <Amount :value="xctBalance" :decimalPlaces="2" currency="rmb" sub/>
-                      </template>
-                    </v-chip>
+            <v-col cols="2" md="4"></v-col>
+            <v-col>
+              <v-card-item>
+                <v-tooltip location="top" text="账户余额">
+                  <template v-slot:activator="{ isActive,props }">
+                    <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
+                  </template>
+                </v-tooltip>
+                <v-chip variant="text" rounded="xl" size="x-large">
+                  余额:
+                  <template v-slot:append>
+                    <Amount :value="xctBalance" :decimalPlaces="2" currency="rmb" sub/>
+                  </template>
+                </v-chip>
 
-                  </v-card-item>
-                  <v-card-item>
-                    <v-tooltip location="top" text="草田分余额">
-                      <template v-slot:activator="{ isActive,props }">
-                        <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
-                      </template>
-                    </v-tooltip>
-                    <v-chip variant="text" rounded="xl" size="large">
-                      手续费:
-                      <template v-slot:append>
-                        <Amount :value="balance" :decimalPlaces="6" currency="草田分" sub/>
-                      </template>
-                    </v-chip>
-                  </v-card-item>
-                </v-col>
+              </v-card-item>
+              <v-card-item>
+                <v-tooltip location="top" text="草田分余额">
+                  <template v-slot:activator="{ isActive,props }">
+                    <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
+                  </template>
+                </v-tooltip>
+                <v-chip variant="text" rounded="xl" size="large">
+                  手续费:
+                  <template v-slot:append>
+                    <Amount :value="balance" :decimalPlaces="6" currency="草田分" sub/>
+                  </template>
+                </v-chip>
+              </v-card-item>
+            </v-col>
 
-              </v-row>
-              <v-list-item></v-list-item>
-              <v-card-actions>
-                <v-row justify="center" align="center">
+          </v-row>
+          <v-list-item></v-list-item>
+          <v-card-actions>
+            <v-row justify="center" align="center">
 
-                  <v-col cols="auto" align="center">
-                    <v-btn :icon="ArrowUpIcon" size="x-large" variant="elevated" @click="openSend"></v-btn>
-                    <div class="title">发送</div>
-                  </v-col>
+              <v-col cols="auto" align="center">
+                <v-btn :icon="ArrowUpIcon" size="x-large" variant="elevated" @click="openSend"></v-btn>
+                <div class="title">发送</div>
+              </v-col>
 
-                  <v-col cols="auto" align="center">
-                    <v-btn :icon="ArrowDownIcon" size="x-large" variant="elevated" :loading="isReceiveLoading"
-                           @click="openReceive"></v-btn>
-                    <div class="title">接收</div>
-                  </v-col>
+              <v-col cols="auto" align="center">
+                <v-btn :icon="ArrowDownIcon" size="x-large" variant="elevated" :loading="isReceiveLoading"
+                       @click="openReceive"></v-btn>
+                <div class="title">接收</div>
+              </v-col>
 
-                  <v-col cols="auto" align="center">
-                    <v-btn :icon="Connection" size="x-large" variant="elevated" @click="openExchange"></v-btn>
-                    <div class="title">交易</div>
-                  </v-col>
-                </v-row>
-              </v-card-actions>
-              <v-list-item></v-list-item>
-              <v-divider/>
-              <v-list-item></v-list-item>
-              <v-list-item></v-list-item>
-            </v-container>
-          </v-tab-item>
-          <v-tab-item v-if="tab === items[1]">
-            <v-row>
-              <v-col>
-                <v-list>
-                </v-list>
+              <v-col cols="auto" align="center">
+                <v-btn :icon="Connection" size="x-large" variant="elevated" @click="openExchange"></v-btn>
+                <div class="title">交易</div>
               </v-col>
             </v-row>
-            <v-card-item>
-              <v-tooltip location="right" text="账户中的所有通证">
-                <template v-slot:activator="{ isActive,props }">
-                  <h2>
-                    <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
-                    通证
-                  </h2>
+          </v-card-actions>
+          <v-list-item></v-list-item>
+          <v-divider/>
+          <v-list-item></v-list-item>
+          <v-list-item></v-list-item>
+        </v-container>
+      </v-tab-item>
+      <v-tab-item v-if="tab === items[1]">
+        <v-row>
+          <v-col>
+            <v-list>
+            </v-list>
+          </v-col>
+        </v-row>
+        <v-card-item>
+          <v-tooltip location="right" text="账户中的所有通证">
+            <template v-slot:activator="{ isActive,props }">
+              <h2>
+                <v-icon size="x-small" :icon="InfoFilled" v-bind="props"></v-icon>
+                通证
+              </h2>
+            </template>
+
+          </v-tooltip>
+
+          <v-divider/>
+        </v-card-item>
+        <v-container>
+          <v-row class="">
+            <v-col cols="6" md="4" v-for="(token,index) in tokenBalances" :key="index">
+              <v-card color="primary" @click="dropDown(token)">
+
+                <template v-slot:prepend>
+                  <v-icon :icon="Menu"></v-icon>
                 </template>
+                <template v-slot:title>
+                  {{ token.token.name }}
+                </template>
+                <template v-slot:subtitle>
+                  {{ token.token.type }}
+                </template>
+                <template v-slot:append>
+                  {{
+                    token.token.decimals == null ? token.value :
+                      formatUnits(token.value, token.token.decimals)
+                  }}
+                </template>
+                <v-card-item-subtitle v-if="token.token_id != null">
+                  #{{ token.token_id.slice(0, 20) }}...
+                </v-card-item-subtitle>
+                <v-card-item-subtitle>
+                </v-card-item-subtitle>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-tab-item>
 
-              </v-tooltip>
+      <div class="account-panel">
 
-              <v-divider/>
-            </v-card-item>
-            <v-container>
-              <v-row class="">
-                <v-col cols="6" md="4" v-for="(token,index) in tokenBalances" :key="index">
-                  <v-card color="primary" @click="dropDown(token)">
+        <div class="account-panel__modals">
+          <CreateStakeModal :close="reset" v-if="modal === 'createStake'" :visible="true"/>
+          <SellModal :close="openExchange" v-if="modal == 'sell'" :visible="true"/>
+          <BuyModal :close="openExchange" v-if="modal === 'buy'" :visible="true"/>
+          <ReceiveModal :close="reset" v-if="modal === 'receive'" :visible="true"/>
+          <AuthBindModal :afterAuthBind="reset" :close="reset" v-if="modal == 'authBind'" :visible="true"/>
+          <SendModal :close="reset" :item="item" v-if="modal === 'send'" :visible="true"/>
+          <SwapModal
+            :close="reset"
+            :openDeposit="openDeposit"
+            :openWithdraw="openWithdraw"
+            :openSell="openSell"
+            v-if="modal === 'swap'" :visible="true"
+          />
+          <ExchangeModal
+            :close="reset"
+            :openDeposit="openDeposit"
+            :openWithdraw="openWithdraw"
+            :openBuy="openBuy"
+            :openCharge="openCharge"
+            :openSell="openSell"
+            v-if="modal === 'exchange'" :visible="true"
+          />
+          <ChargeModal :close="openExchange" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
+                       :label="'accountPanel'"/>
+          <PayModal :close="closePay" :order="order" v-if="modal === 'pay'" :visible="true"/>
+          <PayH5Modal :close="closePay" :order="order" v-if="modal === 'h5pay'" :visible="true"/>
 
-                    <template v-slot:prepend>
-                      <v-icon :icon="Menu"></v-icon>
-                    </template>
-                    <template v-slot:title>
-                      {{ token.token.name }}
-                    </template>
-                    <template v-slot:subtitle>
-                      {{ token.token.type }}
-                    </template>
-                    <template v-slot:append>
-                      {{
-                        token.token.decimals == null ? token.value :
-                          formatUnits(token.value, token.token.decimals)
-                      }}
-                    </template>
-                    <v-card-item-subtitle v-if="token.token_id != null">
-                      #{{ token.token_id.slice(0, 20) }}...
-                    </v-card-item-subtitle>
-                    <v-card-item-subtitle>
-                    </v-card-item-subtitle>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-tab-item>
+          <v-dialog
+            v-model="dialogVisible"
+            :show-close="false"
+            persistent
+            :close-on-back="false"
+            width="97%"
+            max-width="36rem"
+          >
 
-          <div class="account-panel">
+            <v-card title="账户别名修改">
+              <v-form ref="myForm">
 
-            <div class="account-panel__modals">
-              <CreateStakeModal :close="reset" v-if="modal === 'createStake'" :visible="true"/>
-              <SellModal :close="openExchange" v-if="modal == 'sell'" :visible="true"/>
-              <BuyModal :close="openExchange" v-if="modal === 'buy'" :visible="true"/>
-              <ReceiveModal :close="reset" v-if="modal === 'receive'" :visible="true"/>
-              <AuthBindModal :afterAuthBind="reset" :close="reset" v-if="modal == 'authBind'" :visible="true"/>
-              <SendModal :close="reset" :item="item" v-if="modal === 'send'" :visible="true"/>
-              <SwapModal
-                :close="reset"
-                :openDeposit="openDeposit"
-                :openWithdraw="openWithdraw"
-                :openSell="openSell"
-                v-if="modal === 'swap'" :visible="true"
-              />
-              <ExchangeModal
-                :close="reset"
-                :openDeposit="openDeposit"
-                :openWithdraw="openWithdraw"
-                :openBuy="openBuy"
-                :openCharge="openCharge"
-                :openSell="openSell"
-                v-if="modal === 'exchange'" :visible="true"
-              />
-              <ChargeModal :close="openExchange" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
-                           :label="'accountPanel'"/>
-              <PayModal :close="closePay" :order="order" v-if="modal === 'pay'" :visible="true"/>
-              <PayH5Modal :close="closePay" :order="order" v-if="modal === 'h5pay'" :visible="true"/>
-
-              <v-dialog
-                v-model="dialogVisible"
-                :show-close="false"
-                width="500"
-                persistent
-                :close-on-back="false"
-                max-width="36rem"
-              >
-
-                <v-card title="账户别名修改">
-                  <v-form ref="myForm">
-
-                    <v-list-item title="钱包名称:">
-                      <v-text-field
-                        v-model="walletName"
-                        :rules="walletNameRules"
-                        autocomplete="off"
-                        label="输入一个钱包名称*"
-                        id="charge-amount"
-                        type="text"
-                        required
-                        clearable>
-                      </v-text-field>
-                    </v-list-item>
-                  </v-form>
-                  <v-list-item>
-                    <v-row>
-                      <v-col cols="6">
-                        <v-btn
-                          rounded="xl" block size="x-large"
-                          variant="tonal"
-                          @click="dialogVisible = false"
-                        >
-                          关闭
-                        </v-btn>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-btn
-                          rounded="xl" block size="x-large" @click="createOnEnter">确认
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-list-item>
-                </v-card>
-              </v-dialog>
-            </div>
-          </div>
-        </v-card>
-
-      </v-col>
-
-    </v-row>
-
+                <v-list-item title="钱包名称:">
+                  <v-text-field
+                    v-model="walletName"
+                    :rules="walletNameRules"
+                    autocomplete="off"
+                    label="输入一个钱包名称*"
+                    id="charge-amount"
+                    type="text"
+                    required
+                    clearable>
+                  </v-text-field>
+                </v-list-item>
+              </v-form>
+              <v-list-item>
+                <v-row>
+                  <v-col cols="6">
+                    <v-btn
+                      rounded="xl" block size="x-large"
+                      variant="tonal"
+                      @click="dialogVisible = false"
+                    >
+                      关闭
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-btn
+                      rounded="xl" block size="x-large" @click="createOnEnter">确认
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-list-item>
+            </v-card>
+          </v-dialog>
+        </div>
+      </div>
+    </v-card>
   </v-container>
 </template>
 
@@ -433,11 +426,18 @@ export default {
     async authJudge(oriName) {
 
       // 查询实名状态
-      const address = await storage.getAddress(storage.getHighestWalletVersion())
+      const address = this.address
       queryCert({address: address})
         .then((res) => {
           if (res.code !== 200) {
             console.log(res.msg)
+
+            if (res.msg == undefined) {
+              this.$message.error('查询实名认证出错')
+            }
+            else {
+              this.$message.error(res.msg)
+            }
           }
           else if (!res.is_cert) {
             const r = confirm('当前账户未进行实名认证, 认证过后才可以进行手续费接收和充值, 点击确认去认证!')
@@ -451,6 +451,7 @@ export default {
           }
         }).catch((e) => {
         console.log(e)
+        this.$message.error('查询实名认证失败')
       }).finally(() => {
         this.isReceiveLoading = false
       })

@@ -2,6 +2,7 @@
   <v-dialog persistent
             :close-on-back="false"
             :close="cancel"
+            width="97%"
             max-width="36rem"
             v-model="localVisible">
 

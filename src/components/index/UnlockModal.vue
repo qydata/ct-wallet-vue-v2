@@ -2,6 +2,7 @@
   <v-dialog persistent
             :close-on-back="false"
             :close="close"
+            width="97%"
             max-width="36rem"
             v-model="localVisible">
     <v-card title="解锁钱包">

@@ -14,7 +14,7 @@
       <!--          </template>-->
       <!--        </v-card>-->
       <!--      </v-col>-->
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" @click="toDapp('https://test.ctblock.cn')">
         <v-card title="加密朋友圈"
                 subtitle="加密朋友圈是基于区块链的社交平台，通过加密保护用户数据，确保隐私安全，允许用户掌控个人信息，避免数据滥用。">
           <template v-slot:prepend>
@@ -23,9 +23,14 @@
             </v-avatar>
           </template>
           <template v-slot:append>
-            <v-btn variant="text" @click="toDapp('http://localhost:4783')" icon="mdi-link-variant"></v-btn>
+            <v-btn variant="text" @click="toDapp('https://test.ctblock.cn')" icon="mdi-link-variant"></v-btn>
           </template>
         </v-card>
+      </v-col>
+    </v-row>
+    <v-row align="center">
+      <v-col cols="12" align="center">
+        <small class="text-caption text-medium-emphasis">暂无更多</small>
       </v-col>
     </v-row>
   </v-container>

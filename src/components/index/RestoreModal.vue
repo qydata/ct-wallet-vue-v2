@@ -2,16 +2,15 @@
   <v-dialog persistent
             :close-on-back="false"
             :close="cancel"
+            width="97%"
             max-width="36rem"
             v-model="localVisible">
-
 
     <v-card>
 
       <template v-slot:title>
         <h2>导入钱包</h2>
       </template>
-
 
       <v-form validate-on="submit lazy"
               ref="myForm">
@@ -97,9 +96,8 @@ const privateKeyRegexp = /^(0x)?[a-fA-F0-9]{64}$/
 import {EditPen} from '@element-plus/icons-vue'
 
 export default {
-  name: 'CreateModal',
-  components: {
-  },
+  name: 'RestoreModal',
+  components: {},
   props: {
     afterRestore: Function,
     close: Function,

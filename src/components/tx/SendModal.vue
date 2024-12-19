@@ -3,6 +3,7 @@
     <v-dialog persistent
               :close-on-back="false"
               :close="cancel"
+              width="99%"
               max-width="36rem"
               v-model="localVisible1">
       <v-card :title="'发送' + item.name + '(' + item.symbol + ')'">
@@ -96,6 +97,7 @@
     <v-dialog persistent
               :close-on-back="false"
               :close="cancel"
+              width="99%"
               max-width="36rem"
               v-model="localVisible2">
 
@@ -173,6 +175,7 @@
     <v-dialog persistent
               :close-on-back="false"
               :close="cancel"
+              width="99%"
               max-width="36rem"
               v-model="localVisible3">
 

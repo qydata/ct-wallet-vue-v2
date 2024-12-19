@@ -2,6 +2,7 @@
   <v-dialog
     persistent
     :close-on-back="false"
+    width="99%"
     max-width="36rem"
     v-model="localVisible" :close="close"
     :showCloseButton="true">
@@ -24,13 +25,15 @@
         <v-card-text>
           <v-row>
 
-            <v-col cols="12" md="4" align="center">
+            <v-col cols="12" md="4">
               <v-card-item title="充值草田分" subtitle="充值草田分手续费，用来在API调用中使用。">
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/recharge.svg" alt="质押从CT到XCT"/>
-                <v-btn :prepend-icon="ArrowNarrowLeftIcon"
-                       :loading="chargeCTLoading"
-                       @click="()=>{
+                <template v-slot:append>
+
+                  <v-btn :prepend-icon="ArrowNarrowLeftIcon"
+                         :loading="chargeCTLoading"
+                         @click="()=>{
                          chargeCTLoading = true;
                          try {
                             openCharge()
@@ -41,38 +44,45 @@
                          }
 
                        }">
-                  充值草田分
-                </v-btn>
+                    充值草田分
+                  </v-btn>
+                </template>
               </v-card-item>
               <v-divider/>
             </v-col>
-            <v-col cols="12" md="4" align="center">
+            <v-col cols="12" md="4">
               <v-card-item title="充值" subtitle="在草田链网络上以 CNY 的价格充值。">
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/buy.svg" alt="提现 从 RMB 到 CT"/>
-                <v-btn :prepend-icon="ArrowNarrowRightIcon"
-                       @click="()=>{
+                <template v-slot:append>
+                  <v-btn :prepend-icon="ArrowNarrowRightIcon"
+                         @click="()=>{
                          showAlert = true;
                          alertMessage = '暂未开放';
                          // openBuy()
-                       }">>
-                  充值
-                </v-btn>
+                       }">
+                    充值
+                  </v-btn>
+                </template>
+
               </v-card-item>
               <v-divider/>
             </v-col>
-            <v-col cols="12" md="4" align="center">
+            <v-col cols="12" md="4">
               <v-card-item title="提现" subtitle="在草田链网络上以 CNY 的价格提现。">
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/sell.svg" alt="以人民币的价格出售 CT"/>
-                <v-btn :prepend-icon="CurrencyDollarIcon"
-                       @click="()=>{
+                <template v-slot:append>
+                  <v-btn :prepend-icon="CurrencyDollarIcon"
+                         @click="()=>{
                          showAlert = true;
                          alertMessage = '暂未开放';
                          // openSell()
                        }">
-                  提现
-                </v-btn>
+                    提现
+                  </v-btn>
+                </template>
+
               </v-card-item>
               <v-divider/>
             </v-col>
