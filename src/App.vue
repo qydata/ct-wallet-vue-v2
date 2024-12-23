@@ -198,10 +198,10 @@ export default {
   // 返回清理函数
   methods: {
     routeTo(item) {
-      clearTimeout(this.taskId)
-      this.taskId = setTimeout(() => {
-        this.$router.push(item.path)
-      }, 500)
+      // clearTimeout(this.taskId)
+      // this.taskId = setTimeout(() => {
+      this.$router.push(item.path)
+      // }, 500)
     },
     showModal({
       type,
