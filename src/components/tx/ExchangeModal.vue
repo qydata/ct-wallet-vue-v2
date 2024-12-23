@@ -9,9 +9,6 @@
 
     <template v-slot:default="{ isActive }">
       <v-card rounded="lg">
-        <v-alert v-if="showAlert" type="error" dismissible>
-          {{ alertMessage }}
-        </v-alert>
         <v-card-title class="d-flex justify-space-between align-center">
           <div class="text-h5 text-medium-emphasis ps-2">
             交易
@@ -57,8 +54,7 @@
                 <template v-slot:append>
                   <v-btn :prepend-icon="ArrowNarrowRightIcon"
                          @click="()=>{
-                         showAlert = true;
-                         alertMessage = '暂未开放';
+                        this.$message.error('暂未开放')
                          // openBuy()
                        }">
                     充值
@@ -75,8 +71,7 @@
                 <template v-slot:append>
                   <v-btn :prepend-icon="CurrencyDollarIcon"
                          @click="()=>{
-                         showAlert = true;
-                         alertMessage = '暂未开放';
+                        this.$message.error('暂未开放')
                          // openSell()
                        }">
                     提现
@@ -95,25 +90,17 @@
 </template>
 
 <script>
-import Modal from '../Modal'
 import {ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon} from '@heroicons/vue/outline'
 
 export default {
   name: 'ExchangeModal',
-  components: {
-    ArrowNarrowLeftIcon,
-    ArrowNarrowRightIcon,
-    CurrencyDollarIcon,
-    Modal
-  },
+  components: {},
 
   data() {
     return {
       // 使用本地副本控制对话框的显示状态
       localVisible: this.visible,
-      chargeCTLoading: false,
-      showAlert: false,
-      alertMessage: false
+      chargeCTLoading: false
     }
   },
   props: {
@@ -144,6 +131,3 @@ export default {
 
 <style scoped>
 </style>
-
-<script setup lang="ts">
-</script>
