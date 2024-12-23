@@ -34,12 +34,12 @@ const routes = [
   {
     path: '/news',
     name: 'News',
-    component: News
+    component: () => News
   },
   {
     path: '/discover',
     name: 'Discover',
-    component: Discover
+    component: () => Discover
   },
   {
     path: '/overview',

@@ -25,10 +25,17 @@
         />
       </v-drawer>
       <router-view :key="$route.fullPath"/>
-      <v-bottom-navigation :active="active" class="sticky bottom-0 md:hidden" color="primary" grow v-model="selected">
-        <v-btn value="wallet" :to="item.path" v-for="(item,index ) in options" v-bind:key="index">
+      <v-bottom-navigation
+        v-model="selected"
+        color="primary"
+        horizontal
+        grow
+        :active="active"
+      >
+
+        <v-btn v-for="(item,index) in options" v-bind:key="index">
           <v-icon>{{ item.icon }}</v-icon>
-          <span>{{ item.title }}</span>
+          {{ item.title }}
         </v-btn>
       </v-bottom-navigation>
     </v-main>
@@ -105,7 +112,8 @@ export default {
       drawer: false,
       direction: 'btt',
       dappConnector: null,
-      method: null
+      method: null,
+      isMobile: false
     }
   },
   computed: {
@@ -127,41 +135,49 @@ export default {
     },
     selected(newVal, oldVal) {
       console.log('selected:', oldVal, newVal)
+      if (newVal == undefined) {
+        this.selected = oldVal
+      }
+      if (newVal != undefined) {
+        this.routeTo(this.options[newVal])
+      }
     },
     '$route.fullPath': {
       handler: function (newVal, oldVal) {
         console.log(`fullPath changed from ${oldVal} to ${newVal}`)
         // 当 iframeSrc 改变时，执行一些操作
-        this.active = true
-        // 抽取 'name' 属性值
-        if (newVal == null) {
-          this.active = false
-        }
-        else {
-          let tempUrl = newVal.substring(1)
-          tempUrl = tempUrl.split('?')[0]
-          const newStr = newVal.length > 0 ? tempUrl : newVal
-          const paths = this.options.map(item => item.path)
-          if (paths.includes(newStr)) {
-            this.active = true
-          }
-          else {
-            this.active = false
-          }
-        }
-
         this.options.forEach(item => {
           console.log('/' + item.path === newVal)
           if ('/' + item.path === newVal) {
             this.selected = item.id
           }
         })
-
+        if (this.isMobile) {
+          this.active = true
+          // 抽取 'name' 属性值
+          if (newVal == null) {
+            this.active = false
+          }
+          else {
+            let tempUrl = newVal.substring(1)
+            tempUrl = tempUrl.split('?')[0]
+            const newStr = newVal.length > 0 ? tempUrl : newVal
+            const paths = this.options.map(item => item.path)
+            if (paths.includes(newStr)) {
+              this.active = true
+            }
+            else {
+              this.active = false
+            }
+          }
+        }
       }
     }
   },
   mounted() {
 
+    // 检测是否为移动端
+    this.isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
     let that = this
 
     // 交易
@@ -181,6 +197,12 @@ export default {
   },
   // 返回清理函数
   methods: {
+    routeTo(item) {
+      clearTimeout(this.taskId)
+      this.taskId = setTimeout(() => {
+        this.$router.push(item.path)
+      }, 500)
+    },
     showModal({
       type,
       props
