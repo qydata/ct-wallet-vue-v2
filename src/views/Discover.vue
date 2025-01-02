@@ -16,7 +16,7 @@
       <!--      </v-col>-->
       <v-col cols="12" md="6" @click="toDapp('https://test.ctblock.cn')">
         <v-card title="加密朋友圈"
-                subtitle="加密朋友圈是基于区块链的社交平台，通过加密保护用户数据，确保隐私安全，允许用户掌控个人信息，避免数据滥用。">
+                text="加密朋友圈是基于区块链的社交平台，通过加密保护用户数据，确保隐私安全，允许用户掌控个人信息，避免数据滥用。">
           <template v-slot:prepend>
             <v-avatar rounded="0">
               <v-img src="/assets/logo.svg" alt="CT Wallet"/>
