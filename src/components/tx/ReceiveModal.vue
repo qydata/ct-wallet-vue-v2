@@ -5,14 +5,14 @@
               width="99%"
               max-width="36rem"
               v-model="localVisible">
-      <v-card title="接收 CT">
+      <v-card title="接收资产">
         <v-card-item subtitle="我接收资金的公开地址">
         </v-card-item>
         <v-card-text>
           <v-list>
             <v-list-item>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="6" class="qrcode_parent">
 
                   <v-img
                     class="qrcode__image"
@@ -119,13 +119,17 @@ export default {
 </script>
 
 <style scoped>
+.qrcode_parent{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .qrcode__image {
   position: absolute;
   background-color: #1d1d1d;
   border: 0.25rem solid #1d1d1d;
   border-radius: 100%;
-  left: 17%;
-  top: 38%;
   width: 50px;
   height: 50px;
   padding: 3px;
