@@ -46,7 +46,7 @@
       <template v-slot:append>
         <v-menu>
           <template v-slot:activator="{ props }">
-            <v-btn :prepend-icon="UsersIcon" :append-icon="ChevronDownIcon" v-bind="props">切换账户</v-btn>
+            <v-btn :prepend-icon="UsersIcon" :append-icon="ChevronDownIcon" v-bind="props">{{ walletName }}</v-btn>
           </template>
           <v-list lines="one">
             <v-list-item
@@ -181,7 +181,6 @@ import ImportKey from '@/components/index/ImportModal'
 import PayCardModal from '@/components/index/PayCardModal'
 import Logo from '@/components/Logo'
 import Menu from '@/components/Menu'
-import WalletList from '@/components/WalletList'
 import {queryCert} from '@/utils/api'
 import * as storage from '@/utils/storage'
 import {
@@ -193,7 +192,7 @@ import {
   LockOpenIcon,
   KeyIcon
 } from '@heroicons/vue/outline'
-import {inject} from 'vue'
+import {getWalletName} from '../utils/storage'
 
 const ethUtil = require('ethereumjs-util')
 
@@ -268,7 +267,8 @@ export default {
         //   text: '开源链接'
         // }
       ],
-      walletList: []
+      walletList: [],
+      walletName: '',
     }
   },
   watch: {
@@ -285,6 +285,7 @@ export default {
     ...mapState(['address'])
   },
   async mounted() {
+    this.walletName = await getWalletName()
     this.walletList = await storage.getWalletList(storage.getHighestWalletVersion())
     const intent = this.$route.query.intent
     if (intent !== null && intent !== undefined && intent.length > 1) {
@@ -456,7 +457,6 @@ export default {
     Logo,
     Menu,
     HeaderTools,
-    WalletList,
     BurgerButton,
     ForgetWallet,
     ExportKey,
