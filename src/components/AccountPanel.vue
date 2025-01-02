@@ -138,8 +138,8 @@
         </v-card-item>
         <v-container>
           <v-row class="">
-            <v-col cols="6" md="4" v-for="(token,index) in tokenBalances" :key="index">
-              <v-card color="primary" @click="dropDown(token)">
+            <v-col cols="12" md="4" v-for="(token,index) in tokenBalances" :key="index">
+              <v-card color="primary" @click="sendErc20(token)">
 
                 <template v-slot:prepend>
                   <v-icon :icon="Menu"></v-icon>
@@ -367,6 +367,15 @@ export default {
     formatUnits(value, decimals) {
       return ethers.utils.formatUnits(value, decimals)
     },
+    sendErc20(token) {
+      this.item = token
+      this.item.type = token.token.type
+      this.item.balance = token.value
+      this.item.decimals = token.token.decimals
+      this.item.name = token.token.name
+      this.item.symbol = token.token.symbol
+      this.modal = 'send'
+    },
     dropDown(items) {
       switch (items.token.type) {
       case 'ERC-1155':
@@ -467,6 +476,12 @@ export default {
       this.modal = 'buy'
     },
     openSend() {
+      this.item = {
+        name: '草田分',
+        symbol: 'CT',
+        type: 'CT',
+        balance: 0
+      }
       this.modal = 'send'
     },
     openSwap() {

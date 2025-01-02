@@ -84,7 +84,11 @@ export default {
         const transactions = await transactionsByAddress(7, this.address)
         // eslint-disable-next-line no-empty
         if (typeof transactions == 'string') {
-
+          if (transactions.indexOf('Address not found.') !== -1) {
+            // 这里如果子图没有索引对应的地址, 则直接将轮询时间戳变为50s
+            this.transactionRefreshInterval = 50000
+            clearInterval(this.polling)
+          }
         }
         else {
           this.transactions = transactions.address.transactions.edges

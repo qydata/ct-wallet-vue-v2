@@ -29,7 +29,8 @@ export function fetchGraphQLExploder(query, variables = {}) {
   }).then(response => {
     if (response.data.errors) {
       console.error('GraphQL errors:', response.data.errors)
-      throw new Error('GraphQL error occurred')
+      // throw new Error('GraphQL error occurred')
+      return 'Error fetching data:' + response.data.errors[0].message
     }
     return response.data.data
   }).catch(error => {

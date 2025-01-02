@@ -6,17 +6,18 @@
               width="99%"
               max-width="36rem"
               v-model="localVisible1">
-      <v-card :title="'发送' + item.name + '(' + item.symbol + ')'">
-        <v-card-subtitle>
-          &nbsp;
-          <Amount :value="balance" currency="CT"/>
-          可用
-        </v-card-subtitle>
-        <div v-if="item.type != 'CT'">
-          <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="formattedAmount" :currency="item.name+'('+item.symbol+')'"/> 可用
-        </span>
-        </div>
+      <v-card :title="'发送' + localItem.name + '(' + localItem.symbol + ')'">
+        <template v-slot:subtitle>
+          <v-card-subtitle>
+            <Amount :value="balance" currency="CT"/>
+            可用
+          </v-card-subtitle>
+
+          <v-card-subtitle v-if="localItem.type != 'CT'">
+            <Amount :value="formattedAmount" :currency="localItem.name+'('+localItem.symbol+')'"/>
+            可用
+          </v-card-subtitle>
+        </template>
 
 
         <v-card-text>
@@ -51,22 +52,45 @@
                   required
                   clearable/>
               </v-list-item>
-              <v-list-item
-                title="数量"
-              >
-                <v-text-field
-                  v-model="amount"
-                  :rules="amountRules"
-                  autocomplete="off"
-                  label="0.00"
+              <v-list-item>
+                <v-row>
 
-                  type="text"
-                  required
-                  clearable>
-                  <template v-slot:append>
-                    {{ item.type }}
-                  </template>
-                </v-text-field>
+                  <v-col :cols="item.type !== 'CT' ? 12 : 8">
+                    <v-text-field
+                      v-model="amount"
+                      :rules="amountRules"
+                      autocomplete="off"
+                      label="数量"
+                      type="text"
+                      required
+                      clearable>
+                      <template v-slot:append>
+                        <div v-if="item.type !== 'CT'">
+                          <v-chip variant="text">
+                            {{ item.type }}
+                          </v-chip>
+                        </div>
+                      </template>
+
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols="4">
+                    <div v-if="item.type != 'CT'">
+                    </div>
+
+                    <div v-else>
+                      <v-select
+                        variant="default"
+                        v-model="localItem"
+                        :items="items"
+                        item-title="coin"
+                        hide-details
+                        item-value="coin"
+                        return-object
+                      ></v-select>
+                    </div>
+                  </v-col>
+                </v-row>
                 <v-btn size="small" @click="setAmountAsPercent(100)">
                   最大值
                 </v-btn>
@@ -102,18 +126,17 @@
               v-model="localVisible2">
 
 
-      <v-card :title="'发送' + item.name + '(' + item.symbol + ')'">
-
-        <v-card-subtitle>
-          &nbsp;
-          <Amount :value="balance" currency="CT"/>
-          可用
-        </v-card-subtitle>
-        <div v-if="item.type != 'CT'">
-          <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="formattedAmount" :currency="item.name+'('+item.symbol+')'"/> 可用
-        </span>
-        </div>
+      <v-card :title="'发送' + localItem.name + '(' + localItem.symbol + ')'">
+        <template v-slot:subtitle>
+          <v-card-subtitle>
+            <Amount :value="balance" currency="CT"/>
+            可用
+          </v-card-subtitle>
+          <v-card-subtitle v-if="localItem.type != 'CT'">
+            <Amount :value="formattedAmount" :currency="localItem.name+'('+localItem.symbol+')'"/>
+            可用
+          </v-card-subtitle>
+        </template>
         <v-card-text>
           <v-form validate-on="submit lazy"
                   ref="myForm1">
@@ -122,7 +145,7 @@
               <v-list-item v-show="false" title="备忘录" :subtitle="memo || 'None'"></v-list-item>
               <v-list-item title="数量">
                 <v-list-item-subtitle>
-                  <Amount :value="amountParsed" :currency="item.name+'('+item.symbol+')'" short sub/>
+                  <Amount :value="amountParsed" :currency="localItem.name+'('+localItem.symbol+')'" short sub/>
                 </v-list-item-subtitle>
               </v-list-item>
               <v-list-item title="手续费">
@@ -132,7 +155,7 @@
               </v-list-item>
               <v-list-item title="接收人收到">
                 <v-list-item-subtitle>
-                  <Amount :value="amountParsedCalc" :currency="item.name+'('+item.symbol+')'" short sub/>
+                  <Amount :value="amountParsedCalc" :currency="localItem.name+'('+localItem.symbol+')'" short sub/>
                 </v-list-item-subtitle>
               </v-list-item>
             </v-list>
@@ -198,7 +221,7 @@
             </v-list-item>
             <v-list-item title="接收人收到">
               <v-list-item-subtitle>
-                <Amount :value="amount" :currency="item.name" short sub/>
+                <Amount :value="amount" :currency="localItem.name" short sub/>
               </v-list-item-subtitle>
             </v-list-item>
             <v-list-item title="交易哈希">
@@ -207,9 +230,9 @@
               </v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
-                  <v-btn rounded="xl" block size="x-large"
-                         variant="tonal" @click="cancel">关闭
-                  </v-btn>
+              <v-btn rounded="xl" block size="x-large"
+                     variant="tonal" @click="cancel">关闭
+              </v-btn>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -296,11 +319,11 @@ export default {
         value => {
 
           let _bal
-          if (this.item == null || this.item.type === 'CT') {
+          if (this.localItem == null || this.localItem.type === 'CT') {
             _bal = this.balance
           }
           else {
-            _bal = this.item.balance
+            _bal = this.localItem.balance
           }
 
           if (isNaN(parseAmount(value))) {
@@ -337,7 +360,37 @@ export default {
       // 使用本地副本控制对话框的显示状态
       localVisible1: false,
       localVisible2: false,
-      localVisible3: false
+      localVisible3: false,
+      localItem: {
+        name: '草田分',
+        symbol: 'CT',
+        coin: 'CT',
+        type: 'CT',
+        id: 0,
+        balance: '0',
+        decimals: 18
+      },
+      items: [
+        {
+          name: '草田分',
+          symbol: 'CT',
+          coin: 'CT',
+          type: 'CT',
+          balance: '0',
+          id: 0,
+          decimals: 18
+        },
+        {
+          name: '人民币代币(TEST)',
+          symbol: 'RMB',
+          coin: 'RMB',
+          type: 'ERC-20',
+          contractAddress: '0x60A4fFEAd5F99dA661eb931E313FaDd1f139f773',
+          balance: '0',
+          id: 1,
+          decimals: 2
+        }
+      ]
     }
   },
   validations() {
@@ -346,12 +399,12 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address', 'balance', 'nextNonce']),
+    ...mapState(['address', 'balance', 'nextNonce', 'xctBalance']),
     amountParsed() {
       return parseAmount(this.amount)
     },
     amountParsedCalc() {
-      if (this.item.type == 'CT') {
+      if (this.localItem.type == 'CT') {
         // return parseAmount(this.amount) - this.gas
         return parseAmount(this.amount)
       }
@@ -360,27 +413,31 @@ export default {
       }
     },
     isMaxAmountEntered() {
-      switch (this.item.type) {
+      switch (this.localItem.type) {
       case 'ERC-20':
       case 'ERC-721':
       case 'ERC-1155':
-        return this.item.balance > 0 && this.amountParsed === this.item.balance / 1e6
+        return this.localItem.balance > 0 && this.amountParsed === this.localItem.balance / 1e6
       default:
         return this.balance > 0 && this.amountParsed === this.balance / 1e6
       }
     },
     formattedAmount() {
-      console.log(this.item.decimals)
-      console.log(this.item.balance)
-      if (this.item.decimals == '' || this.item.decimals == null) {
-        return Number(this.item.balance)
+      console.log(this.localItem)
+      console.log(this.localItem.decimals)
+      console.log(this.localItem.balance)
+      if (this.localItem.decimals == '' || this.localItem.decimals == null || this.localItem.balance.indexOf('.') !== -1) {
+        return Number(this.localItem.balance)
       }
       else {
-        return Number(ethers.utils.formatUnits(this.item.balance, this.item.decimals))
+        return Number(ethers.utils.formatUnits(this.localItem.balance, this.localItem.decimals))
       }
     }
   },
   watch: {
+    localItem(newValue, oldv) {
+      console.log('watch localItem', newValue, oldv)
+    },
     visible(newValue, oldv) {
       console.log('watch visible', newValue, oldv)
       if (newValue === oldv) return
@@ -389,6 +446,13 @@ export default {
       this.localVisible3 = newValue && this.step == 3
       if (newValue) {
         this.$store.dispatch('refresh')
+      }
+    },
+    item(newValue, oldv) {
+      console.log('watch item', newValue, oldv)
+      if (newValue === oldv) return
+      if (this.item.type !== 'CT') {
+        this.localItem = newValue
       }
     },
     step(newValue, oldv) {
@@ -401,11 +465,19 @@ export default {
   },
   mounted() {
     this.localVisible1 = this.visible && this.step == 1
+    console.log(this.balance)
+    console.log(this.xctBalance)
+    this.items[0].balance = this.balance + ''
+    this.items[1].balance = this.xctBalance + ''
+    if (this.item.type !== 'CT') {
+      this.localItem = this.item
+      this.localItem.contractAddress = this.item.token.address
+    }
   },
   methods: {
 
     parseAmount() {
-      return ethers.utils.parseUnits(this.amount, this.item.decimals)
+      return ethers.utils.parseUnits(this.amount, this.localItem.decimals)
     },
     async gasCalc() {
       this.gas = await this.easGasSend()
@@ -413,7 +485,7 @@ export default {
     },
     cancel() {
       this.reset()
-      switch (this.item.type) {
+      switch (this.localItem.type) {
       case 'ERC-20':
         this.close('erc20')
         break
@@ -470,14 +542,14 @@ export default {
       })
       let override = {}
       this.loading = true
-      switch (this.item.type) {
+      switch (this.localItem.type) {
       case 'ERC-20':
         override = {
           from: this.address
         }
         gasLimit = await contract_gas_call_override(
           ethers,
-          this.item.contractAddress,
+          this.localItem.contractAddress,
           ABI_const['JiFenToken'].abi,
           'transfer',
           customHttpProvider,
@@ -497,11 +569,11 @@ export default {
         }
         gasLimit = await contract_gas_call_override(
           ethers,
-          this.item.contractAddress,
+          this.localItem.contractAddress,
           ABI_const['ERC721Ctnft'].abi,
           'safeTransferFrom(address,address,uint256)',
           customHttpProvider,
-          [this.address, this.recipient, this.item.id],
+          [this.address, this.recipient, this.localItem.id],
           override
         )
         this.loading = false
@@ -517,11 +589,11 @@ export default {
         }
         gasLimit = await contract_gas_call_override(
           ethers,
-          this.item.contractAddress,
+          this.localItem.contractAddress,
           ABI_const['ERC1155Ctnft'].abi,
           'safeTransferFrom',
           customHttpProvider,
-          [this.address, this.recipient, this.item.id, this.parseAmount(), '0x'],
+          [this.address, this.recipient, this.localItem.id, this.parseAmount(), '0x'],
           override
         )
         this.loading = false
@@ -552,7 +624,7 @@ export default {
       let tx
       let override
       this.loading = true
-      switch (this.item.type) {
+      switch (this.localItem.type) {
 
       case 'ERC-20':
         override = {
@@ -563,7 +635,7 @@ export default {
         tx = await contract_call_override(
           ethers,
           wallet,
-          this.item.contractAddress,
+          this.localItem.contractAddress,
           ABI_const['JiFenToken'].abi,
           'transfer',
           customHttpProvider,
@@ -613,11 +685,11 @@ export default {
         tx = await contract_call_override(
           ethers,
           wallet,
-          this.item.contractAddress,
+          this.localItem.contractAddress,
           ABI_const['ERC721Ctnft'].abi,
           'safeTransferFrom(address,address,uint256)',
           customHttpProvider,
-          [this.address, this.recipient, this.item.id],
+          [this.address, this.recipient, this.localItem.id],
           override
         )
 
@@ -660,11 +732,11 @@ export default {
         tx = await contract_call_override(
           ethers,
           wallet,
-          this.item.contractAddress,
+          this.localItem.contractAddress,
           ABI_const['ERC1155Ctnft'].abi,
           'safeTransferFrom',
           customHttpProvider,
-          [this.address, this.recipient, this.item.id, this.parseAmount(), '0x'],
+          [this.address, this.recipient, this.localItem.id, this.parseAmount(), '0x'],
           override
         )
 
@@ -755,13 +827,13 @@ export default {
       this.send()
     },
     setAmountAsPercent(pct) {
-      switch (this.item.type) {
+      switch (this.localItem.type) {
       case 'ERC-20':
         this.amount = (Math.floor(this.formattedAmount * 1e6) / 1e6).toFixed(6)
         break
       case 'ERC-721':
       case 'ERC-1155':
-        this.amount = (Math.floor(this.item.balance * 1e6) / 1e6).toFixed(6)
+        this.amount = (Math.floor(this.localItem.balance * 1e6) / 1e6).toFixed(6)
         break
       default:
         this.amount = (Math.floor(this.balance * 1e6) / 1e6).toFixed(6)

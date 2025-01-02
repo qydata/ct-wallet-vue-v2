@@ -22,10 +22,15 @@ export default class Web3Bridge {
       jsonRpcUrl: 'https://ctblock.cn/blockChain',
       accounts: [selectedAddress]
     }
-    targetFrame.contentWindow.postMessage(JSON.stringify({
-      type: 'wallet_setConfig',
-      config: config
-    }), this.targetOrigin)
+    if (targetFrame && targetFrame.contentWindow) {
+      targetFrame.contentWindow.postMessage(JSON.stringify({
+        type: 'wallet_setConfig',
+        config: config
+      }), this.targetOrigin);
+    }
+    else {
+      console.error('targetFrame not found or contentWindow is unavailable');
+    }
   }
 
   init(modal,
