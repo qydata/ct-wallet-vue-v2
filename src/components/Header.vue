@@ -314,7 +314,6 @@ export default {
     },
     async switchAccount(walletItem) {
       await storage.switchWallet(walletItem.p1, JSON.parse(JSON.stringify(walletItem.p2)), walletItem.walletName, storage.getHighestWalletVersion())
-      this.address = await storage.getAddress(storage.getHighestWalletVersion())
       this.$store.commit('setAddress', this.address)
       this.$store.dispatch('refresh')
       this.showTools = false
@@ -357,9 +356,22 @@ export default {
       this.showNav = false
       this.createAndImportModal = 'create'
     },
-    openAuthBindModal() {
+    async openAuthBindModal() {
       this.showNav = false
-      this.createAndImportModal = 'authBind'
+      // 判断是否实名
+      queryCert({address: this.address}).then((res) => {
+        if (res.code !== 200) {
+          console.log(res.msg)
+        }
+        else if (!res.is_cert) {
+          this.createAndImportModal = 'authBind'
+        }
+        else {
+          this.$message.error('当前账户已经实名!')
+        }
+      }).catch((e) => {
+        console.log(e)
+      })
     },
     openSessionModal() {
       this.showNav = false
