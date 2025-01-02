@@ -96,16 +96,16 @@
               </template>
             </v-list-item>
 
-            <v-list-item>
-              <template v-slot:prepend>
-                <v-btn
-                  @click="openSessionModal"
-                  :prepend-icon="SparklesIcon"
-                  variant="text"
-                >dApp 会话
-                </v-btn>
-              </template>
-            </v-list-item>
+<!--            <v-list-item>-->
+<!--              <template v-slot:prepend>-->
+<!--                <v-btn-->
+<!--                  @click="openSessionModal"-->
+<!--                  :prepend-icon="SparklesIcon"-->
+<!--                  variant="text"-->
+<!--                >dApp 会话-->
+<!--                </v-btn>-->
+<!--              </template>-->
+<!--            </v-list-item>-->
 
             <v-list-item>
               <template v-slot:prepend>
