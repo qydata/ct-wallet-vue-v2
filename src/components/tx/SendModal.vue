@@ -366,7 +366,7 @@ export default {
         symbol: 'CT',
         coin: 'CT',
         type: 'CT',
-        id: 0,
+        index: 0,
         balance: '0',
         decimals: 18
       },
@@ -377,7 +377,7 @@ export default {
           coin: 'CT',
           type: 'CT',
           balance: '0',
-          id: 0,
+          index: 0,
           decimals: 18
         },
         {
@@ -387,7 +387,7 @@ export default {
           type: 'ERC-20',
           contractAddress: '0x60A4fFEAd5F99dA661eb931E313FaDd1f139f773',
           balance: '0',
-          id: 1,
+          index: 1,
           decimals: 2
         }
       ]
@@ -477,11 +477,21 @@ export default {
   methods: {
 
     parseAmount() {
-      return ethers.utils.parseUnits(this.amount, this.localItem.decimals)
+      if (!this.localItem.decimals) {
+        return this.amount
+      }
+      else {
+        return ethers.utils.parseUnits(this.amount, this.localItem.decimals)
+      }
     },
     async gasCalc() {
       this.gas = await this.easGasSend()
-      this.goto(2)
+      if (this.gas !== 'err') {
+        this.goto(2)
+      }
+      else {
+        this.loading = false
+      }
     },
     cancel() {
       this.reset()
@@ -545,7 +555,9 @@ export default {
       switch (this.localItem.type) {
       case 'ERC-20':
         override = {
-          from: this.address
+          from: this.address,
+          maxPriorityFeePerGas: 4500e9,
+          maxFeePerGas: 4800e9
         }
         gasLimit = await contract_gas_call_override(
           ethers,
@@ -565,7 +577,14 @@ export default {
       case 'ERC-721':
 
         override = {
-          from: this.address
+          from: this.address,
+          maxPriorityFeePerGas: 4500e9,
+          maxFeePerGas: 4800e9
+        }
+
+        if (!this.localItem.token_id) {
+          this.$message.error('TokenId 为空!')
+          return 'err'
         }
         gasLimit = await contract_gas_call_override(
           ethers,
@@ -573,19 +592,30 @@ export default {
           ABI_const['ERC721Ctnft'].abi,
           'safeTransferFrom(address,address,uint256)',
           customHttpProvider,
-          [this.address, this.recipient, this.localItem.id],
+          [this.address, this.recipient, this.localItem.token_id],
           override
         )
+
+
         this.loading = false
         if (gasLimit.err != null) {
           console.log('error:', gasLimit.err)
+          this.$message.error(gasLimit.err)
+          return 'err'
         }
-        gasLimit = gasLimit.data.toString()
-
-        return gasPrice * gasLimit / 1e9
+        else {
+          gasLimit = gasLimit.data.toString()
+          return gasPrice * gasLimit / 1e9
+        }
       case 'ERC-1155':
         override = {
-          from: this.address
+          from: this.address,
+          maxPriorityFeePerGas: 4500e9,
+          maxFeePerGas: 4800e9
+        }
+        if (!this.localItem.token_id) {
+          this.$message.error('TokenId 为空!')
+          return 'err'
         }
         gasLimit = await contract_gas_call_override(
           ethers,
@@ -593,15 +623,19 @@ export default {
           ABI_const['ERC1155Ctnft'].abi,
           'safeTransferFrom',
           customHttpProvider,
-          [this.address, this.recipient, this.localItem.id, this.parseAmount(), '0x'],
+          [this.address, this.recipient, this.localItem.token_id, this.parseAmount(), '0x'],
           override
         )
         this.loading = false
         if (gasLimit.err != null) {
           console.log('error:', gasLimit.err)
+          this.$message.error(gasLimit.err)
+          return 'err'
         }
-        gasLimit = gasLimit.data.toString()
-        return gasPrice * gasLimit / 1e9
+        else {
+          gasLimit = gasLimit.data.toString()
+          return gasPrice * gasLimit / 1e9
+        }
       case 'CT':
       default:
         this.loading = false
@@ -680,7 +714,9 @@ export default {
         break
       case 'ERC-721':
         override = {
-          from: this.address
+          from: this.address,
+          maxPriorityFeePerGas: 4500e9,
+          maxFeePerGas: 4800e9
         }
         tx = await contract_call_override(
           ethers,
@@ -689,7 +725,7 @@ export default {
           ABI_const['ERC721Ctnft'].abi,
           'safeTransferFrom(address,address,uint256)',
           customHttpProvider,
-          [this.address, this.recipient, this.localItem.id],
+          [this.address, this.recipient, this.localItem.token_id],
           override
         )
 
@@ -727,7 +763,9 @@ export default {
         break
       case 'ERC-1155':
         override = {
-          from: this.address
+          from: this.address,
+          maxPriorityFeePerGas: 4500e9,
+          maxFeePerGas: 4800e9
         }
         tx = await contract_call_override(
           ethers,
@@ -736,7 +774,7 @@ export default {
           ABI_const['ERC1155Ctnft'].abi,
           'safeTransferFrom',
           customHttpProvider,
-          [this.address, this.recipient, this.localItem.id, this.parseAmount(), '0x'],
+          [this.address, this.recipient, this.localItem.token_id, this.parseAmount(), '0x'],
           override
         )
 

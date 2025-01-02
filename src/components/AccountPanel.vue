@@ -136,7 +136,7 @@
 
           <v-divider/>
         </v-card-item>
-        <v-container>
+        <v-container class="scrollable-container">
           <v-row class="">
             <v-col cols="12" md="4" v-for="(token,index) in tokenBalances" :key="index">
               <v-card color="primary" @click="sendErc20(token)">
@@ -509,4 +509,25 @@ export default {
 </script>
 
 <style scoped>
+.scrollable-container {
+  height: 70vh;
+  overflow-y: auto;
+}
+
+.scrollable-container::-webkit-scrollbar {
+  width: 8px; /* 滚动条宽度 */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background-color: #888; /* 滚动条滑块颜色 */
+  border-radius: 4px;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 滑块悬停颜色 */
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* 滑道颜色 */
+}
 </style>
