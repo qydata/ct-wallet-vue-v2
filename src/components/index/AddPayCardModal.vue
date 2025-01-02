@@ -20,8 +20,7 @@
                        v-bind:key="index"
                        :value="items">
                 <template v-slot:label>
-                  <div>{{ items.value }} <strong class="text-primary">{{ items.name }}</strong>
-                  </div>
+                  <strong class="text-primary">{{ items.name }}</strong>
                 </template>
               </v-radio>
               <!--              <v-radio label="Radio Two" value="two"></v-radio>-->
@@ -33,8 +32,11 @@
             <v-list-item title="卡类型:">
               <v-select
                 clearable
-                :label="cardType.name +' '+ cardType.type"
+                item-title="name"
+                :hint="cardType.name +' '+ cardType.type"
                 :items="cardTypes"
+                v-model="cardType"
+                return-object
                 variant="solo-filled"
               ></v-select>
             </v-list-item>
