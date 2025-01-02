@@ -23,7 +23,14 @@
           <v-row>
 
             <v-col cols="12">
-              <v-card-item title="充值草田分" subtitle="充值草田分手续费，用来在API调用中使用。">
+              <v-card-item title="充值草田分"
+
+              >
+                <template v-slot:subtitle>
+                  <span class="text-wrap">
+                    充值草田分手续费，用来在API调用中使用。
+                  </span>
+                </template>
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/recharge.svg" alt="质押从CT到XCT"/>
                 <template v-slot:append>
@@ -48,7 +55,12 @@
               <v-divider/>
             </v-col>
             <v-col cols="12">
-              <v-card-item title="充值" subtitle="在草田链网络上以 CNY 的价格充值。">
+              <v-card-item title="充值">
+                <template v-slot:subtitle>
+                  <span class="text-wrap">
+                    在草田链网络上以 CNY 的价格充值。
+                  </span>
+                </template>
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/buy.svg" alt="提现 从 RMB 到 CT"/>
                 <template v-slot:append>
@@ -66,7 +78,12 @@
               <v-divider/>
             </v-col>
             <v-col cols="12">
-              <v-card-item title="提现" subtitle="在草田链网络上以 CNY 的价格提现。">
+              <v-card-item title="提现">
+                <template v-slot:subtitle>
+                  <span class="text-wrap">
+                    在草田链网络上以 CNY 的价格提现。
+                  </span>
+                </template>
                 <v-img :width="100" :height="100"
                        aspect-ratio="16/9" src="/assets/sell.svg" alt="以人民币的价格出售 CT"/>
                 <template v-slot:append>
