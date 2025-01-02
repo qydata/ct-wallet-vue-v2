@@ -21,17 +21,21 @@
                        v-bind:key="index"
                        :value="items">
                 <template v-slot:label>
-                  <div>{{ items.value }} <strong class="text-primary">{{ items.name }}</strong>
-                  </div>
+                  <strong class="text-primary">{{ items.name }}</strong>
                 </template>
               </v-radio>
               <!--              <v-radio label="Radio Two" value="two"></v-radio>-->
               <!--              <v-radio label="Radio Three" value="three"></v-radio>-->
             </v-radio-group>
+
+            <v-chip variant="text" color="red" v-if="cardTypeArr.length == 0">
+              暂无银行卡支付数据,请点击进行添加
+            </v-chip>
           </v-list-item>
           <v-list-item>
+
             <v-card class="col-span-4" shadow="always"
-                     v-for="(items, index) in cardTypeArr" v-bind:key="index">
+                    v-for="(items, index) in cardTypeArr" v-bind:key="index">
 
               <div class="text-md  py-4 text-sm">
                 <el-tooltip class="box-item" effect="dark" :content="items.card_name+'('+items.card_type+')'"
