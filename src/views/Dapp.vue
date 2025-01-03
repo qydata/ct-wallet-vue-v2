@@ -30,7 +30,7 @@
       @load="onIframeLoad"
       sandbox="allow-scripts allow-same-origin allow-forms"
       @error="onIframeError"
-      scrolling="no"
+      scrolling="yes"
       :src="iframeSrc"
       style="width: 100%;overflow:hidden;"
       class=" h-screen"
@@ -193,8 +193,15 @@ export default {
 <style scoped>
 .dapp_container {
   padding: 0px;
-  height: 100%;
+  height: fit-content;
   overflow: scroll;
 }
+
+/* 滚动条宽度 */
+.dapp_container::-webkit-scrollbar {
+  width: 1px; /* 垂直滚动条宽度 */
+  height: 0px; /* 水平滚动条高度 */
+}
+
 </style>
 

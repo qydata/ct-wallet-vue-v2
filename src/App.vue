@@ -1,7 +1,7 @@
 <template>
   <v-app>
 
-    <v-main class="overflow-scroll h-screen">
+    <v-main class="overflow-scroll h-screen app-main">
       <v-drawer
         title="ToolWallet"
         v-model="drawer"
@@ -250,4 +250,13 @@ export default {
 </script>
 
 <style>
+.app-main{
+
+}
+
+/* 滚动条宽度 */
+.app-main::-webkit-scrollbar {
+  width: 1px; /* 垂直滚动条宽度 */
+  height: 0px; /* 水平滚动条高度 */
+}
 </style>
