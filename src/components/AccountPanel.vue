@@ -105,7 +105,7 @@
               </v-col>
 
               <v-col cols="auto" align="center">
-                <v-btn :icon="Connection" size="x-large" variant="elevated" @click="openExchange"></v-btn>
+                <v-btn :icon="Connection" size="x-large" variant="elevated" @click="openCharge"></v-btn>
                 <div class="title">交易</div>
               </v-col>
             </v-row>
@@ -192,7 +192,7 @@
             :openSell="openSell"
             v-if="modal === 'exchange'" :visible="true"
           />
-          <ChargeModal :close="openExchange" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
+          <ChargeModal :close="reset" :afterCharge="openPay" v-if="modal === 'charge'" :visible="true"
                        :label="'accountPanel'"/>
           <PayModal :close="closePay" :order="order" v-if="modal === 'pay'" :visible="true"/>
           <PayH5Modal :close="closePay" :order="order" v-if="modal === 'h5pay'" :visible="true"/>

@@ -127,16 +127,16 @@
                 </v-btn>
               </template>
             </v-list-item>
-            <v-list-item>
-              <template v-slot:prepend>
-                <v-btn
-                  @click="openCardModal"
-                  :prepend-icon="CreditCardIcon"
-                  variant="text"
-                >我的支付
-                </v-btn>
-              </template>
-            </v-list-item>
+<!--            <v-list-item>-->
+<!--              <template v-slot:prepend>-->
+<!--                <v-btn-->
+<!--                  @click="openCardModal"-->
+<!--                  :prepend-icon="CreditCardIcon"-->
+<!--                  variant="text"-->
+<!--                >我的支付-->
+<!--                </v-btn>-->
+<!--              </template>-->
+<!--            </v-list-item>-->
             <v-list-item>
               <template v-slot:prepend>
                 <v-btn
@@ -308,9 +308,8 @@ export default {
     }
   },
   methods: {
-    openLink(_item) {
-      this.tab = '/dapp'
-      window.open(_item.link)
+    open(link) {
+      window.open(link)
     },
     async switchAccount(walletItem) {
       await storage.switchWallet(walletItem.p1, JSON.parse(JSON.stringify(walletItem.p2)), walletItem.walletName, storage.getHighestWalletVersion())
