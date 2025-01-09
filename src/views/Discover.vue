@@ -27,7 +27,7 @@
           </template>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" @click="toDapp('https://test.ctsign.cn')">
+      <v-col cols="12" md="6" @click="toDapp('https://tool.ctblock.cn')">
         <v-card title="链上付"
                 text="链上付”是一款基于区块链的支付解决方案，提供安全、便捷的数字资产支付与转账服务，连接用户钱包与dApp，实现高效可靠的链上交易体验。">
           <template v-slot:prepend>
