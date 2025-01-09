@@ -28,7 +28,7 @@
       v-if="isIframeLoaded"
       ref="myIframe"
       @load="onIframeLoad"
-      sandbox="allow-scripts allow-same-origin allow-forms"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
       @error="onIframeError"
       scrolling="yes"
       :src="iframeSrc"
